@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Talking💕</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); height: 100vh; display: flex; justify-content: center; align-items: center; }
+    .container { width: 100%; max-width: 450px; height: 90vh; background: rgba(255, 255, 255, 0.9); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; }
+    
+    /* Login Box */
+    .login-box { padding: 40px 30px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; }
+    .login-box h2 { color: #ff4b2b; margin-bottom: 10px; font-size: 26px; }
+    .login-box p { color: #666; margin-bottom: 25px; }
+    .input-field { width: 100%; padding: 12px 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 25px; outline: none; transition: 0.3s; }
+    .input-field:focus { border-color: #ff4b2b; }
+    .btn { background: linear-gradient(to right, #ff416c, #ff4b2b); color: white; padding: 12px; border: none; border-radius: 25px; width: 100%; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+    .btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+    /* Chat Area */
+    .chat-container { display: none; flex-direction: column; height: 100%; }
+    .chat-header { background: linear-gradient(to right, #ff416c, #ff4b2b); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-info i { font-size: 24px; }
+    .call-btns button { background: none; border: none; color: white; font-size: 18px; margin-left: 12px; cursor: pointer; }
+
+    .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #fff0f3; display: flex; flex-direction: column; gap: 10px; }
+    .message { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; position: relative; }
+    .message.sent { background: #ff4b2b; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .message.received { background: #ffffff; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .message img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+
+    .chat-input { padding: 10px; background: white; display: flex; align-items: center; gap: 8px; border-top: 1px solid #eee; }
+    .chat-input input[type="text"] { flex: 1; border: none; outline: none; padding: 10px; font-size: 14px; }
+    .chat-input label { cursor: pointer; color: #ff4b2b; font-size: 20px; }
+    .chat-input input[type="file"] { display: none; }
+    .send-btn { background: #ff4b2b; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Login Screen -->
+  <div class="login-box" id="loginBox">
+    <h2>❤️ Sweet Chat 💕</h2>
+    <p>আপনার অ্যাকাউন্ট লগইন করুন</p>
+    <input type="text" id="username" class="input-field" placeholder="ইউজারনেম (tonu / hredoy)">
+    <input type="password" id="password" class="input-field" placeholder="পাসওয়ার্ড">
+    <button class="btn" onclick="login()">লগইন করুন</button>
+  </div>
+
+  <!-- Chat Screen -->
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+      <div class="user-info">
+        <i class="fas fa-heart"></i>
+        <h3 id="currentUserDisplay">Chat Room</h3>
+      </div>
+      <div class="call-btns">
+        <button onclick="startAudioCall()"><i class="fas fa-phone"></i></button>
+        <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input">
+      <label for="imageInput"><i class="fas fa-image"></i></label>
+      <input type="file" id="imageInput" accept="image/*" onchange="sendImage(event)">
+      <input type="text" id="messageInput" placeholder="বার্তা লিখুন..." onkeypress="handleKeyPress(event)">
+      <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase Compat SDKs (HTML-এর সাথে সরাসরি ব্যবহারের জন্য উপযুক্ত) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+<script>
+  // আপনার প্রজেক্টের সঠিক কনফিগারেশন[cite: 1, 2]
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWKra1j3o3x4LrK1_9aGbvfxxV4qoiRgI",
+    authDomain: "mylove-a6ee9.firebaseapp.com",
+    databaseURL: "https://mylove-a6ee9-default-rtdb.firebaseio.com", // Realtime Database URL
+    projectId: "mylove-a6ee9",
+    storageBucket: "mylove-a6ee9.firebasestorage.app",
+    messagingSenderId: "630327683426",
+    appId: "1:630327683426:web:75bfe5bda4bb1c7f35a43b",
+    measurementId: "G-X2NWFH9TKT"
+  };
+
+  // Firebase Initialize
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const storage = firebase.storage();
+
+  // ইউজার তথ্য[cite: 2]
+  const users = {
+    "tonu": "12345",
+    "hredoy": "12345"
+  };
+
+  let currentUser = "";
+
+  function login() {
+    const u = document.getElementById("username").value.trim().toLowerCase();
+    const p = document.getElementById("password").value.trim();
+
+    if (users[u] && users[u] === p) {
+      currentUser = u;
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("chatContainer").style.display = "flex";
+      document.getElementById("currentUserDisplay").innerText = currentUser === "tonu" ? "Hredoy ❤️" : "Tonu ❤️";
+      loadMessages();
+    } else {
+      alert("ভুল ইউজারনেম বা পাসওয়ার্ড!");
+    }
+  }
+
+  function logout() {
+    location.reload();
+  }
+
+  function sendMessage() {
+    const msgInput = document.getElementById("messageInput");
+    const text = msgInput.value.trim();
+    if (text === "") return;
+
+    const msgRef = database.ref("messages").push();
+    msgRef.set({
+      sender: currentUser,
+      text: text,
+      timestamp: Date.now()
+    });
+
+    msgInput.value = "";
+  }
+
+  function handleKeyPress(e) {
+    if (e.key === 'Enter') sendMessage();
+  }
+
+  function sendImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const storageRef = storage.ref('chat_images/' + Date.now() + '_' + file.name);
+    storageRef.put(file).then(snapshot => {
+      snapshot.ref.getDownloadURL().then(downloadURL => {
+        const msgRef = database.ref("messages").push();
+        msgRef.set({
+          sender: currentUser,
+          imageUrl: downloadURL,
+          timestamp: Date.now()
+        });
+      });
+    }).catch(err => alert("ছবি পাঠাতে সমস্যা হয়েছে: " + err.message));
+  }
+
+  function loadMessages() {
+    database.ref("messages").on("value", snapshot => {
+      const messagesDiv = document.getElementById("chatMessages");
+      messagesDiv.innerHTML = "";
+      const data = snapshot.val();
+      
+      for (let id in data) {
+        const msg = data[id];
+        const msgEl = document.createElement("div");
+        msgEl.classList.add("message", msg.sender === currentUser ? "sent" : "received");
+
+        if (msg.text) {
+          msgEl.innerText = msg.text;
+        } else if (msg.imageUrl) {
+          msgEl.innerHTML = `<img src="${msg.imageUrl}" alt="image">`;
+        }
+
+        messagesDiv.appendChild(msgEl);
+      }
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+  }
+
+  function startAudioCall() {
+    alert("অডিও কলের সিগন্যাল পাঠানো হয়েছে।");
+  }
+</script>
+</body>
+</html>
