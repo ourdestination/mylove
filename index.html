@@ -53,9 +53,9 @@
 </head>
 <body class="static-texture-bg text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Sticky Navigation Wrapper (Dhek-e na jabey) -->
+    <!-- Sticky Navigation Wrapper -->
     <div class="sticky top-0 z-50">
-        <!-- Top Running Info Text (White Font) -->
+        <!-- Top Running Info Text -->
         <div class="bg-slate-900/95 text-white py-2 px-4 border-b border-slate-800 text-xs md:text-sm font-medium shadow-inner overflow-hidden">
             <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
                 This Website Made by Hredoy Roy, Phone: +088 01518 411872; +880 1345 409887, Email: 100pc.net@gmail.com, Address: Krishnabila, Gangnalia-7610, Magura Sadar, Magura.
@@ -122,7 +122,7 @@
                     </div>
                     <button type="submit" id="login-submit-btn" class="btn-press w-full bg-indigo-600 active:bg-indigo-800 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg text-sm" data-i18n="loginBtn">প্রবেশ করুন</button>
                     <div class="text-right pt-1">
-                        <button type="button" onclick="alert('এডমিনের সাথে যোগাযোগ করুন: 01518411872')" class="text-xs text-indigo-600 font-semibold hover:underline" data-i18n="forgotPass">পাসওয়ার্ড ভুলে গেছেন?</button>
+                        <button type="button" onclick="openForgotModal()" class="text-xs text-indigo-600 font-semibold hover:underline" data-i18n="forgotPass">পাসওয়ার্ড ভুলে গেছেন?</button>
                     </div>
                 </form>
 
@@ -151,6 +151,55 @@
                     </div>
                     <button type="submit" id="signup-submit-btn" class="btn-press w-full bg-emerald-600 active:bg-emerald-800 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg text-sm" data-i18n="signupBtn">অনুরোধ পাঠান</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- ================= FORGOT PASSWORD MODAL ================= -->
+        <div id="forgot-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden action-pop-anim">
+            <div class="bg-white max-w-md w-full p-6 rounded-3xl shadow-2xl border border-slate-200 space-y-4 relative">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">🔑 <span data-i18n="recoverTitle">পাসওয়ার্ড পুনরুদ্ধার</span></h3>
+                    <button onclick="closeForgotModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+                </div>
+
+                <form id="forgot-form" onsubmit="handlePasswordRecovery(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="fullName">নাম</label>
+                        <input type="text" id="recovery-name" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="userId">ইউজার আইডি</label>
+                        <input type="text" id="recovery-userid" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="mobile">মোবাইল নম্বর (১১ সংখ্যা)</label>
+                        <input type="tel" id="recovery-mobile" pattern="0[0-9]{10}" placeholder="01XXXXXXXXX" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+
+                    <!-- Math Captcha Section -->
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 flex items-center justify-between gap-3">
+                        <span class="text-sm font-bold text-indigo-900" id="captcha-question">0 + 0 = ?</span>
+                        <input type="number" id="captcha-answer" required placeholder="উত্তর" class="w-24 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg text-sm text-center font-bold focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <button type="button" onclick="generateCaptcha()" title="Refresh Captcha" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold">🔄 Refresh</button>
+                    </div>
+
+                    <button type="submit" id="recovery-submit-btn" class="btn-press w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-700 transition shadow-md text-sm">ভেরিফাই ও রিকভার করুন</button>
+                </form>
+
+                <!-- Recovery Result Box -->
+                <div id="recovery-result" class="hidden p-4 rounded-xl border space-y-3 bg-slate-50">
+                    <div class="text-xs text-slate-700">
+                        <p><strong>ইউজার:</strong> <span id="rec-res-name">---</span></p>
+                        <p class="mt-1"><strong>বর্তমান পাসওয়ার্ড:</strong> <span id="rec-res-pass" class="font-mono bg-amber-100 px-2 py-0.5 rounded font-bold text-amber-800">---</span></p>
+                    </div>
+                    <div class="pt-2 border-t">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">নতুন পাসওয়ার্ড সেট করুন:</label>
+                        <div class="flex gap-2">
+                            <input type="password" id="new-rec-password" placeholder="নতুন পাসওয়ার্ড" class="w-full px-3 py-1.5 text-xs border rounded-lg outline-none">
+                            <button type="button" onclick="resetPasswordFromRecovery()" class="btn-press px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">সেভ</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -205,6 +254,17 @@
                         </div>
                     </div>
 
+                    <!-- Change Password Box in User Panel -->
+                    <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                        <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">🔑 <span data-i18n="changePassTitle">পাসওয়ার্ড পরিবর্তন</span></h4>
+                        <form onsubmit="handleChangePassword(event)" class="space-y-2">
+                            <input type="password" id="change-old-pass" required placeholder="পুরাতন পাসওয়ার্ড" class="w-full text-xs p-2 border rounded-lg outline-none">
+                            <input type="password" id="change-new-pass" required placeholder="নতুন পাসওয়ার্ড" class="w-full text-xs p-2 border rounded-lg outline-none">
+                            <button type="submit" class="btn-press w-full bg-indigo-600 text-white py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition" data-i18n="updatePassBtn">আপডেট করুন</button>
+                        </form>
+                    </div>
+
+                    <!-- Logout Button -->
                     <div class="pt-2 border-t space-y-2">
                         <button onclick="handleLogout()" class="btn-press w-full py-2 bg-rose-50 active:bg-rose-200 text-rose-600 text-xs font-bold rounded-xl hover:bg-rose-100 transition" data-i18n="logout">লগ আউট</button>
                     </div>
@@ -460,6 +520,8 @@
 
         let currentUser = JSON.parse(localStorage.getItem('lt_user')) || null;
         let currentLang = 'bn';
+        let captchaAns = 0;
+        let recoveredUserId = null;
 
         const translations = {
             bn: {
@@ -529,7 +591,10 @@
                 thStatus: "স্ট্যাটাস",
                 thAction: "অ্যাকশন",
                 incTypeText: "আয়",
-                expTypeText: "ব্যয়"
+                expTypeText: "ব্যয়",
+                changePassTitle: "পাসওয়ার্ড পরিবর্তন",
+                updatePassBtn: "আপডেট করুন",
+                recoverTitle: "পাসওয়ার্ড পুনরুদ্ধার"
             },
             en: {
                 tagline: "Simple & Accurate Income & Expense Management",
@@ -598,7 +663,10 @@
                 thStatus: "Status",
                 thAction: "Action",
                 incTypeText: "Income",
-                expTypeText: "Expense"
+                expTypeText: "Expense",
+                changePassTitle: "Change Password",
+                updatePassBtn: "Update Password",
+                recoverTitle: "Password Recovery"
             }
         };
 
@@ -609,6 +677,102 @@
             updateIncomeFields();
             checkSession();
         };
+
+        // Captcha Generator Function
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            captchaAns = num1 + num2;
+            document.getElementById('captcha-question').innerText = `${num1} + ${num2} = ?`;
+            document.getElementById('captcha-answer').value = '';
+        }
+
+        function openForgotModal() {
+            generateCaptcha();
+            document.getElementById('forgot-form').reset();
+            document.getElementById('recovery-result').classList.add('hidden');
+            document.getElementById('forgot-modal').classList.remove('hidden');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgot-modal').classList.add('hidden');
+        }
+
+        // Handle Password Recovery in Login Panel
+        async function handlePasswordRecovery(e) {
+            e.preventDefault();
+            const name = document.getElementById('recovery-name').value.trim();
+            const userid = document.getElementById('recovery-userid').value.trim();
+            const mobile = document.getElementById('recovery-mobile').value.trim();
+            const userAns = parseInt(document.getElementById('captcha-answer').value);
+
+            if (userAns !== captchaAns) {
+                alert(currentLang === 'bn' ? 'ক্যাপচা উত্তর সঠিক নয়! পুনরায় চেষ্টা করুন।' : 'Incorrect Captcha answer! Try again.');
+                generateCaptcha();
+                return;
+            }
+
+            try {
+                const doc = await db.collection('users').doc(userid).get();
+                if (!doc.exists) {
+                    alert(currentLang === 'bn' ? 'উক্ত ইউজার আইডি পাওয়া যায়নি!' : 'User ID not found!');
+                    return;
+                }
+
+                const userData = doc.data();
+
+                // Check Name and Mobile match
+                if (userData.name.toLowerCase() === name.toLowerCase() && userData.mobile === mobile) {
+                    recoveredUserId = userid;
+                    document.getElementById('rec-res-name').innerText = userData.name;
+                    document.getElementById('rec-res-pass').innerText = userData.password;
+                    document.getElementById('recovery-result').classList.remove('hidden');
+                } else {
+                    alert(currentLang === 'bn' ? 'প্রদত্ত নাম বা মোবাইল নম্বর রেকর্ডের সাথে মেলেনি!' : 'Name or Mobile Number does not match records!');
+                }
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function resetPasswordFromRecovery() {
+            const newPass = document.getElementById('new-rec-password').value.trim();
+            if(!newPass) {
+                alert(currentLang === 'bn' ? 'নতুন পাসওয়ার্ড লিখুন!' : 'Enter new password!');
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(recoveredUserId).update({ password: newPass });
+                alert(currentLang === 'bn' ? 'পাসওয়ার্ড সফলভাবে আপডেট করা হয়েছে! এখন লগইন করুন।' : 'Password reset successful! You can now login.');
+                closeForgotModal();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Handle Change Password in User Panel
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const oldPass = document.getElementById('change-old-pass').value.trim();
+            const newPass = document.getElementById('change-new-pass').value.trim();
+
+            if (oldPass !== currentUser.password) {
+                alert(currentLang === 'bn' ? 'পুরাতন পাসওয়ার্ড সঠিক নয়!' : 'Old password is incorrect!');
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(currentUser.id).update({ password: newPass });
+                currentUser.password = newPass;
+                localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                alert(currentLang === 'bn' ? 'পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!' : 'Password changed successfully!');
+                document.getElementById('change-old-pass').value = '';
+                document.getElementById('change-new-pass').value = '';
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
 
         // Language Switcher Function
         function toggleLanguage() {
@@ -996,14 +1160,12 @@
 
             try {
                 if (noteId) {
-                    // Update Existing Note
                     await db.collection('notes').doc(noteId).update({
                         title: title,
                         content: content
                     });
                     alert(currentLang === 'bn' ? 'নোটটি সফলভাবে এডিট ও আপডেট করা হয়েছে!' : 'Note updated successfully!');
                 } else {
-                    // Create New Note
                     await db.collection('notes').add({
                         userId: currentUser.id,
                         title: title,
@@ -1066,7 +1228,6 @@
                     
                     const formattedDate = note.createdAt ? new Date(note.createdAt.seconds * 1000).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-US') : '';
 
-                    // Escape double quotes for inline JS call
                     const safeTitle = note.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
                     const safeContent = note.content.replace(/"/g, '&quot;').replace(/'/g, "\\'");
 
