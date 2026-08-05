@@ -1,192 +1,1250 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Talking💕</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); height: 100vh; display: flex; justify-content: center; align-items: center; }
-    .container { width: 100%; max-width: 450px; height: 90vh; background: rgba(255, 255, 255, 0.9); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life's Tally - Income & Expense Tracker</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    /* Login Box */
-    .login-box { padding: 40px 30px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; }
-    .login-box h2 { color: #ff4b2b; margin-bottom: 10px; font-size: 26px; }
-    .login-box p { color: #666; margin-bottom: 25px; }
-    .input-field { width: 100%; padding: 12px 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 25px; outline: none; transition: 0.3s; }
-    .input-field:focus { border-color: #ff4b2b; }
-    .btn { background: linear-gradient(to right, #ff416c, #ff4b2b); color: white; padding: 12px; border: none; border-radius: 25px; width: 100%; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; transition: 0.3s; }
-    .btn:hover { opacity: 0.9; transform: scale(1.02); }
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    /* Chat Area */
-    .chat-container { display: none; flex-direction: column; height: 100%; }
-    .chat-header { background: linear-gradient(to right, #ff416c, #ff4b2b); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .user-info { display: flex; align-items: center; gap: 10px; }
-    .user-info i { font-size: 24px; }
-    .call-btns button { background: none; border: none; color: white; font-size: 18px; margin-left: 12px; cursor: pointer; }
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #fff0f3; display: flex; flex-direction: column; gap: 10px; }
-    .message { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; position: relative; }
-    .message.sent { background: #ff4b2b; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .message.received { background: #ffffff; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .message img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
-
-    .chat-input { padding: 10px; background: white; display: flex; align-items: center; gap: 8px; border-top: 1px solid #eee; }
-    .chat-input input[type="text"] { flex: 1; border: none; outline: none; padding: 10px; font-size: 14px; }
-    .chat-input label { cursor: pointer; color: #ff4b2b; font-size: 20px; }
-    .chat-input input[type="file"] { display: none; }
-    .send-btn { background: #ff4b2b; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-  </style>
-</head>
-<body>
-
-<div class="container">
-  <!-- Login Screen -->
-  <div class="login-box" id="loginBox">
-    <h2>❤️ Sweet Chat 💕</h2>
-    <p>আপনার অ্যাকাউন্ট লগইন করুন</p>
-    <input type="text" id="username" class="input-field" placeholder="ইউজারনেম ">
-    <input type="password" id="password" class="input-field" placeholder="পাসওয়ার্ড">
-    <button class="btn" onclick="login()">লগইন করুন</button>
-  </div>
-
-  <!-- Chat Screen -->
-  <div class="chat-container" id="chatContainer">
-    <div class="chat-header">
-      <div class="user-info">
-        <i class="fas fa-heart"></i>
-        <h3 id="currentUserDisplay">Chat Room</h3>
-      </div>
-      <div class="call-btns">
-        <button onclick="startAudioCall()"><i class="fas fa-phone"></i></button>
-        <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
-    </div>
-
-    <div class="chat-messages" id="chatMessages"></div>
-
-    <div class="chat-input">
-      <label for="imageInput"><i class="fas fa-image"></i></label>
-      <input type="file" id="imageInput" accept="image/*" onchange="sendImage(event)">
-      <input type="text" id="messageInput" placeholder="বার্তা লিখুন..." onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-    </div>
-  </div>
-</div>
-
-<!-- Firebase Compat SDKs (HTML-এর সাথে সরাসরি ব্যবহারের জন্য উপযুক্ত) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
-<script>
-  // আপনার প্রজেক্টের সঠিক কনফিগারেশন[cite: 1, 2]
-  const firebaseConfig = {
-    apiKey: "AIzaSyDWKra1j3o3x4LrK1_9aGbvfxxV4qoiRgI",
-    authDomain: "mylove-a6ee9.firebaseapp.com",
-    databaseURL: "https://mylove-a6ee9-default-rtdb.firebaseio.com", // Realtime Database URL
-    projectId: "mylove-a6ee9",
-    storageBucket: "mylove-a6ee9.firebasestorage.app",
-    messagingSenderId: "630327683426",
-    appId: "1:630327683426:web:75bfe5bda4bb1c7f35a43b",
-    measurementId: "G-X2NWFH9TKT"
-  };
-
-  // Firebase Initialize
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-  const storage = firebase.storage();
-
-  // ইউজার তথ্য[cite: 2]
-  const users = {
-    "tonu": "12345",
-    "hredoy": "12345"
-  };
-
-  let currentUser = "";
-
-  function login() {
-    const u = document.getElementById("username").value.trim().toLowerCase();
-    const p = document.getElementById("password").value.trim();
-
-    if (users[u] && users[u] === p) {
-      currentUser = u;
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("chatContainer").style.display = "flex";
-      document.getElementById("currentUserDisplay").innerText = currentUser === "tonu" ? "Hredoy ❤️" : "Tonu ❤️";
-      loadMessages();
-    } else {
-      alert("ভুল ইউজারনেম বা পাসওয়ার্ড!");
-    }
-  }
-
-  function logout() {
-    location.reload();
-  }
-
-  function sendMessage() {
-    const msgInput = document.getElementById("messageInput");
-    const text = msgInput.value.trim();
-    if (text === "") return;
-
-    const msgRef = database.ref("messages").push();
-    msgRef.set({
-      sender: currentUser,
-      text: text,
-      timestamp: Date.now()
-    });
-
-    msgInput.value = "";
-  }
-
-  function handleKeyPress(e) {
-    if (e.key === 'Enter') sendMessage();
-  }
-
-  function sendImage(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const storageRef = storage.ref('chat_images/' + Date.now() + '_' + file.name);
-    storageRef.put(file).then(snapshot => {
-      snapshot.ref.getDownloadURL().then(downloadURL => {
-        const msgRef = database.ref("messages").push();
-        msgRef.set({
-          sender: currentUser,
-          imageUrl: downloadURL,
-          timestamp: Date.now()
-        });
-      });
-    }).catch(err => alert("ছবি পাঠাতে সমস্যা হয়েছে: " + err.message));
-  }
-
-  function loadMessages() {
-    database.ref("messages").on("value", snapshot => {
-      const messagesDiv = document.getElementById("chatMessages");
-      messagesDiv.innerHTML = "";
-      const data = snapshot.val();
-      
-      for (let id in data) {
-        const msg = data[id];
-        const msgEl = document.createElement("div");
-        msgEl.classList.add("message", msg.sender === currentUser ? "sent" : "received");
-
-        if (msg.text) {
-          msgEl.innerText = msg.text;
-        } else if (msg.imageUrl) {
-          msgEl.innerHTML = `<img src="${msg.imageUrl}" alt="image">`;
+    <style>
+        .static-texture-bg {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
-        messagesDiv.appendChild(msgEl);
-      }
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
-  }
+        .btn-press {
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-press:active {
+            transform: scale(0.96);
+            filter: brightness(0.85);
+        }
 
-  function startAudioCall() {
-    alert("অডিও কলের সিগন্যাল পাঠানো হয়েছে।");
-  }
-</script>
+        .action-pop-anim {
+            animation: popZoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popZoom {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="static-texture-bg text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Running Info Text (Moving via Marquee) -->
+    <div class="bg-slate-900/90 text-amber-300 py-2 px-4 border-b border-slate-800 text-xs md:text-sm font-medium shadow-inner overflow-hidden">
+        <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
+            This Website Made by Hredoy Roy, Phone: +088 01518 411872; +880 1345 409887, Email: 100pc.net@gmail.com, Address: Krishnabila, Gangnalia-7610, Magura Sadar, Magura.
+        </marquee>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
+                    <i data-lucide="wallet" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Life's Tally</span>
+            </div>
+
+            <!-- Language Switcher -->
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleLanguage()" class="btn-press px-3.5 py-1.5 rounded-xl border text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 active:bg-indigo-100 transition shadow-sm flex items-center gap-1.5">
+                    🌐 <span id="lang-btn-text">English</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- ================= AUTH CONTAINER ================= -->
+        <div id="auth-section" class="max-w-md w-full mx-auto my-6 action-pop-anim">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 text-white rounded-2xl shadow-lg mb-3">
+                    <i data-lucide="calculator" class="w-7 h-7"></i>
+                </div>
+                <h2 class="text-3xl font-black text-white tracking-tight">Life's Tally</h2>
+                <p class="text-xs font-semibold text-slate-300 mt-1" data-i18n="tagline">সহজ ও নিখুঁত আয়-ব্যয়ের হিসাব ব্যবস্থাপনা</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-2xl border border-slate-200">
+                <div class="flex border-b border-slate-200 mb-6 font-bold text-sm">
+                    <button id="tab-login-btn" onclick="switchAuthTab('login')" class="btn-press w-1/2 py-3 border-b-2 border-indigo-600 text-indigo-600 transition-all" data-i18n="login">লগইন</button>
+                    <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="btn-press w-1/2 py-3 text-slate-400 hover:text-slate-600 transition-all" data-i18n="signup">সাইন আপ</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="userId">ইউজার আইডি</label>
+                        <div class="relative">
+                            <input type="text" id="login-userid" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="password">পাসওয়ার্ড</label>
+                        <div class="relative">
+                            <input type="password" id="login-password" required class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                            <button type="button" onclick="togglePasswordVisibility('login-password', 'eye-icon-login')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                                <i data-lucide="eye" id="eye-icon-login" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" id="login-submit-btn" class="btn-press w-full bg-indigo-600 active:bg-indigo-800 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg text-sm" data-i18n="loginBtn">প্রবেশ করুন</button>
+                    <div class="text-right pt-1">
+                        <button type="button" onclick="alert('এডমিনের সাথে যোগাযোগ করুন: 01518411872')" class="text-xs text-indigo-600 font-semibold hover:underline" data-i18n="forgotPass">পাসওয়ার্ড ভুলে গেছেন?</button>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="fullName">নাম</label>
+                        <input type="text" id="signup-name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="userId">ইউজার আইডি</label>
+                        <input type="text" id="signup-userid" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="mobile">মোবাইল নম্বর (১১ সংখ্যা)</label>
+                        <input type="tel" id="signup-mobile" pattern="0[0-9]{10}" placeholder="01XXXXXXXXX" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5" data-i18n="password">পাসওয়ার্ড</label>
+                        <div class="relative">
+                            <input type="password" id="signup-password" required class="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition">
+                            <button type="button" onclick="togglePasswordVisibility('signup-password', 'eye-icon-signup')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
+                                <i data-lucide="eye" id="eye-icon-signup" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" id="signup-submit-btn" class="btn-press w-full bg-emerald-600 active:bg-emerald-800 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg text-sm" data-i18n="signupBtn">অনুরোধ পাঠান</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= USER DASHBOARD ================= -->
+        <div id="user-dashboard" class="hidden space-y-6">
+            
+            <!-- Navigation Tabs (Dashboard vs Notes) -->
+            <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex gap-2 no-print">
+                <button id="nav-dash-btn" onclick="switchMainUserTab('dash')" class="btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> <span data-i18n="navDash">ড্যাশবোর্ড ও হিসাব</span>
+                </button>
+                <button id="nav-notes-btn" onclick="switchMainUserTab('notes')" class="btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i data-lucide="sticky-note" class="w-4 h-4"></i> <span data-i18n="navNotes">📝 নোটস (Notes)</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Left Sidebar -->
+                <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                    <!-- Profile Picture & Details -->
+                    <div class="flex flex-col items-center text-center pb-4 border-b">
+                        <div class="relative group mb-3">
+                            <div class="w-20 h-20 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-2xl overflow-hidden border-2 border-indigo-500 shadow-md" id="profile-pic-container">
+                                <span id="user-avatar">U</span>
+                            </div>
+                            <label for="profile-upload" class="absolute bottom-0 right-0 bg-indigo-600 text-white p-1.5 rounded-lg cursor-pointer shadow-md hover:bg-indigo-700 transition btn-press">
+                                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                            </label>
+                            <input type="file" id="profile-upload" accept="image/*" class="hidden" onchange="uploadProfilePicture(event)">
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base" id="user-display-name">---</h3>
+                        <p class="text-xs font-medium text-slate-400" id="user-display-id">ID: ---</p>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm text-slate-600">
+                        <p class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-slate-400"></i> <span id="user-display-mobile">---</span></p>
+                        <p class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> <span id="user-display-status" class="text-emerald-600 font-semibold" data-i18n="activeStatus">Active</span></p>
+                    </div>
+
+                    <!-- Live Chat Box with Admin -->
+                    <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                        <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">💬 <span data-i18n="chatWithAdmin">এডমিন লাইভ চ্যাট</span></h4>
+                        <div id="chat-messages" class="h-32 overflow-y-auto bg-white border rounded-lg p-2 text-xs space-y-2"></div>
+                        <div class="flex gap-1">
+                            <input type="text" id="chat-input" placeholder="মেসেজ লিখুন..." data-i18n-ph="msgPlaceholder" class="w-full text-xs px-2.5 py-1.5 border rounded-lg outline-none focus:ring-1 focus:ring-indigo-500">
+                            <button onclick="sendChatMessage()" class="btn-press bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700"><i data-lucide="send" class="w-3 h-3"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t space-y-2">
+                        <button onclick="handleLogout()" class="btn-press w-full py-2 bg-rose-50 active:bg-rose-200 text-rose-600 text-xs font-bold rounded-xl hover:bg-rose-100 transition" data-i18n="logout">লগ আউট</button>
+                    </div>
+                </div>
+
+                <!-- Right Main Area -->
+                <div class="lg:col-span-3 space-y-6">
+                    
+                    <!-- TAB 1: DASHBOARD CONTENT -->
+                    <div id="main-dash-section" class="space-y-6">
+                        <!-- Advanced Date Filter Section -->
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                            <div class="flex flex-wrap justify-between items-center gap-4">
+                                <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i data-lucide="layout-dashboard" class="text-indigo-600"></i> <span data-i18n="dashTitle">ড্যাশবোর্ড ও ফিল্টারিং</span></h2>
+                                <button onclick="window.print()" class="btn-press px-3 py-1.5 bg-indigo-50 active:bg-indigo-200 text-indigo-600 rounded-xl text-sm font-semibold hover:bg-indigo-100 flex items-center gap-1 transition no-print">
+                                    <i data-lucide="printer" class="w-4 h-4"></i> <span data-i18n="print">প্রিন্ট</span>
+                                </button>
+                            </div>
+
+                            <!-- Filter Options Box -->
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 no-print">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                                    <div>
+                                        <label class="block font-bold text-slate-600 mb-1" data-i18n="filterTypeLabel">ফিল্টার টাইপ</label>
+                                        <select id="filter-mode" onchange="toggleFilterInputs()" class="w-full p-2 border rounded-xl bg-white font-semibold">
+                                            <option value="month" data-i18n="filterMonth">নির্দিষ্ট মাস</option>
+                                            <option value="single" data-i18n="filterSingle">নির্দিষ্ট এক দিন</option>
+                                            <option value="range" data-i18n="filterRange">তারিখ হতে তারিখ (Range)</option>
+                                            <option value="all" data-i18n="filterAllTime">সকল রেকর্ড (শুরু থেকে)</option>
+                                        </select>
+                                    </div>
+                                    <div id="filter-month-box">
+                                        <label class="block font-bold text-slate-600 mb-1" data-i18n="selectMonthLabel">মাস সিলেক্ট করুন</label>
+                                        <input type="month" id="filter-month" class="w-full p-2 border rounded-xl bg-white">
+                                    </div>
+                                    <div id="filter-single-box" class="hidden">
+                                        <label class="block font-bold text-slate-600 mb-1" data-i18n="date">তারিখ</label>
+                                        <input type="date" id="filter-single-date" class="w-full p-2 border rounded-xl bg-white">
+                                    </div>
+                                    <div id="filter-range-from-box" class="hidden">
+                                        <label class="block font-bold text-slate-600 mb-1" data-i18n="startDateLabel">শুরুর তারিখ (From)</label>
+                                        <input type="date" id="filter-date-from" class="w-full p-2 border rounded-xl bg-white">
+                                    </div>
+                                    <div id="filter-range-to-box" class="hidden">
+                                        <label class="block font-bold text-slate-600 mb-1" data-i18n="endDateLabel">শেষ তারিখ (To)</label>
+                                        <input type="date" id="filter-date-to" class="w-full p-2 border rounded-xl bg-white">
+                                    </div>
+                                </div>
+                                <button onclick="loadDashboardData()" class="btn-press bg-indigo-600 active:bg-indigo-800 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-sm" data-i18n="applyFilterBtn">ফিল্টার প্রয়োগ করুন 🔍</button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                                    <span class="text-xs text-emerald-600 font-bold uppercase tracking-wider" data-i18n="totalIncome">মোট আয়</span>
+                                    <h3 class="text-2xl font-black text-emerald-700 mt-1">৳ <span id="stat-total-income">0.00</span></h3>
+                                </div>
+                                <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                                    <span class="text-xs text-rose-600 font-bold uppercase tracking-wider" data-i18n="totalExpense">মোট ব্যয়</span>
+                                    <h3 class="text-2xl font-black text-rose-700 mt-1">৳ <span id="stat-total-expense">0.00</span></h3>
+                                </div>
+                                <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                                    <span class="text-xs text-indigo-600 font-bold uppercase tracking-wider" data-i18n="netBalance">মোট স্থিতি (ব্যালেন্স)</span>
+                                    <h3 class="text-2xl font-black text-indigo-700 mt-1">৳ <span id="stat-net-balance">0.00</span></h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Section -->
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200">
+                            <div class="flex border-b mb-4 font-bold text-sm">
+                                <button onclick="switchTallyTab('income')" id="tab-inc-btn" class="btn-press py-2.5 px-4 border-b-2 border-emerald-600 text-emerald-600" data-i18n="addIncomeBtn">➕ আয় যোগ করুন</button>
+                                <button onclick="switchTallyTab('expense')" id="tab-exp-btn" class="btn-press py-2.5 px-4 text-slate-400" data-i18n="addExpenseBtn">➖ ব্যয় যোগ করুন</button>
+                            </div>
+
+                            <form id="income-form" onsubmit="addIncomeEntry(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="incomeType">আয়ের ধরন</label>
+                                        <select id="inc-type" onchange="updateIncomeFields()" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                            <option value="job" data-i18n="job">চাকরি</option>
+                                            <option value="business" data-i18n="business">ব্যবসা</option>
+                                            <option value="online" data-i18n="online">অনলাইন</option>
+                                            <option value="commission" data-i18n="commission">কমিশন</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="date">তারিখ</label>
+                                        <input type="date" id="inc-date" required class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                </div>
+
+                                <div id="inc-dynamic-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="description">বিবরণ</label>
+                                    <input type="text" id="inc-desc" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+
+                                <button type="submit" class="btn-press bg-emerald-600 active:bg-emerald-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-emerald-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 🚀</button>
+                            </form>
+
+                            <form id="expense-form" onsubmit="addExpenseEntry(event)" class="space-y-4 hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="date">তারিখ</label>
+                                        <input type="date" id="exp-date" required class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="amount">পরিমাণ (টাকা)</label>
+                                        <input type="number" step="0.01" id="exp-amount" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="expenseCategory">বিবরণ/খাত</label>
+                                    <input type="text" id="exp-desc" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <button type="submit" class="btn-press bg-rose-600 active:bg-rose-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-rose-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 💸</button>
+                            </form>
+                        </div>
+
+                        <!-- Records Table -->
+                        <div id="printable-area" class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200">
+                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="list" class="text-indigo-600"></i> <span data-i18n="listTitle">আয় ও ব্যয়ের ধারাবাহিক তালিকা (তারিখ অনুযায়ী)</span></h3>
+                                
+                                <div class="flex items-center gap-2 no-print">
+                                    <label class="text-xs font-bold text-slate-600" data-i18n="filterLabel">খাত ফিল্টার:</label>
+                                    <select id="filter-type" onchange="loadDashboardData()" class="px-3 py-1.5 border rounded-xl text-xs bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none font-semibold">
+                                        <option value="all" data-i18n="filterAll">সব দেখুন</option>
+                                        <option value="income" data-i18n="filterIncome">শুধু আয়</option>
+                                        <option value="expense" data-i18n="filterExpense">শুধু ব্যয়</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100 border-b text-slate-600 font-bold">
+                                            <th class="p-3" data-i18n="thDate">তারিখ</th>
+                                            <th class="p-3" data-i18n="thType">টাইপ</th>
+                                            <th class="p-3" data-i18n="thDesc">বিবরণ / তথ্য</th>
+                                            <th class="p-3 text-right" data-i18n="thAmount">পরিমাণ (টাকা)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tally-table-body" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: NOTES MANAGEMENT SECTION -->
+                    <div id="main-notes-section" class="space-y-6 hidden">
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">📌 <span id="note-form-title" data-i18n="addNoteTitle">নতুন নোট যোগ করুন</span></h3>
+                            <form onsubmit="saveNote(event)" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="noteTitleLabel">নোটের বিষয় / নাম (Title)</label>
+                                    <input type="text" id="note-title" required placeholder="যেমন: কাজের তালিকা, জরুরি হিসাব ইত্যাদি..." data-i18n-ph="noteTitlePh" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="noteDetailLabel">নোটের বিস্তারিত তথ্য (Details)</label>
+                                    <textarea id="note-content" rows="4" required placeholder="এখানে আপনার সকল প্রয়োজনীয় তথ্য লিখে রাখুন..." data-i18n-ph="noteDetailPh" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                                </div>
+                                <button type="submit" class="btn-press bg-indigo-600 active:bg-indigo-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5">
+                                    <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="saveNoteBtn">নোট সেভ করুন</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i data-lucide="notebook" class="text-indigo-600"></i> <span data-i18n="savedNotesTitle">আপনার সংরক্ষিত নোটসমূহ</span></h3>
+                            <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ADMIN PANEL ================= -->
+        <div id="admin-panel" class="hidden space-y-6">
+            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex justify-between items-center border border-slate-800">
+                <div>
+                    <h2 class="text-2xl font-bold flex items-center gap-2">🛠️ <span data-i18n="adminPanel">ম্যানেজমেন্ট প্যানেল</span></h2>
+                    <p class="text-slate-400 text-xs">Life's Tally - Admin Portal</p>
+                </div>
+                <button onclick="handleLogout()" class="btn-press px-4 py-2 bg-rose-600 active:bg-rose-800 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition" data-i18n="logout">লগ আউট</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-6">
+                    <h3 class="font-bold text-slate-800 text-lg border-b pb-2" data-i18n="userListTitle">সকল ইউজারের তালিকা ও অনুমোদন</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b text-slate-600 font-bold">
+                                    <th class="p-3" data-i18n="userId">ইউজার আইডি</th>
+                                    <th class="p-3" data-i18n="fullName">নাম</th>
+                                    <th class="p-3" data-i18n="mobile">মোবাইল</th>
+                                    <th class="p-3" data-i18n="thStatus">স্ট্যাটাস</th>
+                                    <th class="p-3 text-center" data-i18n="thAction">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Live Chat Console -->
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center gap-2">💬 <span data-i18n="adminChatSupport">ইউজার চ্যাট সাপোর্ট</span></h3>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="selectUserLabel">ইউজার চয়ন করুন:</label>
+                        <select id="admin-chat-user-select" onchange="loadAdminChatMessages()" class="w-full p-2 border rounded-xl text-xs bg-slate-50 font-bold outline-none"></select>
+                    </div>
+                    <div id="admin-chat-messages" class="h-64 overflow-y-auto bg-slate-50 border rounded-xl p-3 text-xs space-y-2"></div>
+                    <div class="flex gap-2">
+                        <input type="text" id="admin-chat-input" placeholder="উত্তর লিখুন..." data-i18n-ph="replyPlaceholder" class="w-full text-xs p-2 border rounded-xl outline-none">
+                        <button onclick="sendAdminChatMessage()" class="btn-press bg-indigo-600 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // ================= FIREBASE CONFIG =================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDWKra1j3o3x4LrK1_9aGbvfxxV4qoiRgI",
+            authDomain: "mylove-a6ee9.firebaseapp.com",
+            projectId: "mylove-a6ee9",
+            storageBucket: "mylove-a6ee9.firebasestorage.app",
+            messagingSenderId: "630327683426",
+            appId: "1:630327683426:web:75bfe5bda4bb1c7f35a43b",
+            measurementId: "G-X2NWFH9TKT"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let currentUser = JSON.parse(localStorage.getItem('lt_user')) || null;
+        let currentLang = 'bn';
+
+        const translations = {
+            bn: {
+                tagline: "সহজ ও নিখুঁত আয়-ব্যয়ের হিসাব ব্যবস্থাপনা",
+                login: "লগইন",
+                signup: "সাইন আপ",
+                userId: "ইউজার আইডি",
+                password: "পাসওয়ার্ড",
+                fullName: "নাম",
+                mobile: "মোবাইল নম্বর (১১ সংখ্যা)",
+                loginBtn: "প্রবেশ করুন",
+                signupBtn: "অনুরোধ পাঠান",
+                forgotPass: "পাসওয়ার্ড ভুলে গেছেন?",
+                logout: "লগ আউট",
+                navDash: "ড্যাশবোর্ড ও হিসাব",
+                navNotes: "📝 নোটস (Notes)",
+                activeStatus: "Active",
+                dashTitle: "ড্যাশবোর্ড ও ফিল্টারিং",
+                totalIncome: "মোট আয়",
+                totalExpense: "মোট ব্যয়",
+                netBalance: "মোট স্থিতি (ব্যালেন্স)",
+                print: "প্রিন্ট",
+                filterTypeLabel: "ফিল্টার টাইপ",
+                filterMonth: "নির্দিষ্ট মাস",
+                filterSingle: "নির্দিষ্ট এক দিন",
+                filterRange: "তারিখ হতে তারিখ (Range)",
+                filterAllTime: "সকল রেকর্ড (শুরু থেকে)",
+                selectMonthLabel: "মাস সিলেক্ট করুন",
+                startDateLabel: "শুরুর তারিখ (From)",
+                endDateLabel: "শেষ তারিখ (To)",
+                applyFilterBtn: "ফিল্টার প্রয়োগ করুন 🔍",
+                addIncomeBtn: "➕ আয় যোগ করুন",
+                addExpenseBtn: "➖ ব্যয় যোগ করুন",
+                incomeType: "আয়ের ধরন",
+                job: "চাকরি",
+                business: "ব্যবসা",
+                online: "অনলাইন",
+                commission: "কমিশন",
+                date: "তারিখ",
+                description: "বিবরণ",
+                amount: "পরিমাণ (টাকা)",
+                expenseCategory: "বিবরণ/খাত",
+                submitBtn: "সাবমিট করুন 🚀",
+                listTitle: "আয় ও ব্যয়ের ধারাবাহিক তালিকা (তারিখ অনুযায়ী)",
+                filterLabel: "খাত ফিল্টার:",
+                filterAll: "সব দেখুন",
+                filterIncome: "শুধু আয়",
+                filterExpense: "শুধু ব্যয়",
+                thDate: "তারিখ",
+                thType: "টাইপ",
+                thDesc: "বিবরণ / তথ্য",
+                thAmount: "পরিমাণ (টাকা)",
+                chatWithAdmin: "এডমিন লাইভ চ্যাট",
+                msgPlaceholder: "মেসেজ লিখুন...",
+                addNoteTitle: "নতুন নোট যোগ করুন",
+                noteTitleLabel: "নোটের বিষয় / নাম (Title)",
+                noteTitlePh: "যেমন: কাজের তালিকা, জরুরি হিসাব ইত্যাদি...",
+                noteDetailLabel: "নোটের বিস্তারিত তথ্য (Details)",
+                noteDetailPh: "এখানে আপনার সকল প্রয়োজনীয় তথ্য লিখে রাখুন...",
+                saveNoteBtn: "নোট সেভ করুন",
+                savedNotesTitle: "আপনার সংরক্ষিত নোটসমূহ",
+                adminPanel: "ম্যানেজমেন্ট প্যানেল",
+                userListTitle: "সকল ইউজারের তালিকা ও অনুমোদন",
+                adminChatSupport: "ইউজার চ্যাট সাপোর্ট",
+                selectUserLabel: "ইউজার চয়ন করুন:",
+                replyPlaceholder: "উত্তর লিখুন...",
+                thStatus: "স্ট্যাটাস",
+                thAction: "অ্যাকশন",
+                incTypeText: "আয়",
+                expTypeText: "ব্যয়"
+            },
+            en: {
+                tagline: "Simple & Accurate Income & Expense Management",
+                login: "Login",
+                signup: "Sign Up",
+                userId: "User ID",
+                password: "Password",
+                fullName: "Full Name",
+                mobile: "Mobile Number (11 Digits)",
+                loginBtn: "Login Now",
+                signupBtn: "Submit Request",
+                forgotPass: "Forgot Password?",
+                logout: "Logout",
+                navDash: "Dashboard & Tally",
+                navNotes: "📝 Notes",
+                activeStatus: "Active",
+                dashTitle: "Dashboard & Filtering",
+                totalIncome: "Total Income",
+                totalExpense: "Total Expense",
+                netBalance: "Net Balance",
+                print: "Print",
+                filterTypeLabel: "Filter Type",
+                filterMonth: "Specific Month",
+                filterSingle: "Specific Date",
+                filterRange: "Date Range",
+                filterAllTime: "All Time Records",
+                selectMonthLabel: "Select Month",
+                startDateLabel: "Start Date (From)",
+                endDateLabel: "End Date (To)",
+                applyFilterBtn: "Apply Filter 🔍",
+                addIncomeBtn: "➕ Add Income",
+                addExpenseBtn: "➖ Add Expense",
+                incomeType: "Income Type",
+                job: "Job",
+                business: "Business",
+                online: "Online",
+                commission: "Commission",
+                date: "Date",
+                description: "Description",
+                amount: "Amount (BDT)",
+                expenseCategory: "Description/Category",
+                submitBtn: "Submit Entry 🚀",
+                listTitle: "Income & Expense Records (Chronological)",
+                filterLabel: "Filter By:",
+                filterAll: "Show All",
+                filterIncome: "Income Only",
+                filterExpense: "Expense Only",
+                thDate: "Date",
+                thType: "Type",
+                thDesc: "Description / Info",
+                thAmount: "Amount (BDT)",
+                chatWithAdmin: "Admin Live Chat",
+                msgPlaceholder: "Type a message...",
+                addNoteTitle: "Add New Note",
+                noteTitleLabel: "Note Title",
+                noteTitlePh: "e.g., Task list, Important calculations...",
+                noteDetailLabel: "Note Details",
+                noteDetailPh: "Write all your important information here...",
+                saveNoteBtn: "Save Note",
+                savedNotesTitle: "Your Saved Notes",
+                adminPanel: "Management Panel",
+                userListTitle: "User List & Approvals",
+                adminChatSupport: "User Chat Support",
+                selectUserLabel: "Select User:",
+                replyPlaceholder: "Write a reply...",
+                thStatus: "Status",
+                thAction: "Action",
+                incTypeText: "Income",
+                expTypeText: "Expense"
+            }
+        };
+
+        window.onload = function() {
+            lucide.createIcons();
+            document.getElementById('filter-month').value = new Date().toISOString().slice(0, 7);
+            document.getElementById('filter-single-date').value = new Date().toISOString().slice(0, 10);
+            updateIncomeFields();
+            checkSession();
+        };
+
+        // Language Switcher Function
+        function toggleLanguage() {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            document.getElementById('lang-btn-text').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+
+            // Translate Text Content
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+
+            // Translate Placeholders
+            const phElements = document.querySelectorAll('[data-i18n-ph]');
+            phElements.forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (translations[currentLang][key]) {
+                    el.placeholder = translations[currentLang][key];
+                }
+            });
+
+            updateIncomeFields();
+            if(currentUser) {
+                if(currentUser.role === 'admin') {
+                    loadAdminUsers();
+                } else {
+                    loadDashboardData();
+                }
+            }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        function checkSession() {
+            if (currentUser) {
+                if (currentUser.id === 'LT-1872') {
+                    showAdminPanel();
+                } else {
+                    showUserDashboard();
+                }
+            } else {
+                showAuthSection();
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabLogin = document.getElementById('tab-login-btn');
+            const tabSignup = document.getElementById('tab-signup-btn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabLogin.className = "btn-press w-1/2 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold transition-all";
+                tabSignup.className = "btn-press w-1/2 py-3 text-slate-400 font-bold transition-all";
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                tabSignup.className = "btn-press w-1/2 py-3 border-b-2 border-emerald-600 text-emerald-600 font-bold transition-all";
+                tabLogin.className = "btn-press w-1/2 py-3 text-slate-400 font-bold transition-all";
+            }
+        }
+
+        function switchMainUserTab(tabName) {
+            const dashSection = document.getElementById('main-dash-section');
+            const notesSection = document.getElementById('main-notes-section');
+            const dashBtn = document.getElementById('nav-dash-btn');
+            const notesBtn = document.getElementById('nav-notes-btn');
+
+            if(tabName === 'dash') {
+                dashSection.classList.remove('hidden');
+                notesSection.classList.add('hidden');
+                dashBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md";
+                notesBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            } else {
+                dashSection.classList.add('hidden');
+                notesSection.classList.remove('hidden');
+                notesBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md";
+                dashBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
+                loadUserNotes();
+            }
+        }
+
+        function toggleFilterInputs() {
+            const mode = document.getElementById('filter-mode').value;
+            document.getElementById('filter-month-box').classList.toggle('hidden', mode !== 'month');
+            document.getElementById('filter-single-box').classList.toggle('hidden', mode !== 'single');
+            document.getElementById('filter-range-from-box').classList.toggle('hidden', mode !== 'range');
+            document.getElementById('filter-range-to-box').classList.toggle('hidden', mode !== 'range');
+        }
+
+        async function uploadProfilePicture(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                const base64Img = evt.target.result;
+                currentUser.photo = base64Img;
+                localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                
+                await db.collection('users').doc(currentUser.id).update({ photo: base64Img });
+                renderProfilePicture();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderProfilePicture() {
+            const container = document.getElementById('profile-pic-container');
+            if (currentUser.photo) {
+                container.innerHTML = `<img src="${currentUser.photo}" class="w-full h-full object-cover">`;
+            } else {
+                container.innerHTML = `<span id="user-avatar">${currentUser.name.charAt(0).toUpperCase()}</span>`;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-submit-btn');
+            btn.innerHTML = "⌛ Checking...";
+            btn.disabled = true;
+
+            const id = document.getElementById('login-userid').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            setTimeout(async () => {
+                if (id === 'LT-1872' && pass === 'LT-01518411872') {
+                    currentUser = { id: 'LT-1872', name: 'Admin Management', role: 'admin' };
+                    localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                    showAdminPanel();
+                    btn.innerHTML = translations[currentLang].loginBtn;
+                    btn.disabled = false;
+                    return;
+                }
+
+                try {
+                    const doc = await db.collection('users').doc(id).get();
+                    if (!doc.exists) {
+                        alert(currentLang === 'bn' ? 'ইউজার আইডি সঠিক নয়!' : 'Invalid User ID!');
+                        btn.innerHTML = translations[currentLang].loginBtn;
+                        btn.disabled = false;
+                        return;
+                    }
+                    const userData = doc.data();
+
+                    if (userData.password !== pass) {
+                        alert(currentLang === 'bn' ? 'পাসওয়ার্ড সঠিক নয়!' : 'Incorrect Password!');
+                        btn.innerHTML = translations[currentLang].loginBtn;
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    if (userData.status === 'pending') {
+                        alert(currentLang === 'bn' ? 'আপনার অ্যাকাউন্টটি অনুমোদনের অপেক্ষায় আছে।' : 'Your account is pending approval.');
+                        btn.innerHTML = translations[currentLang].loginBtn;
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    if (userData.status === 'locked' || userData.status === 'rejected') {
+                        alert(currentLang === 'bn' ? 'আপনার অ্যাকাউন্টটি নিষ্ক্রিয় বা লক করা হয়েছে।' : 'Your account is locked or disabled.');
+                        btn.innerHTML = translations[currentLang].loginBtn;
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    currentUser = userData;
+                    localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                    showUserDashboard();
+                    btn.innerHTML = translations[currentLang].loginBtn;
+                    btn.disabled = false;
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                    btn.innerHTML = translations[currentLang].loginBtn;
+                    btn.disabled = false;
+                }
+            }, 300);
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const btn = document.getElementById('signup-submit-btn');
+            btn.disabled = true;
+
+            const name = document.getElementById('signup-name').value.trim();
+            const id = document.getElementById('signup-userid').value.trim();
+            const mobile = document.getElementById('signup-mobile').value.trim();
+            const pass = document.getElementById('signup-password').value.trim();
+
+            try {
+                await db.collection('users').doc(id).set({
+                    id: id,
+                    name: name,
+                    mobile: mobile,
+                    password: pass,
+                    status: 'pending',
+                    createdAt: new Date()
+                });
+
+                alert(currentLang === 'bn' ? 'সাইন আপ অনুরোধ সফল হয়েছে!' : 'Signup request submitted successfully!');
+                switchAuthTab('login');
+                btn.disabled = false;
+            } catch (err) {
+                alert('Error: ' + err.message);
+                btn.disabled = false;
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('lt_user');
+            showAuthSection();
+        }
+
+        function showAuthSection() {
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('user-dashboard').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+        }
+
+        function showUserDashboard() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-dashboard').classList.remove('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+
+            document.getElementById('user-display-name').innerText = currentUser.name;
+            document.getElementById('user-display-id').innerText = 'ID: ' + currentUser.id;
+            document.getElementById('user-display-mobile').innerText = currentUser.mobile;
+
+            renderProfilePicture();
+            loadDashboardData();
+            listenUserChatMessages();
+        }
+
+        function formatDateBN(dateStr) {
+            if(!dateStr) return '';
+            const [y, m, d] = dateStr.split('-');
+            return `${d}-${m}-${y}`;
+        }
+
+        async function addIncomeEntry(e) {
+            e.preventDefault();
+            const date = document.getElementById('inc-date').value;
+            const type = document.getElementById('inc-type').value;
+            const desc = document.getElementById('inc-desc').value;
+            const amount = parseFloat(document.getElementById('inc-amount').value) || 0;
+
+            try {
+                await db.collection('tallies').add({
+                    userId: currentUser.id,
+                    entryType: 'income',
+                    category: type,
+                    date: date,
+                    desc: desc,
+                    amount: amount,
+                    createdAt: new Date()
+                });
+                alert(currentLang === 'bn' ? 'আয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Income saved successfully!');
+                document.getElementById('income-form').reset();
+                loadDashboardData();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function addExpenseEntry(e) {
+            e.preventDefault();
+            const date = document.getElementById('exp-date').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const desc = document.getElementById('exp-desc').value;
+
+            try {
+                await db.collection('tallies').add({
+                    userId: currentUser.id,
+                    entryType: 'expense',
+                    category: 'expense',
+                    date: date,
+                    desc: desc,
+                    amount: amount,
+                    createdAt: new Date()
+                });
+                alert(currentLang === 'bn' ? 'ব্যয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Expense saved successfully!');
+                document.getElementById('expense-form').reset();
+                loadDashboardData();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function loadDashboardData() {
+            const tbody = document.getElementById('tally-table-body');
+            const filterType = document.getElementById('filter-type').value;
+            const filterMode = document.getElementById('filter-mode').value;
+
+            tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center">${currentLang === 'bn' ? 'ডেটা লোড হচ্ছে...' : 'Loading Data...'}</td></tr>`;
+
+            try {
+                const snapshot = await db.collection('tallies')
+                    .where('userId', '==', currentUser.id)
+                    .get();
+
+                let records = [];
+                snapshot.docs.forEach(doc => {
+                    records.push({ id: doc.id, ...doc.data() });
+                });
+
+                records.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                let totalInc = 0, totalExp = 0;
+                tbody.innerHTML = '';
+
+                records.forEach(data => {
+                    if (filterMode === 'month') {
+                        const selMonth = document.getElementById('filter-month').value;
+                        if (selMonth && !data.date.startsWith(selMonth)) return;
+                    } else if (filterMode === 'single') {
+                        const selDate = document.getElementById('filter-single-date').value;
+                        if (selDate && data.date !== selDate) return;
+                    } else if (filterMode === 'range') {
+                        const fromDate = document.getElementById('filter-date-from').value;
+                        const toDate = document.getElementById('filter-date-to').value;
+                        if (fromDate && data.date < fromDate) return;
+                        if (toDate && data.date > toDate) return;
+                    }
+
+                    if (data.entryType === 'income') totalInc += data.amount;
+                    else totalExp += data.amount;
+
+                    if (filterType !== 'all') {
+                        if (filterType === 'income' && data.entryType !== 'income') return;
+                        if (filterType === 'expense' && data.entryType !== 'expense') return;
+                    }
+
+                    const typeLabel = data.entryType === 'income' ? translations[currentLang].incTypeText : translations[currentLang].expTypeText;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="p-3 font-mono text-xs font-bold">${formatDateBN(data.date)}</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${data.entryType === 'income' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                                ${typeLabel}
+                            </span>
+                        </td>
+                        <td class="p-3 font-medium text-slate-700">${data.desc}</td>
+                        <td class="p-3 text-right font-black ${data.entryType === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ৳ ${data.amount.toFixed(2)}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('stat-total-income').innerText = totalInc.toFixed(2);
+                document.getElementById('stat-total-expense').innerText = totalExp.toFixed(2);
+                document.getElementById('stat-net-balance').innerText = (totalInc - totalExp).toFixed(2);
+
+            } catch(err) {
+                console.error(err);
+            }
+        }
+
+        async function saveNote(e) {
+            e.preventDefault();
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').value.trim();
+
+            if (!title || !content) return;
+
+            try {
+                await db.collection('notes').add({
+                    userId: currentUser.id,
+                    title: title,
+                    content: content,
+                    createdAt: new Date()
+                });
+                alert(currentLang === 'bn' ? 'নোটটি সংরক্ষণ করা হয়েছে!' : 'Note saved successfully!');
+                document.getElementById('note-title').value = '';
+                document.getElementById('note-content').value = '';
+                loadUserNotes();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function loadUserNotes() {
+            const container = document.getElementById('notes-grid');
+            container.innerHTML = `<p class="text-xs text-slate-400 col-span-2">${currentLang === 'bn' ? 'নোটস লোড হচ্ছে...' : 'Loading Notes...'}</p>`;
+
+            try {
+                const snapshot = await db.collection('notes')
+                    .where('userId', '==', currentUser.id)
+                    .get();
+
+                let notes = [];
+                snapshot.docs.forEach(doc => {
+                    notes.push({ id: doc.id, ...doc.data() });
+                });
+
+                notes.sort((a,b) => b.createdAt - a.createdAt);
+
+                if (notes.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400 col-span-2">${currentLang === 'bn' ? 'এখনো কোনো নোট সংরক্ষণ করা হয়নি।' : 'No notes saved yet.'}</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                notes.forEach(note => {
+                    const card = document.createElement('div');
+                    card.className = "p-4 rounded-xl border border-amber-200 bg-amber-50/50 space-y-2 relative group shadow-sm hover:shadow-md transition";
+                    
+                    const formattedDate = note.createdAt ? new Date(note.createdAt.seconds * 1000).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-US') : '';
+
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start border-b border-amber-200 pb-2">
+                            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">📌 ${note.title}</h4>
+                            <button onclick="deleteNote('${note.id}')" title="Delete Note" class="btn-press text-rose-600 hover:text-rose-800 text-xs font-bold bg-white p-1 rounded-lg border border-rose-200">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed">${note.content}</p>
+                        <div class="pt-1 text-[10px] text-slate-400 text-right font-medium">${formattedDate}</div>
+                    `;
+                    container.appendChild(card);
+                });
+                lucide.createIcons();
+            } catch(err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteNote(noteId) {
+            if (confirm(currentLang === 'bn' ? 'আপনি কি এই নোটটি মুছে ফেলতে চান?' : 'Are you sure you want to delete this note?')) {
+                try {
+                    await db.collection('notes').doc(noteId).delete();
+                    loadUserNotes();
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            db.collection('chats').add({
+                userId: currentUser.id,
+                userName: currentUser.name,
+                sender: 'user',
+                text: text,
+                timestamp: new Date()
+            });
+            input.value = '';
+        }
+
+        function listenUserChatMessages() {
+            db.collection('chats')
+                .where('userId', '==', currentUser.id)
+                .onSnapshot(snapshot => {
+                    const chatBox = document.getElementById('chat-messages');
+                    let msgs = [];
+                    snapshot.docs.forEach(doc => msgs.push(doc.data()));
+                    msgs.sort((a,b) => a.timestamp - b.timestamp);
+
+                    chatBox.innerHTML = '';
+                    msgs.forEach(m => {
+                        const isMe = m.sender === 'user';
+                        chatBox.innerHTML += `
+                            <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                                <div class="px-2.5 py-1.5 rounded-xl max-w-[80%] ${isMe ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-800'}">
+                                    ${m.text}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+
+        async function showAdminPanel() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-dashboard').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+
+            loadAdminUsers();
+            populateAdminChatUsers();
+        }
+
+        async function loadAdminUsers() {
+            const tbody = document.getElementById('admin-users-table');
+            const snapshot = await db.collection('users').get();
+            tbody.innerHTML = '';
+
+            snapshot.docs.forEach(doc => {
+                const u = doc.data();
+                if (u.id === 'LT-1872') return;
+
+                let statusColor = 'bg-amber-100 text-amber-700';
+                if (u.status === 'active') statusColor = 'bg-emerald-100 text-emerald-700';
+                if (u.status === 'locked') statusColor = 'bg-rose-100 text-rose-700';
+                if (u.status === 'rejected') statusColor = 'bg-slate-200 text-slate-700';
+
+                let actionBtns = '';
+
+                if (u.status === 'pending') {
+                    actionBtns = `
+                        <button onclick="updateUserStatus('${u.id}', 'active')" class="btn-press bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'অনুমোদন' : 'Approve'}</button>
+                        <button onclick="updateUserStatus('${u.id}', 'rejected')" class="btn-press bg-rose-500 hover:bg-rose-600 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'বাতিল' : 'Reject'}</button>
+                    `;
+                } else if (u.status === 'active') {
+                    actionBtns = `
+                        <button onclick="updateUserStatus('${u.id}', 'locked')" class="btn-press bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'লক' : 'Lock'}</button>
+                    `;
+                } else if (u.status === 'locked' || u.status === 'rejected') {
+                    actionBtns = `
+                        <button onclick="updateUserStatus('${u.id}', 'active')" class="btn-press bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'আনলক' : 'Unlock'}</button>
+                    `;
+                }
+
+                const deleteBtn = `<button onclick="deleteUserWithPassword('${u.id}')" class="btn-press bg-rose-600 hover:bg-rose-700 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'ডিলিট' : 'Delete'}</button>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold">${u.id}</td>
+                    <td class="p-3">${u.name}</td>
+                    <td class="p-3">${u.mobile}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${statusColor}">${u.status}</span></td>
+                    <td class="p-3 text-center flex justify-center gap-1">
+                        ${actionBtns}
+                        ${deleteBtn}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function updateUserStatus(userId, status) {
+            await db.collection('users').doc(userId).update({ status: status });
+            loadAdminUsers();
+        }
+
+        async function deleteUserWithPassword(userId) {
+            const inputPass = prompt(currentLang === 'bn' ? 'ইউজার ডিলিট করতে এডমিন পাসওয়ার্ড লিখুন:' : 'Enter Admin Password to delete this user:');
+
+            if (inputPass === null) return;
+
+            if (inputPass === 'LT-01518411872') {
+                const confirmDelete = confirm(currentLang === 'bn' ? `আপনি কি নিশ্চিত যে ইউজার (${userId}) সম্পূর্ণ মুছে ফেলতে চান?` : `Are you sure you want to delete user (${userId})?`);
+                
+                if (confirmDelete) {
+                    try {
+                        await db.collection('users').doc(userId).delete();
+                        alert(currentLang === 'bn' ? 'ইউজার সফলভাবে ডিলিট করা হয়েছে!' : 'User deleted successfully!');
+                        loadAdminUsers();
+                    } catch (err) {
+                        alert('Error: ' + err.message);
+                    }
+                }
+            } else {
+                alert(currentLang === 'bn' ? 'ভুল পাসওয়ার্ড! ডিলিট করা সম্ভব হয়নি।' : 'Incorrect Password! Cannot delete.');
+            }
+        }
+
+        async function populateAdminChatUsers() {
+            const select = document.getElementById('admin-chat-user-select');
+            const snapshot = await db.collection('users').get();
+            select.innerHTML = `<option value="">${currentLang === 'bn' ? 'ইউজার সিলেক্ট করুন' : 'Select User'}</option>`;
+
+            snapshot.docs.forEach(doc => {
+                const u = doc.data();
+                if (u.id !== 'LT-1872') {
+                    select.innerHTML += `<option value="${u.id}">${u.name} (${u.id})</option>`;
+                }
+            });
+        }
+
+        function loadAdminChatMessages() {
+            const userId = document.getElementById('admin-chat-user-select').value;
+            if (!userId) return;
+
+            db.collection('chats')
+                .where('userId', '==', userId)
+                .onSnapshot(snapshot => {
+                    const chatBox = document.getElementById('admin-chat-messages');
+                    let msgs = [];
+                    snapshot.docs.forEach(doc => msgs.push(doc.data()));
+                    msgs.sort((a,b) => a.timestamp - b.timestamp);
+
+                    chatBox.innerHTML = '';
+                    msgs.forEach(m => {
+                        const isAdmin = m.sender === 'admin';
+                        chatBox.innerHTML += `
+                            <div class="flex flex-col ${isAdmin ? 'items-end' : 'items-start'}">
+                                <span class="text-[10px] text-slate-400">${isAdmin ? 'Admin' : m.userName}</span>
+                                <div class="px-2.5 py-1.5 rounded-xl max-w-[80%] ${isAdmin ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-800'}">
+                                    ${m.text}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+
+        function sendAdminChatMessage() {
+            const userId = document.getElementById('admin-chat-user-select').value;
+            const input = document.getElementById('admin-chat-input');
+            const text = input.value.trim();
+
+            if (!userId || !text) return;
+
+            db.collection('chats').add({
+                userId: userId,
+                sender: 'admin',
+                text: text,
+                timestamp: new Date()
+            });
+            input.value = '';
+        }
+
+        function updateIncomeFields() {
+            const container = document.getElementById('inc-dynamic-fields');
+            const amountLabel = translations[currentLang].amount;
+            container.innerHTML = `<div><label class="block text-xs font-bold text-slate-600 mb-1">${amountLabel}</label><input type="number" step="0.01" id="inc-amount" required class="w-full px-3 py-2 border rounded-xl text-sm outline-none"></div>`;
+        }
+
+        function switchTallyTab(type) {
+            if(type === 'income') {
+                document.getElementById('income-form').classList.remove('hidden');
+                document.getElementById('expense-form').classList.add('hidden');
+                document.getElementById('tab-inc-btn').className = "btn-press py-2.5 px-4 border-b-2 border-emerald-600 text-emerald-600 font-bold";
+                document.getElementById('tab-exp-btn').className = "btn-press py-2.5 px-4 text-slate-400";
+            } else {
+                document.getElementById('expense-form').classList.remove('hidden');
+                document.getElementById('income-form').classList.add('hidden');
+                document.getElementById('tab-exp-btn').className = "btn-press py-2.5 px-4 border-b-2 border-rose-600 text-rose-600 font-bold";
+                document.getElementById('tab-inc-btn').className = "btn-press py-2.5 px-4 text-slate-400";
+            }
+        }
+    </script>
 </body>
 </html>
