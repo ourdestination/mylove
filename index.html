@@ -53,31 +53,34 @@
 </head>
 <body class="static-texture-bg text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Top Running Info Text (Moving via Marquee) -->
-    <div class="bg-slate-900/90 text-amber-300 py-2 px-4 border-b border-slate-800 text-xs md:text-sm font-medium shadow-inner overflow-hidden">
-        <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
-            This Website Made by Hredoy Roy, Phone: +088 01518 411872; +880 1345 409887, Email: 100pc.net@gmail.com, Address: Krishnabila, Gangnalia-7610, Magura Sadar, Magura.
-        </marquee>
-    </div>
-
-    <!-- Header / Navbar -->
-    <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
-                    <i data-lucide="wallet" class="w-6 h-6"></i>
-                </div>
-                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Life's Tally</span>
-            </div>
-
-            <!-- Language Switcher -->
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleLanguage()" class="btn-press px-3.5 py-1.5 rounded-xl border text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 active:bg-indigo-100 transition shadow-sm flex items-center gap-1.5">
-                    🌐 <span id="lang-btn-text">English</span>
-                </button>
-            </div>
+    <!-- Sticky Navigation Wrapper (Dhek-e na jabey) -->
+    <div class="sticky top-0 z-50">
+        <!-- Top Running Info Text (White Font) -->
+        <div class="bg-slate-900/95 text-white py-2 px-4 border-b border-slate-800 text-xs md:text-sm font-medium shadow-inner overflow-hidden">
+            <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
+                This Website Made by Hredoy Roy, Phone: +088 01518 411872; +880 1345 409887, Email: 100pc.net@gmail.com, Address: Krishnabila, Gangnalia-7610, Magura Sadar, Magura.
+            </marquee>
         </div>
-    </header>
+
+        <!-- Header / Navbar -->
+        <header class="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
+                        <i data-lucide="wallet" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Life's Tally</span>
+                </div>
+
+                <!-- Language Switcher -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleLanguage()" class="btn-press px-3.5 py-1.5 rounded-xl border text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 active:bg-indigo-100 transition shadow-sm flex items-center gap-1.5">
+                        🌐 <span id="lang-btn-text">English</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+    </div>
 
     <!-- Main Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
@@ -189,7 +192,12 @@
 
                     <!-- Live Chat Box with Admin -->
                     <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
-                        <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">💬 <span data-i18n="chatWithAdmin">এডমিন লাইভ চ্যাট</span></h4>
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">💬 <span data-i18n="chatWithAdmin">এডমিন লাইভ চ্যাট</span></h4>
+                            <button onclick="clearUserChat()" title="Clear Chat" class="btn-press text-[10px] text-rose-600 font-bold hover:underline flex items-center gap-1">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i> Clear
+                            </button>
+                        </div>
                         <div id="chat-messages" class="h-32 overflow-y-auto bg-white border rounded-lg p-2 text-xs space-y-2"></div>
                         <div class="flex gap-1">
                             <input type="text" id="chat-input" placeholder="মেসেজ লিখুন..." data-i18n-ph="msgPlaceholder" class="w-full text-xs px-2.5 py-1.5 border rounded-lg outline-none focus:ring-1 focus:ring-indigo-500">
@@ -353,6 +361,7 @@
                         <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
                             <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">📌 <span id="note-form-title" data-i18n="addNoteTitle">নতুন নোট যোগ করুন</span></h3>
                             <form onsubmit="saveNote(event)" class="space-y-3">
+                                <input type="hidden" id="note-id">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="noteTitleLabel">নোটের বিষয় / নাম (Title)</label>
                                     <input type="text" id="note-title" required placeholder="যেমন: কাজের তালিকা, জরুরি হিসাব ইত্যাদি..." data-i18n-ph="noteTitlePh" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
@@ -361,9 +370,14 @@
                                     <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="noteDetailLabel">নোটের বিস্তারিত তথ্য (Details)</label>
                                     <textarea id="note-content" rows="4" required placeholder="এখানে আপনার সকল প্রয়োজনীয় তথ্য লিখে রাখুন..." data-i18n-ph="noteDetailPh" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
                                 </div>
-                                <button type="submit" class="btn-press bg-indigo-600 active:bg-indigo-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5">
-                                    <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="saveNoteBtn">নোট সেভ করুন</span>
-                                </button>
+                                <div class="flex gap-2">
+                                    <button type="submit" id="save-note-btn" class="btn-press bg-indigo-600 active:bg-indigo-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5">
+                                        <i data-lucide="save" class="w-4 h-4"></i> <span id="save-note-btn-text" data-i18n="saveNoteBtn">নোট সেভ করুন</span>
+                                    </button>
+                                    <button type="button" id="cancel-note-btn" onclick="resetNoteForm()" class="btn-press bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-300 hidden">
+                                        বাতিল করুন
+                                    </button>
+                                </div>
                             </form>
                         </div>
 
@@ -408,7 +422,12 @@
 
                 <!-- Admin Live Chat Console -->
                 <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-4">
-                    <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center gap-2">💬 <span data-i18n="adminChatSupport">ইউজার চ্যাট সাপোর্ট</span></h3>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">💬 <span data-i18n="adminChatSupport">ইউজার চ্যাট সাপোর্ট</span></h3>
+                        <button onclick="clearAdminChat()" title="Clear Chat" class="btn-press text-xs text-rose-600 font-bold hover:underline flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Chat
+                        </button>
+                    </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="selectUserLabel">ইউজার চয়ন করুন:</label>
                         <select id="admin-chat-user-select" onchange="loadAdminChatMessages()" class="w-full p-2 border rounded-xl text-xs bg-slate-50 font-bold outline-none"></select>
@@ -966,27 +985,57 @@
             }
         }
 
+        // ================= NOTE EDIT & SAVE FUNCTIONS =================
         async function saveNote(e) {
             e.preventDefault();
+            const noteId = document.getElementById('note-id').value;
             const title = document.getElementById('note-title').value.trim();
             const content = document.getElementById('note-content').value.trim();
 
             if (!title || !content) return;
 
             try {
-                await db.collection('notes').add({
-                    userId: currentUser.id,
-                    title: title,
-                    content: content,
-                    createdAt: new Date()
-                });
-                alert(currentLang === 'bn' ? 'নোটটি সংরক্ষণ করা হয়েছে!' : 'Note saved successfully!');
-                document.getElementById('note-title').value = '';
-                document.getElementById('note-content').value = '';
+                if (noteId) {
+                    // Update Existing Note
+                    await db.collection('notes').doc(noteId).update({
+                        title: title,
+                        content: content
+                    });
+                    alert(currentLang === 'bn' ? 'নোটটি সফলভাবে এডিট ও আপডেট করা হয়েছে!' : 'Note updated successfully!');
+                } else {
+                    // Create New Note
+                    await db.collection('notes').add({
+                        userId: currentUser.id,
+                        title: title,
+                        content: content,
+                        createdAt: new Date()
+                    });
+                    alert(currentLang === 'bn' ? 'নোটটি সংরক্ষণ করা হয়েছে!' : 'Note saved successfully!');
+                }
+                resetNoteForm();
                 loadUserNotes();
             } catch(err) {
                 alert('Error: ' + err.message);
             }
+        }
+
+        function editNote(id, title, content) {
+            document.getElementById('note-id').value = id;
+            document.getElementById('note-title').value = title;
+            document.getElementById('note-content').value = content;
+            document.getElementById('note-form-title').innerText = currentLang === 'bn' ? 'নোট এডিট করুন' : 'Edit Note';
+            document.getElementById('save-note-btn-text').innerText = currentLang === 'bn' ? 'আপডেট করুন' : 'Update Note';
+            document.getElementById('cancel-note-btn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetNoteForm() {
+            document.getElementById('note-id').value = '';
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').value = '';
+            document.getElementById('note-form-title').innerText = translations[currentLang].addNoteTitle;
+            document.getElementById('save-note-btn-text').innerText = translations[currentLang].saveNoteBtn;
+            document.getElementById('cancel-note-btn').classList.add('hidden');
         }
 
         async function loadUserNotes() {
@@ -1017,12 +1066,21 @@
                     
                     const formattedDate = note.createdAt ? new Date(note.createdAt.seconds * 1000).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-US') : '';
 
+                    // Escape double quotes for inline JS call
+                    const safeTitle = note.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                    const safeContent = note.content.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
                     card.innerHTML = `
                         <div class="flex justify-between items-start border-b border-amber-200 pb-2">
                             <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">📌 ${note.title}</h4>
-                            <button onclick="deleteNote('${note.id}')" title="Delete Note" class="btn-press text-rose-600 hover:text-rose-800 text-xs font-bold bg-white p-1 rounded-lg border border-rose-200">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
+                            <div class="flex items-center gap-1">
+                                <button onclick="editNote('${note.id}', '${safeTitle}', '${safeContent}')" title="Edit Note" class="btn-press text-indigo-600 hover:text-indigo-800 text-xs font-bold bg-white p-1 rounded-lg border border-indigo-200">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="deleteNote('${note.id}')" title="Delete Note" class="btn-press text-rose-600 hover:text-rose-800 text-xs font-bold bg-white p-1 rounded-lg border border-rose-200">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                         </div>
                         <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed">${note.content}</p>
                         <div class="pt-1 text-[10px] text-slate-400 text-right font-medium">${formattedDate}</div>
@@ -1046,6 +1104,7 @@
             }
         }
 
+        // ================= CHAT FUNCTIONS & CLEAR CHAT =================
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -1083,6 +1142,19 @@
                     });
                     chatBox.scrollTop = chatBox.scrollHeight;
                 });
+        }
+
+        async function clearUserChat() {
+            if (confirm(currentLang === 'bn' ? 'আপনি কি আপনার চ্যাট মেসেজগুলো ক্লিয়ার করতে চান?' : 'Are you sure you want to clear your chat messages?')) {
+                try {
+                    const snapshot = await db.collection('chats').where('userId', '==', currentUser.id).get();
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
+            }
         }
 
         async function showAdminPanel() {
@@ -1224,6 +1296,26 @@
                 timestamp: new Date()
             });
             input.value = '';
+        }
+
+        async function clearAdminChat() {
+            const userId = document.getElementById('admin-chat-user-select').value;
+            if (!userId) {
+                alert(currentLang === 'bn' ? 'অনুগ্রহ করে প্রথমে একজন ইউজার সিলেক্ট করুন!' : 'Please select a user first!');
+                return;
+            }
+
+            if (confirm(currentLang === 'bn' ? 'আপনি কি এই ইউজারের চ্যাট হিস্ট্রি সম্পূর্ণ ক্লিয়ার করতে চান?' : 'Are you sure you want to clear chat history for this user?')) {
+                try {
+                    const snapshot = await db.collection('chats').where('userId', '==', userId).get();
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                    alert(currentLang === 'bn' ? 'চ্যাট হিস্ট্রি সফলভাবে ক্লিয়ার করা হয়েছে!' : 'Chat history cleared successfully!');
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
+            }
         }
 
         function updateIncomeFields() {
