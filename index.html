@@ -203,6 +203,42 @@
             </div>
         </div>
 
+        <!-- ================= PAYMENT / SUBSCRIPTION MODAL (NEW) ================= -->
+        <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden action-pop-anim">
+            <div class="bg-white max-w-md w-full p-6 rounded-3xl shadow-2xl border border-slate-200 space-y-4 relative max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">💳 <span data-i18n="paymentModalTitle">পেমেন্ট ও সাবস্ক্রিপশন</span></h3>
+                    <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+                </div>
+
+                <div class="space-y-4 text-slate-700">
+                    <!-- Payment Instructions -->
+                    <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100">
+                        <h4 class="text-xs font-bold text-indigo-900 mb-1 flex items-center gap-1.5">📢 <span data-i18n="instructions">নির্দেশনা</span></h4>
+                        <p id="user-payment-instructions" class="text-xs text-slate-600 whitespace-pre-line leading-relaxed">পেমেন্ট সংক্রান্ত কোনো তথ্য পাওয়া যায়নি।</p>
+                    </div>
+
+                    <!-- QR Code Image -->
+                    <div id="user-payment-qr-container" class="flex flex-col items-center justify-center p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                        <span class="text-xs font-bold text-slate-500 mb-2">পেমেন্ট কিউআর কোড (QR Code):</span>
+                        <img id="user-payment-qr" src="" alt="Payment QR Code" class="w-48 h-48 object-contain rounded-xl border bg-white p-2 shadow-sm hidden">
+                        <span id="no-qr-text" class="text-xs text-slate-400 italic">কোনো QR কোড আপলোড করা হয়নি</span>
+                    </div>
+
+                    <!-- Payment Link -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-600">পেমেন্ট লিংক (Payment Link):</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="user-payment-link" readonly class="w-full px-3 py-2 bg-white border rounded-xl text-xs font-medium text-indigo-600 outline-none" value="নেই">
+                            <button onclick="copyPaymentLink()" class="btn-press px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 shrink-0">কপি</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="closePaymentModal()" class="btn-press w-full py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-300">বন্ধ করুন</button>
+            </div>
+        </div>
+
         <!-- ================= USER DASHBOARD ================= -->
         <div id="user-dashboard" class="hidden space-y-6">
             
@@ -240,7 +276,16 @@
                     <div class="space-y-2 text-sm text-slate-600">
                         <p class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-slate-400"></i> <span id="user-display-mobile">---</span></p>
                         <p class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> <span id="user-display-status" class="text-emerald-600 font-semibold" data-i18n="activeStatus">Active</span></p>
+                        <!-- Remaining Days Display (NEW) -->
+                        <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 font-bold flex items-center gap-2">
+                            ⏳ <span id="user-remaining-days">মেয়াদ: চেক করা হচ্ছে...</span>
+                        </div>
                     </div>
+
+                    <!-- Payment Option Button (NEW) -->
+                    <button onclick="openPaymentModal()" class="btn-press w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold text-xs shadow-md hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <i data-lucide="credit-card" class="w-4 h-4"></i> <span data-i18n="paySubBtn">পেমেন্ট / সাবস্ক্রিপশন</span>
+                    </button>
 
                     <!-- Live Chat Box with Admin -->
                     <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
@@ -506,6 +551,30 @@
                 <button onclick="handleLogout()" class="btn-press px-4 py-2 bg-rose-600 active:bg-rose-800 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition" data-i18n="logout">লগ আউট</button>
             </div>
 
+            <!-- ADMIN PAYMENT & SUBSCRIPTION SETTINGS SECTION (NEW) -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">💳 <span>পেমেন্ট ও সাবস্ক্রিপশন সেটিংস</span></h3>
+                <form onsubmit="saveAdminPaymentSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">পেমেন্ট লিংক (Payment Link)</label>
+                            <input type="url" id="admin-payment-link-input" placeholder="https://pay.example.com/..." class="w-full p-2 border rounded-xl text-xs outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">পেমেন্ট কিউআর কোড (JPG/PNG ফাইল আপলোড)</label>
+                            <input type="file" id="admin-qr-file-input" accept="image/*" class="w-full text-xs p-1 border rounded-xl bg-slate-50 cursor-pointer">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">পেমেন্ট নির্দেশনাবলী (Instructions)</label>
+                        <textarea id="admin-payment-instructions-input" rows="4" placeholder="যেমন: বিকাশ মার্চেন্ট নম্বরে পেমেন্ট করে রেফারেন্সে আপনার ইউজার আইডি দিন..." class="w-full p-2 border rounded-xl text-xs outline-none"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="btn-press bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow">পেমেন্ট সেটিংস সেভ করুন</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-6">
                     <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
@@ -523,7 +592,7 @@
                                 <tr class="bg-slate-100 border-b text-slate-600 font-bold">
                                     <th class="p-3" data-i18n="userId">ইউজার আইডি</th>
                                     <th class="p-3" data-i18n="fullName">নাম</th>
-                                    <th class="p-3" data-i18n="mobile">মোবাইল</th>
+                                    <th class="p-3">মেয়াদ (Expiry)</th>
                                     <th class="p-3" data-i18n="thStatus">স্ট্যাটাস</th>
                                     <th class="p-3 text-center" data-i18n="thAction">অ্যাকশন</th>
                                 </tr>
@@ -662,7 +731,10 @@
                 expTypeText: "ব্যয়",
                 changePassTitle: "পাসওয়ার্ড পরিবর্তন",
                 updatePassBtn: "আপডেট করুন",
-                recoverTitle: "পাসওয়ার্ড পুনরুদ্ধার"
+                recoverTitle: "পাসওয়ার্ড পুনরুদ্ধার",
+                paySubBtn: "💳 পেমেন্ট / সাবস্ক্রিপশন",
+                paymentModalTitle: "পেমেন্ট ও সাবস্ক্রিপশন",
+                instructions: "নির্দেশনা"
             },
             en: {
                 tagline: "Simple & Accurate Income & Expense Management",
@@ -747,7 +819,10 @@
                 expTypeText: "Expense",
                 changePassTitle: "Change Password",
                 updatePassBtn: "Update Password",
-                recoverTitle: "Password Recovery"
+                recoverTitle: "Password Recovery",
+                paySubBtn: "💳 Payment / Subscription",
+                paymentModalTitle: "Payment & Subscription",
+                instructions: "Instructions"
             }
         };
 
@@ -783,6 +858,104 @@
 
         function closeForgotModal() {
             document.getElementById('forgot-modal').classList.add('hidden');
+        }
+
+        // ================= PAYMENT MODAL & DATA FUNCTIONS =================
+        async function openPaymentModal() {
+            document.getElementById('payment-modal').classList.remove('hidden');
+            try {
+                const doc = await db.collection('settings').doc('payment_info').get();
+                if(doc.exists) {
+                    const info = doc.data();
+                    document.getElementById('user-payment-instructions').innerText = info.instructions || "কোনো নির্দেশনা নেই।";
+                    document.getElementById('user-payment-link').value = info.link || "নেই";
+                    
+                    if(info.qrCode) {
+                        const qrImg = document.getElementById('user-payment-qr');
+                        qrImg.src = info.qrCode;
+                        qrImg.classList.remove('hidden');
+                        document.getElementById('no-qr-text').classList.add('hidden');
+                    } else {
+                        document.getElementById('user-payment-qr').classList.add('hidden');
+                        document.getElementById('no-qr-text').classList.remove('hidden');
+                    }
+                }
+            } catch(e) {
+                console.error("Payment info load error:", e);
+            }
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
+
+        function copyPaymentLink() {
+            const linkInput = document.getElementById('user-payment-link');
+            if(linkInput.value && linkInput.value !== 'নেই') {
+                navigator.clipboard.writeText(linkInput.value);
+                alert(currentLang === 'bn' ? 'পেমেন্ট লিংক কপি করা হয়েছে!' : 'Payment link copied!');
+            }
+        }
+
+        async function saveAdminPaymentSettings(e) {
+            e.preventDefault();
+            const link = document.getElementById('admin-payment-link-input').value.trim();
+            const instructions = document.getElementById('admin-payment-instructions-input').value.trim();
+            const qrFileInput = document.getElementById('admin-qr-file-input');
+
+            let qrDataBase64 = null;
+
+            if (qrFileInput.files && qrFileInput.files[0]) {
+                const file = qrFileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(evt) {
+                    qrDataBase64 = evt.target.result;
+                    await updatePaymentSettingsDb(link, instructions, qrDataBase64);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const existingDoc = await db.collection('settings').doc('payment_info').get();
+                if(existingDoc.exists) {
+                    qrDataBase64 = existingDoc.data().qrCode || null;
+                }
+                await updatePaymentSettingsDb(link, instructions, qrDataBase64);
+            }
+        }
+
+        async function updatePaymentSettingsDb(link, instructions, qrCode) {
+            try {
+                await db.collection('settings').doc('payment_info').set({
+                    link: link,
+                    instructions: instructions,
+                    qrCode: qrCode,
+                    updatedAt: new Date()
+                });
+                alert(currentLang === 'bn' ? 'পেমেন্ট সেটিংস সফলভাবে সেভ করা হয়েছে!' : 'Payment settings saved successfully!');
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // ================= USER VALIDITY / REMAINING DAYS CALCULATOR =================
+        function calculateRemainingDays(expiryDateStr) {
+            if(!expiryDateStr) return currentLang === 'bn' ? 'মেয়াদ: অনির্দিষ্ট' : 'Validity: Unlimited';
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const expDate = new Date(expiryDateStr);
+            expDate.setHours(0, 0, 0, 0);
+
+            const diffTime = expDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if(diffDays < 0) {
+                return currentLang === 'bn' ? '⚠️ আপনার অ্যাকাউন্টের মেয়াদ শেষ!' : '⚠️ Account Expired!';
+            } else if(diffDays === 0) {
+                return currentLang === 'bn' ? 'আজই মেয়াদের শেষ দিন' : 'Expires Today';
+            } else {
+                return currentLang === 'bn' ? `মেয়াদ বাকি: ${diffDays} দিন` : `Validity: ${diffDays} Days left`;
+            }
         }
 
         // Handle Password Recovery in Login Panel
@@ -1057,6 +1230,17 @@
                         return;
                     }
 
+                    // Expiry check
+                    if (userData.expiryDate) {
+                        const today = new Date().toISOString().slice(0, 10);
+                        if (userData.expiryDate < today) {
+                            alert(currentLang === 'bn' ? 'আপনার অ্যাকাউন্টের মেয়াদ শেষ হয়ে গেছে! দয়া করে পেমেন্ট করে অ্যাকাউন্ট রিনিউ করুন।' : 'Your account validity has expired!');
+                            btn.innerHTML = translations[currentLang].loginBtn;
+                            btn.disabled = false;
+                            return;
+                        }
+                    }
+
                     currentUser = userData;
                     sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                     showUserDashboard();
@@ -1087,6 +1271,7 @@
                     mobile: mobile,
                     password: pass,
                     status: 'pending',
+                    expiryDate: '',
                     createdAt: new Date()
                 });
 
@@ -1119,6 +1304,9 @@
             document.getElementById('user-display-name').innerText = currentUser.name;
             document.getElementById('user-display-id').innerText = 'ID: ' + currentUser.id;
             document.getElementById('user-display-mobile').innerText = currentUser.mobile;
+
+            // Render remaining validity days
+            document.getElementById('user-remaining-days').innerText = calculateRemainingDays(currentUser.expiryDate);
 
             renderProfilePicture();
             loadDashboardData();
@@ -1618,6 +1806,20 @@
 
             loadAdminUsers();
             populateAdminChatUsers();
+            loadAdminPaymentSettings();
+        }
+
+        async function loadAdminPaymentSettings() {
+            try {
+                const doc = await db.collection('settings').doc('payment_info').get();
+                if(doc.exists) {
+                    const info = doc.data();
+                    document.getElementById('admin-payment-link-input').value = info.link || '';
+                    document.getElementById('admin-payment-instructions-input').value = info.instructions || '';
+                }
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         // ================= ADMIN USER FILTERING & MANAGEMENT =================
@@ -1675,11 +1877,15 @@
 
                 const deleteBtn = `<button onclick="deleteUserWithPassword('${u.id}')" class="btn-press bg-rose-600 hover:bg-rose-700 text-white px-2 py-1 rounded-lg text-xs font-bold">${currentLang === 'bn' ? 'ডিলিট' : 'Delete'}</button>`;
 
+                const expiryVal = u.expiryDate || '';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="p-3 font-bold">${u.id}</td>
-                    <td class="p-3">${u.name}</td>
-                    <td class="p-3">${u.mobile}</td>
+                    <td class="p-3">${u.name}<br><span class="text-[10px] text-slate-400">${u.mobile}</span></td>
+                    <td class="p-3">
+                        <input type="date" value="${expiryVal}" onchange="updateUserExpiry('${u.id}', this.value)" class="p-1 border rounded text-xs bg-slate-50 font-bold outline-none">
+                    </td>
                     <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${statusColor}">${u.status}</span></td>
                     <td class="p-3 text-center flex justify-center gap-1">
                         ${actionBtns}
@@ -1693,6 +1899,16 @@
         async function updateUserStatus(userId, status) {
             await db.collection('users').doc(userId).update({ status: status });
             loadAdminUsers();
+        }
+
+        async function updateUserExpiry(userId, expiryDate) {
+            try {
+                await db.collection('users').doc(userId).update({ expiryDate: expiryDate });
+                alert(currentLang === 'bn' ? 'মেয়াদ আপডেট করা হয়েছে!' : 'Expiry date updated!');
+                loadAdminUsers();
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
         }
 
         async function deleteUserWithPassword(userId) {
