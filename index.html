@@ -206,13 +206,16 @@
         <!-- ================= USER DASHBOARD ================= -->
         <div id="user-dashboard" class="hidden space-y-6">
             
-            <!-- Navigation Tabs (Dashboard vs Notes) -->
-            <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex gap-2 no-print">
+            <!-- Navigation Tabs (Dashboard vs Notes vs To-Do) -->
+            <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex flex-wrap gap-2 no-print">
                 <button id="nav-dash-btn" onclick="switchMainUserTab('dash')" class="btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i> <span data-i18n="navDash">ড্যাশবোর্ড ও হিসাব</span>
                 </button>
                 <button id="nav-notes-btn" onclick="switchMainUserTab('notes')" class="btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200">
                     <i data-lucide="sticky-note" class="w-4 h-4"></i> <span data-i18n="navNotes">📝 নোটস (Notes)</span>
+                </button>
+                <button id="nav-todo-btn" onclick="switchMainUserTab('todo')" class="btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i data-lucide="check-square" class="w-4 h-4"></i> <span data-i18n="navTodo">✅ টু-ডু-লিষ্ট (To-Do)</span>
                 </button>
             </div>
 
@@ -340,6 +343,7 @@
                             </div>
 
                             <form id="income-form" onsubmit="addIncomeEntry(event)" class="space-y-4">
+                                <input type="hidden" id="inc-edit-id">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="incomeType">আয়ের ধরন</label>
@@ -348,6 +352,8 @@
                                             <option value="business" data-i18n="business">ব্যবসা</option>
                                             <option value="online" data-i18n="online">অনলাইন</option>
                                             <option value="commission" data-i18n="commission">কমিশন</option>
+                                            <option value="bank_profit" data-i18n="bank_profit">ব্যাংক মুনাফা</option>
+                                            <option value="other" data-i18n="other">অন্যান্য (ম্যানুয়ালী লিখুন)</option>
                                         </select>
                                     </div>
                                     <div>
@@ -363,10 +369,14 @@
                                     <input type="text" id="inc-desc" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                 </div>
 
-                                <button type="submit" class="btn-press bg-emerald-600 active:bg-emerald-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-emerald-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 🚀</button>
+                                <div class="flex gap-2">
+                                    <button type="submit" id="inc-submit-btn" class="btn-press bg-emerald-600 active:bg-emerald-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-emerald-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 🚀</button>
+                                    <button type="button" id="inc-cancel-btn" onclick="resetIncomeForm()" class="btn-press bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-300 hidden">বাতিল</button>
+                                </div>
                             </form>
 
                             <form id="expense-form" onsubmit="addExpenseEntry(event)" class="space-y-4 hidden">
+                                <input type="hidden" id="exp-edit-id">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="date">তারিখ</label>
@@ -381,7 +391,10 @@
                                     <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="expenseCategory">বিবরণ/খাত</label>
                                     <input type="text" id="exp-desc" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                 </div>
-                                <button type="submit" class="btn-press bg-rose-600 active:bg-rose-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-rose-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 💸</button>
+                                <div class="flex gap-2">
+                                    <button type="submit" id="exp-submit-btn" class="btn-press bg-rose-600 active:bg-rose-800 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-rose-700 transition text-sm shadow-md" data-i18n="submitBtn">সাবমিট করুন 💸</button>
+                                    <button type="button" id="exp-cancel-btn" onclick="resetExpenseForm()" class="btn-press bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-300 hidden">বাতিল</button>
+                                </div>
                             </form>
                         </div>
 
@@ -408,6 +421,7 @@
                                             <th class="p-3" data-i18n="thType">টাইপ</th>
                                             <th class="p-3" data-i18n="thDesc">বিবরণ / তথ্য</th>
                                             <th class="p-3 text-right" data-i18n="thAmount">পরিমাণ (টাকা)</th>
+                                            <th class="p-3 text-center no-print" data-i18n="thAction">অ্যাকশন</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tally-table-body" class="divide-y divide-slate-100"></tbody>
@@ -447,6 +461,37 @@
                         </div>
                     </div>
 
+                    <!-- TAB 3: TO-DO LIST MANAGEMENT SECTION -->
+                    <div id="main-todo-section" class="space-y-6 hidden">
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">✅ <span data-i18n="addTodoTitle">নতুন টু-ডু (To-Do) যোগ করুন</span></h3>
+                            <form onsubmit="saveTodo(event)" class="space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="todoDateLabel">তারিখ</label>
+                                        <input type="date" id="todo-date" required class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="todoTimeLabel">সময়</label>
+                                        <input type="time" id="todo-time" required class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1" data-i18n="todoDescLabel">কাজের বিবরণ</label>
+                                    <input type="text" id="todo-desc" required placeholder="যেমন: বিকেল ৫ টায় মিটিং আছে..." data-i18n-ph="todoDescPh" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <button type="submit" class="btn-press bg-indigo-600 active:bg-indigo-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="saveTodoBtn">যোগ করুন</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i data-lucide="list-checks" class="text-indigo-600"></i> <span data-i18n="todoListTitle">আপনার টু-ডু লিষ্ট (তারিখ ও সময় অনুযায়ী)</span></h3>
+                            <div id="todo-list-container" class="space-y-3"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -463,7 +508,15 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-6">
-                    <h3 class="font-bold text-slate-800 text-lg border-b pb-2" data-i18n="userListTitle">সকল ইউজারের তালিকা ও অনুমোদন</h3>
+                    <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
+                        <h3 class="font-bold text-slate-800 text-lg" data-i18n="userListTitle">সকল ইউজারের তালিকা ও অনুমোদন</h3>
+                        
+                        <!-- User ID Filter Input in Admin Panel -->
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="admin-user-filter" oninput="filterAdminUsers()" placeholder="ইউজার আইডি ফিল্টার..." data-i18n-ph="filterUserPh" class="px-3 py-1.5 border rounded-xl text-xs bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm border-collapse">
                             <thead>
@@ -518,10 +571,12 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let currentUser = JSON.parse(localStorage.getItem('lt_user')) || null;
-        let currentLang = 'bn';
+        // Browser session based login (Auto logout on tab close)
+        let currentUser = JSON.parse(sessionStorage.getItem('lt_user')) || null;
+        let currentLang = localStorage.getItem('lt_lang') || 'bn'; // Persistent language choice
         let captchaAns = 0;
         let recoveredUserId = null;
+        let allAdminUsersList = [];
 
         const translations = {
             bn: {
@@ -538,6 +593,7 @@
                 logout: "লগ আউট",
                 navDash: "ড্যাশবোর্ড ও হিসাব",
                 navNotes: "📝 নোটস (Notes)",
+                navTodo: "✅ টু-ডু-লিষ্ট (To-Do)",
                 activeStatus: "Active",
                 dashTitle: "ড্যাশবোর্ড ও ফিল্টারিং",
                 totalIncome: "মোট আয়",
@@ -560,6 +616,10 @@
                 business: "ব্যবসা",
                 online: "অনলাইন",
                 commission: "কমিশন",
+                bank_profit: "ব্যাংক মুনাফা",
+                other: "অন্যান্য (ম্যানুয়ালী লিখুন)",
+                customIncomeLabel: "খাতের নাম (ম্যানুয়ালী লিখুন)",
+                customIncomePh: "যেমন: উপহার, বাড়ি ভাড়া ইত্যাদি...",
                 date: "তারিখ",
                 description: "বিবরণ",
                 amount: "পরিমাণ (টাকা)",
@@ -583,8 +643,16 @@
                 noteDetailPh: "এখানে আপনার সকল প্রয়োজনীয় তথ্য লিখে রাখুন...",
                 saveNoteBtn: "নোট সেভ করুন",
                 savedNotesTitle: "আপনার সংরক্ষিত নোটসমূহ",
+                addTodoTitle: "নতুন টু-ডু (To-Do) যোগ করুন",
+                todoDateLabel: "তারিখ",
+                todoTimeLabel: "সময়",
+                todoDescLabel: "কাজের বিবরণ",
+                todoDescPh: "যেমন: বিকেল ৫ টায় মিটিং আছে...",
+                saveTodoBtn: "যোগ করুন",
+                todoListTitle: "আপনার টু-ডু লিষ্ট (তারিখ ও সময় অনুযায়ী)",
                 adminPanel: "ম্যানেজমেন্ট প্যানেল",
                 userListTitle: "সকল ইউজারের তালিকা ও অনুমোদন",
+                filterUserPh: "ইউজার আইডি ফিল্টার...",
                 adminChatSupport: "ইউজার চ্যাট সাপোর্ট",
                 selectUserLabel: "ইউজার চয়ন করুন:",
                 replyPlaceholder: "উত্তর লিখুন...",
@@ -610,6 +678,7 @@
                 logout: "Logout",
                 navDash: "Dashboard & Tally",
                 navNotes: "📝 Notes",
+                navTodo: "✅ To-Do List",
                 activeStatus: "Active",
                 dashTitle: "Dashboard & Filtering",
                 totalIncome: "Total Income",
@@ -632,6 +701,10 @@
                 business: "Business",
                 online: "Online",
                 commission: "Commission",
+                bank_profit: "Bank Profit",
+                other: "Other (Manual Entry)",
+                customIncomeLabel: "Category Name (Manual)",
+                customIncomePh: "e.g., Gift, House Rent etc...",
                 date: "Date",
                 description: "Description",
                 amount: "Amount (BDT)",
@@ -655,8 +728,16 @@
                 noteDetailPh: "Write all your important information here...",
                 saveNoteBtn: "Save Note",
                 savedNotesTitle: "Your Saved Notes",
+                addTodoTitle: "Add New To-Do Task",
+                todoDateLabel: "Date",
+                todoTimeLabel: "Time",
+                todoDescLabel: "Task Description",
+                todoDescPh: "e.g., Meeting at 5:00 PM...",
+                saveTodoBtn: "Add Task",
+                todoListTitle: "Your To-Do List (Chronological)",
                 adminPanel: "Management Panel",
                 userListTitle: "User List & Approvals",
+                filterUserPh: "Filter User ID...",
                 adminChatSupport: "User Chat Support",
                 selectUserLabel: "Select User:",
                 replyPlaceholder: "Write a reply...",
@@ -674,7 +755,13 @@
             lucide.createIcons();
             document.getElementById('filter-month').value = new Date().toISOString().slice(0, 7);
             document.getElementById('filter-single-date').value = new Date().toISOString().slice(0, 10);
+            
+            // Set current date & time for To-Do List form default
+            document.getElementById('todo-date').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('todo-time').value = new Date().toTimeString().slice(0, 5);
+
             updateIncomeFields();
+            applyLanguageUI();
             checkSession();
         };
 
@@ -765,7 +852,7 @@
             try {
                 await db.collection('users').doc(currentUser.id).update({ password: newPass });
                 currentUser.password = newPass;
-                localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                 alert(currentLang === 'bn' ? 'পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!' : 'Password changed successfully!');
                 document.getElementById('change-old-pass').value = '';
                 document.getElementById('change-new-pass').value = '';
@@ -774,9 +861,23 @@
             }
         }
 
-        // Language Switcher Function
+        // Persistent Language Switcher Function
         function toggleLanguage() {
             currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            localStorage.setItem('lt_lang', currentLang);
+            applyLanguageUI();
+
+            updateIncomeFields();
+            if(currentUser) {
+                if(currentUser.role === 'admin') {
+                    loadAdminUsers();
+                } else {
+                    loadDashboardData();
+                }
+            }
+        }
+
+        function applyLanguageUI() {
             document.getElementById('lang-btn-text').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
 
             // Translate Text Content
@@ -796,15 +897,6 @@
                     el.placeholder = translations[currentLang][key];
                 }
             });
-
-            updateIncomeFields();
-            if(currentUser) {
-                if(currentUser.role === 'admin') {
-                    loadAdminUsers();
-                } else {
-                    loadDashboardData();
-                }
-            }
         }
 
         function togglePasswordVisibility(inputId, iconId) {
@@ -854,20 +946,31 @@
         function switchMainUserTab(tabName) {
             const dashSection = document.getElementById('main-dash-section');
             const notesSection = document.getElementById('main-notes-section');
+            const todoSection = document.getElementById('main-todo-section');
+            
             const dashBtn = document.getElementById('nav-dash-btn');
             const notesBtn = document.getElementById('nav-notes-btn');
+            const todoBtn = document.getElementById('nav-todo-btn');
+
+            dashSection.classList.add('hidden');
+            notesSection.classList.add('hidden');
+            todoSection.classList.add('hidden');
+
+            dashBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            notesBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            todoBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
 
             if(tabName === 'dash') {
                 dashSection.classList.remove('hidden');
-                notesSection.classList.add('hidden');
                 dashBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md";
-                notesBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
-            } else {
-                dashSection.classList.add('hidden');
+            } else if(tabName === 'notes') {
                 notesSection.classList.remove('hidden');
                 notesBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md";
-                dashBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
                 loadUserNotes();
+            } else if(tabName === 'todo') {
+                todoSection.classList.remove('hidden');
+                todoBtn.className = "btn-press px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-indigo-600 text-white shadow-md";
+                loadUserTodos();
             }
         }
 
@@ -887,7 +990,7 @@
             reader.onload = async function(evt) {
                 const base64Img = evt.target.result;
                 currentUser.photo = base64Img;
-                localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                 
                 await db.collection('users').doc(currentUser.id).update({ photo: base64Img });
                 renderProfilePicture();
@@ -916,7 +1019,7 @@
             setTimeout(async () => {
                 if (id === 'LT-1872' && pass === 'LT-01518411872') {
                     currentUser = { id: 'LT-1872', name: 'Admin Management', role: 'admin' };
-                    localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                    sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                     showAdminPanel();
                     btn.innerHTML = translations[currentLang].loginBtn;
                     btn.disabled = false;
@@ -955,7 +1058,7 @@
                     }
 
                     currentUser = userData;
-                    localStorage.setItem('lt_user', JSON.stringify(currentUser));
+                    sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                     showUserDashboard();
                     btn.innerHTML = translations[currentLang].loginBtn;
                     btn.disabled = false;
@@ -998,7 +1101,7 @@
 
         function handleLogout() {
             currentUser = null;
-            localStorage.removeItem('lt_user');
+            sessionStorage.removeItem('lt_user');
             showAuthSection();
         }
 
@@ -1028,52 +1131,143 @@
             return `${d}-${m}-${y}`;
         }
 
+        // ================= TALLY INCOME / EXPENSE EDIT & SAVE =================
         async function addIncomeEntry(e) {
             e.preventDefault();
+            const editId = document.getElementById('inc-edit-id').value;
             const date = document.getElementById('inc-date').value;
-            const type = document.getElementById('inc-type').value;
+            let type = document.getElementById('inc-type').value;
             const desc = document.getElementById('inc-desc').value;
             const amount = parseFloat(document.getElementById('inc-amount').value) || 0;
 
+            if (type === 'other') {
+                const customType = document.getElementById('inc-custom-type')?.value.trim();
+                if (customType) type = customType;
+            }
+
             try {
-                await db.collection('tallies').add({
-                    userId: currentUser.id,
-                    entryType: 'income',
-                    category: type,
-                    date: date,
-                    desc: desc,
-                    amount: amount,
-                    createdAt: new Date()
-                });
-                alert(currentLang === 'bn' ? 'আয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Income saved successfully!');
-                document.getElementById('income-form').reset();
+                if (editId) {
+                    await db.collection('tallies').doc(editId).update({
+                        category: type,
+                        date: date,
+                        desc: desc,
+                        amount: amount
+                    });
+                    alert(currentLang === 'bn' ? 'আয়ের তথ্য আপডেট করা হয়েছে!' : 'Income updated successfully!');
+                } else {
+                    await db.collection('tallies').add({
+                        userId: currentUser.id,
+                        entryType: 'income',
+                        category: type,
+                        date: date,
+                        desc: desc,
+                        amount: amount,
+                        createdAt: new Date()
+                    });
+                    alert(currentLang === 'bn' ? 'আয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Income saved successfully!');
+                }
+                resetIncomeForm();
                 loadDashboardData();
             } catch(err) {
                 alert('Error: ' + err.message);
             }
         }
 
+        function resetIncomeForm() {
+            document.getElementById('income-form').reset();
+            document.getElementById('inc-edit-id').value = '';
+            document.getElementById('inc-submit-btn').innerText = translations[currentLang].submitBtn;
+            document.getElementById('inc-cancel-btn').classList.add('hidden');
+            updateIncomeFields();
+        }
+
         async function addExpenseEntry(e) {
             e.preventDefault();
+            const editId = document.getElementById('exp-edit-id').value;
             const date = document.getElementById('exp-date').value;
             const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
             const desc = document.getElementById('exp-desc').value;
 
             try {
-                await db.collection('tallies').add({
-                    userId: currentUser.id,
-                    entryType: 'expense',
-                    category: 'expense',
-                    date: date,
-                    desc: desc,
-                    amount: amount,
-                    createdAt: new Date()
-                });
-                alert(currentLang === 'bn' ? 'ব্যয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Expense saved successfully!');
-                document.getElementById('expense-form').reset();
+                if (editId) {
+                    await db.collection('tallies').doc(editId).update({
+                        date: date,
+                        desc: desc,
+                        amount: amount
+                    });
+                    alert(currentLang === 'bn' ? 'ব্যয়ের তথ্য আপডেট করা হয়েছে!' : 'Expense updated successfully!');
+                } else {
+                    await db.collection('tallies').add({
+                        userId: currentUser.id,
+                        entryType: 'expense',
+                        category: 'expense',
+                        date: date,
+                        desc: desc,
+                        amount: amount,
+                        createdAt: new Date()
+                    });
+                    alert(currentLang === 'bn' ? 'ব্যয় সফলভাবে সংরক্ষণ করা হয়েছে!' : 'Expense saved successfully!');
+                }
+                resetExpenseForm();
                 loadDashboardData();
             } catch(err) {
                 alert('Error: ' + err.message);
+            }
+        }
+
+        function resetExpenseForm() {
+            document.getElementById('expense-form').reset();
+            document.getElementById('exp-edit-id').value = '';
+            document.getElementById('exp-submit-btn').innerText = translations[currentLang].submitBtn;
+            document.getElementById('exp-cancel-btn').classList.add('hidden');
+        }
+
+        function editTally(id, entryType, date, desc, amount, category) {
+            if (entryType === 'income') {
+                switchTallyTab('income');
+                document.getElementById('inc-edit-id').value = id;
+                document.getElementById('inc-date').value = date;
+                
+                const incTypeSelect = document.getElementById('inc-type');
+                const standardCategories = ['job', 'business', 'online', 'commission', 'bank_profit'];
+                
+                if (standardCategories.includes(category)) {
+                    incTypeSelect.value = category;
+                } else {
+                    incTypeSelect.value = 'other';
+                }
+                
+                document.getElementById('inc-desc').value = desc;
+                updateIncomeFields();
+                
+                if (!standardCategories.includes(category) && category) {
+                    const customField = document.getElementById('inc-custom-type');
+                    if (customField) customField.value = category;
+                }
+
+                document.getElementById('inc-amount').value = amount;
+                document.getElementById('inc-submit-btn').innerText = currentLang === 'bn' ? 'আপডেট করুন 🔄' : 'Update Entry 🔄';
+                document.getElementById('inc-cancel-btn').classList.remove('hidden');
+            } else {
+                switchTallyTab('expense');
+                document.getElementById('exp-edit-id').value = id;
+                document.getElementById('exp-date').value = date;
+                document.getElementById('exp-desc').value = desc;
+                document.getElementById('exp-amount').value = amount;
+                document.getElementById('exp-submit-btn').innerText = currentLang === 'bn' ? 'আপডেট করুন 🔄' : 'Update Entry 🔄';
+                document.getElementById('exp-cancel-btn').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        async function deleteTally(id) {
+            if (confirm(currentLang === 'bn' ? 'আপনি কি এই রেকর্ডটি মুছে ফেলতে চান?' : 'Are you sure you want to delete this record?')) {
+                try {
+                    await db.collection('tallies').doc(id).delete();
+                    loadDashboardData();
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
             }
         }
 
@@ -1082,7 +1276,7 @@
             const filterType = document.getElementById('filter-type').value;
             const filterMode = document.getElementById('filter-mode').value;
 
-            tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center">${currentLang === 'bn' ? 'ডেটা লোড হচ্ছে...' : 'Loading Data...'}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center">${currentLang === 'bn' ? 'ডেটা লোড হচ্ছে...' : 'Loading Data...'}</td></tr>`;
 
             try {
                 const snapshot = await db.collection('tallies')
@@ -1122,6 +1316,8 @@
                     }
 
                     const typeLabel = data.entryType === 'income' ? translations[currentLang].incTypeText : translations[currentLang].expTypeText;
+                    
+                    const safeDesc = data.desc.replace(/"/g, '&quot;').replace(/'/g, "\\'");
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition";
@@ -1136,6 +1332,14 @@
                         <td class="p-3 text-right font-black ${data.entryType === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
                             ৳ ${data.amount.toFixed(2)}
                         </td>
+                        <td class="p-3 text-center no-print flex justify-center gap-1.5">
+                            <button onclick="editTally('${data.id}', '${data.entryType}', '${data.date}', '${safeDesc}', ${data.amount}, '${data.category || ''}')" title="Edit" class="btn-press text-indigo-600 hover:text-indigo-800 p-1 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button onclick="deleteTally('${data.id}')" title="Delete" class="btn-press text-rose-600 hover:text-rose-800 p-1 bg-rose-50 border border-rose-200 rounded-lg">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -1143,6 +1347,7 @@
                 document.getElementById('stat-total-income').innerText = totalInc.toFixed(2);
                 document.getElementById('stat-total-expense').innerText = totalExp.toFixed(2);
                 document.getElementById('stat-net-balance').innerText = (totalInc - totalExp).toFixed(2);
+                lucide.createIcons();
 
             } catch(err) {
                 console.error(err);
@@ -1265,6 +1470,94 @@
             }
         }
 
+        // ================= TO-DO LIST MANAGEMENT =================
+        async function saveTodo(e) {
+            e.preventDefault();
+            const date = document.getElementById('todo-date').value;
+            const time = document.getElementById('todo-time').value;
+            const desc = document.getElementById('todo-desc').value.trim();
+
+            if (!date || !time || !desc) return;
+
+            try {
+                await db.collection('todos').add({
+                    userId: currentUser.id,
+                    date: date,
+                    time: time,
+                    desc: desc,
+                    createdAt: new Date()
+                });
+                alert(currentLang === 'bn' ? 'টু-ডু যোগ করা হয়েছে!' : 'To-Do item added!');
+                document.getElementById('todo-desc').value = '';
+                loadUserTodos();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function loadUserTodos() {
+            const container = document.getElementById('todo-list-container');
+            container.innerHTML = `<p class="text-xs text-slate-400">${currentLang === 'bn' ? 'টু-ডু লিস্ট লোড হচ্ছে...' : 'Loading To-Do list...'}</p>`;
+
+            try {
+                const snapshot = await db.collection('todos')
+                    .where('userId', '==', currentUser.id)
+                    .get();
+
+                let todos = [];
+                snapshot.docs.forEach(doc => {
+                    todos.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Chronological sort: Date & Time (Start to End / Oldest first)
+                todos.sort((a, b) => {
+                    const dateTimeA = new Date(`${a.date}T${a.time}`);
+                    const dateTimeB = new Date(`${b.date}T${b.time}`);
+                    return dateTimeA - dateTimeB;
+                });
+
+                if (todos.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400">${currentLang === 'bn' ? 'কোনো টু-ডু কাজ খালি নেই।' : 'No pending to-do tasks.'}</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                todos.forEach(todo => {
+                    const card = document.createElement('div');
+                    card.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-3 shadow-sm hover:shadow transition";
+                    
+                    card.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" onchange="completeTodo('${todo.id}')" title="Mark Done to Delete" class="w-5 h-5 cursor-pointer accent-emerald-600 rounded">
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">${todo.desc}</p>
+                                <p class="text-[10px] font-semibold text-slate-500 mt-0.5 flex items-center gap-2">
+                                    <span>📅 ${formatDateBN(todo.date)}</span>
+                                    <span>⏰ ${todo.time}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="completeTodo('${todo.id}')" class="btn-press text-xs font-bold text-slate-400 hover:text-emerald-600 flex items-center gap-1">
+                            <i data-lucide="check" class="w-4 h-4"></i> <span class="hidden md:inline">${currentLang === 'bn' ? 'সম্পন্ন' : 'Done'}</span>
+                        </button>
+                    `;
+                    container.appendChild(card);
+                });
+                lucide.createIcons();
+            } catch(err) {
+                console.error(err);
+            }
+        }
+
+        async function completeTodo(todoId) {
+            try {
+                await db.collection('todos').doc(todoId).delete();
+                loadUserTodos();
+            } catch(err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
         // ================= CHAT FUNCTIONS & CLEAR CHAT =================
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
@@ -1327,15 +1620,37 @@
             populateAdminChatUsers();
         }
 
+        // ================= ADMIN USER FILTERING & MANAGEMENT =================
         async function loadAdminUsers() {
-            const tbody = document.getElementById('admin-users-table');
             const snapshot = await db.collection('users').get();
-            tbody.innerHTML = '';
+            allAdminUsersList = [];
 
             snapshot.docs.forEach(doc => {
                 const u = doc.data();
-                if (u.id === 'LT-1872') return;
+                if (u.id !== 'LT-1872') {
+                    allAdminUsersList.push(u);
+                }
+            });
 
+            renderAdminUsersTable(allAdminUsersList);
+        }
+
+        function filterAdminUsers() {
+            const filterVal = document.getElementById('admin-user-filter').value.trim().toLowerCase();
+            const filtered = allAdminUsersList.filter(u => u.id.toLowerCase().includes(filterVal) || u.name.toLowerCase().includes(filterVal));
+            renderAdminUsersTable(filtered);
+        }
+
+        function renderAdminUsersTable(users) {
+            const tbody = document.getElementById('admin-users-table');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-xs text-slate-400">${currentLang === 'bn' ? 'কোনো ইউজার পাওয়া যায়নি' : 'No users found'}</td></tr>`;
+                return;
+            }
+
+            users.forEach(u => {
                 let statusColor = 'bg-amber-100 text-amber-700';
                 if (u.status === 'active') statusColor = 'bg-emerald-100 text-emerald-700';
                 if (u.status === 'locked') statusColor = 'bg-rose-100 text-rose-700';
@@ -1482,7 +1797,29 @@
         function updateIncomeFields() {
             const container = document.getElementById('inc-dynamic-fields');
             const amountLabel = translations[currentLang].amount;
-            container.innerHTML = `<div><label class="block text-xs font-bold text-slate-600 mb-1">${amountLabel}</label><input type="number" step="0.01" id="inc-amount" required class="w-full px-3 py-2 border rounded-xl text-sm outline-none"></div>`;
+            const selectedType = document.getElementById('inc-type').value;
+
+            if (selectedType === 'other') {
+                const customLabel = translations[currentLang].customIncomeLabel;
+                const customPh = translations[currentLang].customIncomePh;
+                container.innerHTML = `
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">${customLabel}</label>
+                        <input type="text" id="inc-custom-type" required placeholder="${customPh}" class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">${amountLabel}</label>
+                        <input type="number" step="0.01" id="inc-amount" required class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">${amountLabel}</label>
+                        <input type="number" step="0.01" id="inc-amount" required class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
+                    </div>
+                `;
+            }
         }
 
         function switchTallyTab(type) {
