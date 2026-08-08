@@ -55,9 +55,9 @@
 
     <!-- Sticky Navigation Wrapper -->
     <div class="sticky top-0 z-50">
-        <!-- Top Running Info Text -->
+        <!-- Top Running Info Text (Mouse নিলে থামা বন্ধ করা হয়েছে) -->
         <div class="bg-slate-900/95 text-white py-2 px-4 border-b border-slate-800 text-xs md:text-sm font-medium shadow-inner overflow-hidden">
-            <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
+            <marquee behavior="scroll" direction="left" scrollamount="6">
                 This Website Made by Hredoy Roy, Phone: +088 01518 411872; +880 1345 409887, Email: 100pc.net@gmail.com, Address: Krishnabila, Gangnalia-7610, Magura Sadar, Magura.
             </marquee>
         </div>
@@ -899,11 +899,10 @@
             document.getElementById('forgot-modal').classList.add('hidden');
         }
 
-        // ================= UPDATED DEVICE & IP TRACKING FUNCTIONS =================
+        // ================= DEVICE & IP TRACKING FUNCTIONS =================
         async function saveDeviceLoginInfo(userId) {
             const userAgent = navigator.userAgent;
             
-            // ১. ব্রাউজার ও ডিভাইসের প্রকৃত নাম শনাক্তকরণ
             let deviceType = "Unknown Device";
             if (userAgent.indexOf("Firefox") > -1) {
                 deviceType = "Firefox Browser";
@@ -923,7 +922,6 @@
                 deviceType = navigator.platform || "User Device";
             }
 
-            // ২. লোকেশন বাদ দিয়ে সরাসরি IP Address সংগ্রহ
             let ipAddress = "IP Not Found";
 
             try {
@@ -975,7 +973,6 @@
                 logs.forEach(log => {
                     const date = log.loginTime ? new Date(log.loginTime.seconds * 1000) : new Date();
                     
-                    // ৩. '08-08-2026' (DD-MM-YYYY) নির্দিষ্ট সংখ্যার ফরম্যাট
                     const day = String(date.getDate()).padStart(2, '0');
                     const month = String(date.getMonth() + 1).padStart(2, '0');
                     const year = date.getFullYear();
@@ -1371,7 +1368,6 @@
                     currentUser = userData;
                     sessionStorage.setItem('lt_user', JSON.stringify(currentUser));
                     
-                    // Save Device and Location Info on Successful Login
                     await saveDeviceLoginInfo(currentUser.id);
 
                     showUserDashboard();
@@ -1687,6 +1683,7 @@
             }
         }
 
+        // ================= UPDATED NOTES SAVE FUNCTION =================
         async function saveNote(e) {
             e.preventDefault();
             if (isUserExpired()) return;
@@ -1720,6 +1717,7 @@
             }
         }
 
+        // ================= UPDATED EDIT NOTE FUNCTION =================
         function editNote(id, title, content) {
             if (isUserExpired()) return;
 
