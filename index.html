@@ -317,7 +317,7 @@
                     <!-- ================= DEVICE & LOCATION LOGIN INFO BOX ================= -->
                     <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2 mt-4">
                         <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                            📱 <span>গত ৭ দিনের ডিভাইস ও লোকেশন</span>
+                            📱 <span>গত ৭ দিনের ডিভাইস ও IP</span>
                         </h4>
                         <div id="device-login-list" class="space-y-1.5 max-h-56 overflow-y-auto text-[11px] font-medium text-slate-600">
                             <p class="text-slate-400 italic text-center">তথ্য লোড হচ্ছে...</p>
@@ -899,31 +899,48 @@
             document.getElementById('forgot-modal').classList.add('hidden');
         }
 
-        // ================= DEVICE & LOCATION TRACKING FUNCTIONS =================
+        // ================= UPDATED DEVICE & IP TRACKING FUNCTIONS =================
         async function saveDeviceLoginInfo(userId) {
             const userAgent = navigator.userAgent;
-            let deviceType = "Desktop/PC";
             
-            if (/android/i.test(userAgent)) deviceType = "Android Mobile";
-            else if (/iphone|ipad|ipod/i.test(userAgent)) deviceType = "iOS Device";
+            // ১. ব্রাউজার ও ডিভাইসের প্রকৃত নাম শনাক্তকরণ
+            let deviceType = "Unknown Device";
+            if (userAgent.indexOf("Firefox") > -1) {
+                deviceType = "Firefox Browser";
+            } else if (userAgent.indexOf("SamsungBrowser") > -1) {
+                deviceType = "Samsung Internet";
+            } else if (userAgent.indexOf("Opera") > -1 || userAgent.indexOf("OPR") > -1) {
+                deviceType = "Opera Browser";
+            } else if (userAgent.indexOf("Trident") > -1) {
+                deviceType = "Internet Explorer";
+            } else if (userAgent.indexOf("Edge") > -1) {
+                deviceType = "Microsoft Edge";
+            } else if (userAgent.indexOf("Chrome") > -1) {
+                deviceType = "Google Chrome";
+            } else if (userAgent.indexOf("Safari") > -1) {
+                deviceType = "Safari Browser";
+            } else {
+                deviceType = navigator.platform || "User Device";
+            }
 
-            let locationStr = "Unknown Location";
+            // ২. লোকেশন বাদ দিয়ে সরাসরি IP Address সংগ্রহ
+            let ipAddress = "IP Not Found";
 
             try {
-                const response = await fetch('https://ipapi.co/json/');
+                const response = await fetch('https://api.ipify.org?format=json');
                 if (response.ok) {
                     const ipData = await response.json();
-                    locationStr = `${ipData.city || 'Unknown'}, ${ipData.country_name || ''}`;
+                    ipAddress = ipData.ip || "IP Not Found";
                 }
             } catch (err) {
-                console.warn("Location fetch skipped/blocked:", err);
+                console.warn("IP fetch error:", err);
             }
 
             try {
                 await db.collection('device_logins').add({
                     userId: userId,
                     device: deviceType,
-                    location: locationStr,
+                    ip: ipAddress,
                     loginTime: new Date()
                 });
             } catch (e) {
@@ -957,8 +974,14 @@
                 container.innerHTML = '';
                 logs.forEach(log => {
                     const date = log.loginTime ? new Date(log.loginTime.seconds * 1000) : new Date();
-                    const formattedDate = date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' });
-                    const formattedTime = date.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // ৩. '08-08-2026' (DD-MM-YYYY) নির্দিষ্ট সংখ্যার ফরম্যাট
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    const formattedDate = `${day}-${month}-${year}`;
+
+                    const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
                     container.innerHTML += `
                         <div class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm flex flex-col gap-1">
@@ -967,7 +990,7 @@
                                 <span class="text-[10px] text-indigo-600 font-semibold">${formattedDate}</span>
                             </div>
                             <div class="flex justify-between items-center text-[10px] text-slate-500">
-                                <span>📍 ${log.location || 'Unknown'}</span>
+                                <span>🌐 IP: ${log.ip || log.location || 'N/A'}</span>
                                 <span>⏰ ${formattedTime}</span>
                             </div>
                         </div>
