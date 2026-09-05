@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DREAM TOUCHING HOSTEL</title>
+  <title>Gour Kishore Das Babaji BACE</title>
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2310b981'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- html2canvas: Cash Memo JPG export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Flatpickr: calendar date picker (DD-MM-YYYY) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/bn.js"></script>
 
   <style>
     body {
@@ -133,21 +138,6 @@
       body { background: #ffffff !important; color: #000000 !important; }
       .shadow-md, .shadow-lg, .shadow-xl { box-shadow: none !important; }
     }
-
-    /* DASHBOARD SECTION TABS (LEFT SIDEBAR) */
-    .dash-tab-btn {
-      color: #475569;
-      background-color: transparent;
-    }
-    .dash-tab-btn:hover {
-      background-color: #f1f5f9;
-      color: #059669;
-    }
-    .dash-tab-btn.active-dash-tab {
-      background-color: #059669;
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);
-    }
   </style>
 </head>
 <body class="font-sans min-h-screen flex flex-col justify-between text-gray-800 relative">
@@ -178,12 +168,12 @@
     </div>
     
     <div class="flex items-center gap-2 flex-wrap justify-end">
-      <button id="header-profile-btn" onclick="openProfileModal()" class="hidden bg-slate-800 hover:bg-slate-700 text-white pl-1.5 pr-3 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center gap-2 shadow border border-slate-600 transition">
-        <span id="header-profile-img-wrap" class="w-7 h-7 rounded-full overflow-hidden bg-emerald-100 flex items-center justify-center flex-shrink-0">
-          <i id="header-profile-default-icon" class="fa-solid fa-user text-emerald-600 text-sm"></i>
-          <img id="header-profile-img" class="w-full h-full object-cover hidden" alt="Profile">
-        </span>
-        <span data-bn="প্রোফাইল" data-en="Profile">প্রোফাইল</span>
+      <button id="header-save-btn" onclick="manualSaveData()" class="hidden btn-green-to-red px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1 shadow">
+        <i class="fa-solid fa-floppy-disk"></i> <span data-bn="সেভ" data-en="Save">সেভ</span>
+      </button>
+
+      <button id="header-change-pass-btn" onclick="openChangePasswordModal()" class="hidden bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1 shadow transition">
+        <i class="fa-solid fa-key"></i> <span data-bn="পাসওয়ার্ড চেঞ্জ" data-en="Change Password">পাসওয়ার্ড চেঞ্জ</span>
       </button>
 
       <button onclick="toggleLanguage()" class="btn-green-to-red px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1 shadow">
@@ -209,7 +199,7 @@
         </div>
         
         <h1 class="text-2xl md:text-3xl font-black text-emerald-800 tracking-wider uppercase mb-1 hover:text-emerald-900 transition">
-          DREAM TOUCHING HOSTEL
+          Gour Kishore Das Babaji BACE
         </h1>
         <p class="text-xs text-gray-500 font-medium italic flex items-center justify-center gap-1" data-bn="🎓 মেস জীবন ও শিক্ষার আলো, সঠিক হিসেব রেখো ভালো 📚" data-en="🎓 Education & Hostel Life - Accurate Mess Accounting 📚">
           🎓 মেস জীবন ও শিক্ষার আলো, সঠিক হিসেব রেখো ভালো 📚
@@ -297,17 +287,9 @@
       <hr class="my-6 border-gray-200">
 
       <div class="space-y-2">
-        <button onclick="triggerAdminAuth('view_accounts')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-xl font-bold text-xs md:text-sm shadow-md flex items-center justify-center gap-2 transition">
-          <i class="fa-solid fa-receipt text-amber-300"></i>
-          <span data-bn="এখানে প্রবেশ করে হিসাব দেখুন" data-en="Enter Here to View Accounts">এখানে প্রবেশ করে হিসাব দেখুন</span>
-        </button>
-
-        <button onclick="triggerAdminAuth('admin_panel')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition">
+        <button onclick="triggerAdminAuth('member_login')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-xl font-bold text-xs md:text-sm shadow-md flex items-center justify-center gap-2 transition">
           <i class="fa-solid fa-user-shield text-amber-400"></i>
-          <span data-bn="অ্যাডমিন প্যানেল (বার্তা পাঠাতে)" data-en="Admin Panel">অ্যাডমিন প্যানেল (বার্তা পাঠাতে)</span>
-        </button>
-        <button onclick="openLiveChatModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition">
-          <i class="fa-solid fa-headset"></i><span data-bn="ম্যানেজারের সাথে লাইভ চ্যাট" data-en="Live Chat with Manager">ম্যানেজারের সাথে লাইভ চ্যাট</span>
+          <span data-bn="মেম্বার লগইন" data-en="Member Login">মেম্বার লগইন</span>
         </button>
       </div>
 
@@ -365,10 +347,11 @@
           <button onclick="openChangePasswordModal()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition">
             <i class="fa-solid fa-key"></i> পাসওয়ার্ড পরিবর্তন
           </button>
-          <button onclick="openSyncCenter()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition">
-            <i class="fa-solid fa-users-viewfinder"></i> সদস্য Sync
+
+          <!-- DEVICE FINGERPRINT LOCK TOGGLE -->
+          <button id="fingerprint-lock-btn" onclick="toggleFingerprintLock()" class="w-full bg-slate-700 hover:bg-slate-800 text-white py-2 rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition">
+            <i class="fa-solid fa-fingerprint"></i> <span id="fingerprint-lock-btn-text">ডিভাইস ফিঙ্গার লক চালু করুন</span>
           </button>
-          <div id="sync-status-mini" class="text-[10px] text-center text-gray-500"></div>
         </aside>
 
         <!-- RIGHT MAIN CONTENT AREA (DISABLED IF EXPIRED) -->
@@ -427,37 +410,6 @@
             </div>
           </div>
 
-          <!-- SECTION TABS: LEFT SIDEBAR + CONTENT PANEL -->
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-            <!-- LEFT SIDEBAR TAB NAV -->
-            <div class="md:col-span-1 no-print">
-              <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-gray-200 p-2 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible md:sticky md:top-4">
-                <button onclick="switchDashboardTab('members')" id="dash-tab-btn-members" class="dash-tab-btn active-dash-tab whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-users w-4 text-center"></i> <span data-bn="সদস্য এন্ট্রি ও জমা হিসাব" data-en="Members & Deposits">সদস্য এন্ট্রি ও জমা হিসাব</span>
-                </button>
-                <button onclick="switchDashboardTab('fixed')" id="dash-tab-btn-fixed" class="dash-tab-btn whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-building-columns w-4 text-center"></i> <span data-bn="স্থায়ী খরচ" data-en="Fixed Expense">স্থায়ী খরচ</span>
-                </button>
-                <button onclick="switchDashboardTab('gas')" id="dash-tab-btn-gas" class="dash-tab-btn whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-fire-burner w-4 text-center"></i> <span data-bn="গ্যাস খরচ" data-en="Gas Expense">গ্যাস খরচ</span>
-                </button>
-                <button onclick="switchDashboardTab('bazaar')" id="dash-tab-btn-bazaar" class="dash-tab-btn whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-cart-shopping w-4 text-center"></i> <span data-bn="বাজার খরচ এন্ট্রি" data-en="Bazaar Entry">বাজার খরচ এন্ট্রি</span>
-                </button>
-                <button onclick="switchDashboardTab('meal')" id="dash-tab-btn-meal" class="dash-tab-btn whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-utensils w-4 text-center"></i> <span data-bn="দৈনিক মিল এন্ট্রি" data-en="Daily Meal Entry">দৈনিক মিল এন্ট্রি</span>
-                </button>
-                <button onclick="switchDashboardTab('summary')" id="dash-tab-btn-summary" class="dash-tab-btn whitespace-nowrap w-full text-left px-3 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition">
-                  <i class="fa-solid fa-calculator w-4 text-center"></i> <span data-bn="চূড়ান্ত হিসাব" data-en="Final Summary">চূড়ান্ত হিসাব</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- RIGHT CONTENT PANEL -->
-            <div class="md:col-span-3 space-y-6">
-
-            <div id="dash-panel-members" class="dash-tab-panel space-y-6">
           <!-- MEMBER ENTRY & CARDS -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
@@ -467,7 +419,7 @@
               </h3>
             </div>
 
-            <form onsubmit="handleAddMember(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200">
+            <form onsubmit="handleAddMember(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200">
               <div>
                 <label class="text-xs font-bold text-gray-600 mb-1 block" data-bn="সদস্যের নাম" data-en="Member Name">সদস্যের নাম</label>
                 <input type="text" id="member-input-name" required class="w-full px-3 py-2 border rounded-lg text-sm">
@@ -476,6 +428,11 @@
               <div>
                 <label class="text-xs font-bold text-gray-600 mb-1 block" data-bn="মোবাইল নম্বর" data-en="Mobile Number">মোবাইল নম্বর</label>
                 <input type="tel" id="member-input-phone" required class="w-full px-3 py-2 border rounded-lg text-sm">
+              </div>
+
+              <div>
+                <label class="text-xs font-bold text-gray-600 mb-1 block" data-bn="সিট বুকিং সংখ্যা" data-en="Seat Booking Quantity">সিট বুকিং সংখ্যা</label>
+                <input type="number" id="member-input-seatqty" min="1" value="1" required class="w-full px-3 py-2 border rounded-lg text-sm">
               </div>
 
               <div>
@@ -502,17 +459,16 @@
               </div>
             </div>
           </div>
-            </div><!-- /dash-panel-members -->
 
-            <div id="dash-panel-fixed" class="dash-tab-panel hidden space-y-6">
           <!-- FIXED EXPENSE SECTION -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-4">
             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-3">
               <i class="fa-solid fa-building-columns text-emerald-600"></i>
-              <span data-bn="স্থায়ী খরচ (সকল সদস্যের মধ্যে সমান ভাগ)" data-en="Fixed Expenses (Shared Equally)">স্থায়ী খরচ (সকল সদস্যের মধ্যে সমান ভাগ)</span>
+              <span data-bn="স্থায়ী খরচ" data-en="Fixed Expenses (Shared Equally)">স্থায়ী খরচ (সকল সদস্যের মধ্যে সমান ভাগ)</span>
             </h3>
 
             <div class="flex flex-wrap gap-2 text-xs font-bold">
+              <button type="button" onclick="setFixedCategory('বাসা ভাড়া')" class="fixed-cat-btn bg-slate-100 text-gray-700 px-3 py-1.5 rounded-lg border"><i class="fa-solid fa-house mr-1"></i>বাসা ভাড়া</button>
               <button type="button" onclick="setFixedCategory('বিদ্যুৎ')" class="fixed-cat-btn bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-lg border border-emerald-300">বিদ্যুৎ</button>
               <button type="button" onclick="setFixedCategory('পানি')" class="fixed-cat-btn bg-slate-100 text-gray-700 px-3 py-1.5 rounded-lg border">পানি</button>
               <button type="button" onclick="setFixedCategory('ময়লা')" class="fixed-cat-btn bg-slate-100 text-gray-700 px-3 py-1.5 rounded-lg border">ময়লা</button>
@@ -541,11 +497,6 @@
               </div>
             </form>
 
-            <div id="user-bazaar-request-section" class="bg-blue-50 rounded-xl border border-blue-200 p-4 space-y-3">
-              <div class="flex justify-between items-center border-b border-blue-200 pb-2"><h4 class="text-sm font-black text-blue-900"><i class="fa-solid fa-inbox text-blue-600 mr-1"></i> <span data-bn="বাজার খরচ রিকোয়েস্ট" data-en="Bazaar Expense Requests">বাজার খরচ রিকোয়েস্ট</span></h4><span class="text-[10px] font-bold text-gray-500" data-bn="অনুমোদন করলে হিসাবের সাথে যুক্ত হবে" data-en="Approved requests are added to the ledger">অনুমোদন করলে হিসাবের সাথে যুক্ত হবে</span></div>
-              <div id="user-bazaar-request-list" class="space-y-2"></div>
-            </div>
-
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs border-collapse">
                 <thead>
@@ -564,14 +515,12 @@
               <span data-bn="সর্বমোট স্থায়ী খরচ:" data-en="Total Fixed Expense:">সর্বমোট স্থায়ী খরচ:</span> ৳ <span id="section-total-fixed">0</span>
             </div>
           </div>
-            </div><!-- /dash-panel-fixed -->
 
-            <div id="dash-panel-gas" class="dash-tab-panel hidden space-y-6">
           <!-- GAS EXPENSE SECTION -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-4">
             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-3">
               <i class="fa-solid fa-fire-burner text-emerald-600"></i>
-              <span data-bn="গ্যাস খরচ (শুধু ব্যবহারকারী গনের মধ্যে সমান ভাগ)" data-en="Gas Expense (Only Gas Users)">গ্যাস খরচ (শুধু ব্যবহারকারী গনের মধ্যে সমান ভাগ)</span>
+              <span data-bn="গ্যাস খরচ" data-en="Gas Expense (Only Gas Users)">গ্যাস খরচ (শুধু ব্যবহারকারী গনের মধ্যে সমান ভাগ)</span>
             </h3>
 
             <form onsubmit="handleAddGasExpense(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl">
@@ -607,15 +556,18 @@
               <span data-bn="সর্বমোট গ্যাস খরচ:" data-en="Total Gas Expense:">সর্বমোট গ্যাস খরচ:</span> ৳ <span id="section-total-gas">0</span>
             </div>
           </div>
-            </div><!-- /dash-panel-gas -->
 
-            <div id="dash-panel-bazaar" class="dash-tab-panel hidden space-y-6">
           <!-- BAZAAR EXPENSE SECTION -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-4">
             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-3">
               <i class="fa-solid fa-cart-shopping text-emerald-600"></i>
-              <span data-bn="বাজার খরচ এন্ট্রি (তারিখের ক্রমানুসারে)" data-en="Bazaar Expense Entry">বাজার খরচ এন্ট্রি (তারিখের ক্রমানুসারে)</span>
+              <span data-bn="বাজার খরচ এন্ট্রি" data-en="Bazaar Expense Entry">বাজার খরচ এন্ট্রি (তারিখের ক্রমানুসারে)</span>
             </h3>
+            <div id="user-bazaar-request-section" class="bg-blue-50 rounded-xl border border-blue-200 p-4 space-y-3">
+              <div class="flex justify-between items-center border-b border-blue-200 pb-2"><h4 class="text-sm font-black text-blue-900"><i class="fa-solid fa-inbox text-blue-600 mr-1"></i> <span data-bn="বাজার খরচ রিকোয়েস্ট" data-en="Bazaar Expense Requests">বাজার খরচ রিকোয়েস্ট</span></h4><span class="text-[10px] font-bold text-gray-500" data-bn="অনুমোদন করলে হিসাবের সাথে যুক্ত হবে" data-en="Approved requests are added to the ledger">অনুমোদন করলে হিসাবের সাথে যুক্ত হবে</span></div>
+              <div id="user-bazaar-request-list" class="space-y-2"></div>
+            </div>
+
 
             <div class="bg-slate-50 p-4 rounded-xl border border-gray-200 space-y-3">
               <p class="text-xs font-bold text-gray-700 uppercase" data-bn="কি কি বাজার হলো (টিক দিন):" data-en="Items Bought (Select All):">কি কি বাজার হলো (টিক দিন):</p>
@@ -669,14 +621,12 @@
               <span data-bn="সর্বমোট বাজার খরচ:" data-en="Total Bazaar Expense:">সর্বমোট বাজার খরচ:</span> ৳ <span id="section-total-bazaar">0</span>
             </div>
           </div>
-            </div><!-- /dash-panel-bazaar -->
 
-            <div id="dash-panel-meal" class="dash-tab-panel hidden space-y-6">
           <!-- DAILY MEAL ENTRY SECTION -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-4">
             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-3">
               <i class="fa-solid fa-utensils text-emerald-600"></i>
-              <span data-bn="দৈনিক মিল এন্ট্রি (তারিখের ক্রমানুসারে)" data-en="Daily Meal Entry">দৈনিক মিল এন্ট্রি (তারিখের ক্রমানুসারে)</span>
+              <span data-bn="দৈনিক মিল এন্ট্রি " data-en="Daily Meal Entry">দৈনিক মিল এন্ট্রি (তারিখের ক্রমানুসারে)</span>
             </h3>
 
             <form onsubmit="handleSaveMeal(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 bg-slate-50 p-4 rounded-xl">
@@ -749,9 +699,7 @@
               <span data-bn="সর্বমোট মিল সংখ্যা:" data-en="Total Meals Count:">সর্বমোট মিল সংখ্যা:</span> <span id="section-total-meals">0</span> টি
             </div>
           </div>
-            </div><!-- /dash-panel-meal -->
 
-            <div id="dash-panel-summary" class="dash-tab-panel hidden space-y-6">
           <!-- FINAL SUMMARY LEDGER BREAKDOWN & SAVE AS JPG -->
           <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-6 border border-gray-200 space-y-6">
             <div id="final-summary-capture-area" class="space-y-6 bg-white/95">
@@ -762,13 +710,17 @@
                 </h3>
               </div>
 
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-4 rounded-xl border border-gray-200">
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs bg-slate-50 p-4 rounded-xl border border-gray-200">
                 <div class="p-2 bg-white rounded border">
                   <span class="text-gray-500 block">মিল চার্জ (Per Meal Rate):</span>
                   <b class="text-emerald-700 text-sm">৳ <span id="calc-meal-rate">0.00</span></b>
                 </div>
                 <div class="p-2 bg-white rounded border">
-                  <span class="text-gray-500 block">প্রতি সদস্যের স্থায়ী চার্জ:</span>
+                  <span class="text-gray-500 block">প্রতি সিট বাসা ভাড়া চার্জ:</span>
+                  <b class="text-emerald-700 text-sm">৳ <span id="calc-rent-rate">0.00</span></b>
+                </div>
+                <div class="p-2 bg-white rounded border">
+                  <span class="text-gray-500 block">প্রতি সদস্যের অন্যান্য স্থায়ী চার্জ:</span>
                   <b class="text-emerald-700 text-sm">৳ <span id="calc-fixed-rate">0.00</span></b>
                 </div>
                 <div class="p-2 bg-white rounded border">
@@ -811,10 +763,6 @@
             </div>
 
           </div>
-            </div><!-- /dash-panel-summary -->
-
-            </div><!-- /RIGHT CONTENT PANEL -->
-          </div><!-- /SECTION TABS GRID -->
 
         </div>
 
@@ -899,18 +847,41 @@
   <div id="admin-auth-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 no-print">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border-t-8 border-slate-800">
       <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+        <h3 id="admin-auth-modal-title" class="text-base font-black text-slate-800 flex items-center gap-2">
           <i class="fa-solid fa-lock text-amber-500"></i> অ্যাডমিন ভেরিফিকেশন
         </h3>
         <button onclick="closeAdminAuthModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-gray-500 font-semibold">প্রবেশ করতে আইডি ও পাসওয়ার্ড দিন:</p>
-        <input type="text" id="admin-auth-id" class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
+        <p id="admin-auth-modal-hint" class="text-xs text-gray-500 font-semibold">প্রবেশ করতে আইডি ও পাসওয়ার্ড দিন:</p>
+        <div id="admin-auth-id-wrap"><input type="text" id="admin-auth-id" class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500"></div>
         <div class="relative"><input type="password" id="admin-auth-pass" class="w-full pr-10 px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500"><button type="button" onclick="togglePasswordVisibility('admin-auth-pass','admin-auth-pass-eye')" class="absolute right-3 top-2.5 text-gray-500"><i id="admin-auth-pass-eye" class="fa-solid fa-eye"></i></button></div>
         <button onclick="verifyAdminAuth()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-sm shadow">
           প্রবেশ করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBER PANEL HUB MODAL -->
+  <div id="member-panel-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 no-print">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border-t-8 border-slate-800">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-amber-500"></i> মেম্বার প্যানেল
+        </h3>
+        <button onclick="closeMemberPanelModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-2">
+        <button onclick="closeMemberPanelModal();openViewAccountsModal();" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-xl font-bold text-xs md:text-sm shadow-md flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-receipt text-amber-300"></i> নির্দিষ্ট ইউজারের হিসাব দেখুন
+        </button>
+        <button onclick="closeMemberPanelModal();openAdminPanelModal();" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-paper-plane text-amber-400"></i> বার্তা / মিল ও বাজার রিকোয়েস্ট পাঠান
+        </button>
+        <button onclick="closeMemberPanelModal();openLiveChatModal();" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-headset"></i> ম্যানেজারের সাথে লাইভ চ্যাট
         </button>
       </div>
     </div>
@@ -1092,7 +1063,7 @@
       </div>
 
       <div class="bg-slate-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-center gap-3">
-        <label class="text-xs font-bold text-gray-700 whitespace-nowrap">ইউজার / সদস্য নির্বাচন করুন:</label>
+        <label class="text-xs font-bold text-gray-700 whitespace-nowrap">নির্দিষ্ট ইউজার নির্বাচন করুন:</label>
         <select id="accounts-user-selector" onchange="renderViewAccountsTableForSelectedUser(this.value)" class="w-full px-3 py-2 border rounded-xl text-sm font-bold bg-white text-emerald-800 focus:ring-2 focus:ring-emerald-500">
         </select>
       </div>
@@ -1167,7 +1138,7 @@
         <div class="space-y-3 bg-slate-50 p-4 rounded-xl border">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div><label class="block text-xs font-bold text-gray-700 mb-1" data-bn="ইউজার নির্বাচন করুন:" data-en="Select User:">ইউজার নির্বাচন করুন:</label><select id="admin-bazaar-user-selector" onchange="populateAdminBazaarMemberSelector(this.value)" class="w-full px-3 py-2 border rounded-xl text-sm bg-white font-bold"></select></div>
-            <div><label class="block text-xs font-bold text-gray-700 mb-1" data-bn="ক্রেতা সদস্য নির্বাচন করুন:" data-en="Select Shopper Member:">ক্রেতা সদস্য নির্বাচন করুন:</label><select id="admin-bazaar-member-selector" class="w-full px-3 py-2 border rounded-xl text-sm bg-white font-bold" disabled><option value="">-- আগে ইউজার নির্বাচন করুন --</option></select></div>
+            <div><label class="block text-xs font-bold text-gray-700 mb-1" data-bn="ক্রেতা সদস্য নির্বাচন করুন:" data-en="Select Shopper Members:">ক্রেতা সদস্য নির্বাচন করুন:</label><div id="admin-bazaar-member-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white p-2 rounded-xl border max-h-40 overflow-y-auto"><div class="text-xs text-gray-400">-- আগে ইউজার নির্বাচন করুন --</div></div></div>
           </div>
           <div><label class="block text-xs font-bold text-gray-700 mb-1" data-bn="বাজারের আইটেম" data-en="Bazaar Items">বাজারের আইটেম</label><div id="admin-bazaar-items-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs"></div><input type="text" id="admin-bazaar-custom-items" class="w-full mt-2 px-3 py-2 border rounded-lg text-sm" placeholder="অন্যান্য আইটেম, কমা দিয়ে লিখুন" data-placeholder-bn="অন্যান্য আইটেম, কমা দিয়ে লিখুন" data-placeholder-en="Other items, separated by commas"></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label class="block text-xs font-bold mb-1" data-bn="টাকার পরিমাণ (৳)" data-en="Amount (৳)">টাকার পরিমাণ (৳)</label><input type="number" id="admin-bazaar-amt" min="1" class="w-full px-3 py-2 border rounded-lg text-sm"></div><div><label class="block text-xs font-bold mb-1" data-bn="তারিখ" data-en="Date">তারিখ</label><input type="text" id="admin-bazaar-date" class="w-full px-3 py-2 border rounded-lg text-sm"></div></div>
@@ -1230,67 +1201,6 @@
     </div>
   </div>
 
-  <!-- PROFILE MODAL -->
-  <div id="profile-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 no-print">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border-t-8 border-emerald-600 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="text-base font-black text-emerald-900 flex items-center gap-2">
-          <i class="fa-solid fa-id-card text-emerald-600"></i>
-          <span data-bn="প্রোফাইল তথ্য" data-en="Profile Information">প্রোফাইল তথ্য</span>
-        </h3>
-        <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-
-      <div class="text-center">
-        <div class="relative inline-block group">
-          <div id="profile-modal-img-container" class="w-24 h-24 rounded-full border-4 border-emerald-500 shadow-lg mx-auto overflow-hidden bg-slate-100 flex items-center justify-center">
-            <i id="profile-modal-default-icon" class="fa-solid fa-user text-4xl text-emerald-600"></i>
-            <img id="profile-modal-img" class="w-full h-full object-cover hidden" alt="User Profile">
-          </div>
-          <label for="profile-modal-photo-input" class="absolute bottom-0 right-0 bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-full shadow-md cursor-pointer transition" title="ছবি পরিবর্তন করুন">
-            <i class="fa-solid fa-camera text-xs"></i>
-          </label>
-          <input type="file" id="profile-modal-photo-input" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
-        </div>
-        <p id="profile-modal-userid" class="text-xs text-emerald-700 font-bold mt-2">@userid</p>
-      </div>
-
-      <form onsubmit="handleProfileInfoUpdate(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1" data-bn="নাম (Full Name)" data-en="Full Name">নাম (Full Name)</label>
-          <input type="text" id="profile-modal-name-input" required class="w-full px-3 py-2 border rounded-xl text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1" data-bn="মোবাইল নম্বর" data-en="Mobile Number">মোবাইল নম্বর</label>
-          <input type="tel" id="profile-modal-mobile-input" required class="w-full px-3 py-2 border rounded-xl text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1" data-bn="জন্ম তারিখ (দিন-মাস-বছর)" data-en="Date of Birth (DD-MM-YYYY)">জন্ম তারিখ (দিন-মাস-বছর)</label>
-          <input type="text" id="profile-modal-dob-input" required class="w-full px-3 py-2 border rounded-xl text-sm">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
-          <div class="flex flex-col p-2 bg-slate-50 rounded-lg">
-            <span class="text-gray-500" data-bn="আইডি মেয়াদ" data-en="Validity">আইডি মেয়াদ</span>
-            <span id="profile-modal-validity" class="text-amber-600 font-bold">--</span>
-          </div>
-          <div class="flex flex-col p-2 bg-slate-50 rounded-lg">
-            <span class="text-gray-500" data-bn="স্ট্যাটাস" data-en="Status">স্ট্যাটাস</span>
-            <span id="profile-modal-status" class="text-emerald-600 font-bold">--</span>
-          </div>
-        </div>
-
-        <button type="submit" class="w-full btn-green-to-red py-2.5 rounded-xl font-bold text-sm shadow flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> <span data-bn="প্রোফাইল আপডেট করুন" data-en="Update Profile">প্রোফাইল আপডেট করুন</span>
-        </button>
-      </form>
-
-      <button onclick="closeProfileModal();openChangePasswordModal();" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-1 transition">
-        <i class="fa-solid fa-key"></i> <span data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</span>
-      </button>
-    </div>
-  </div>
-
   <!-- FORGET PASS MODAL -->
   <div id="forget-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 no-print">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border-t-8 border-emerald-600">
@@ -1338,8 +1248,8 @@
     window.selectedMealDateFilter = 'ALL';
 
     window.defaultBazaarItems = [
-      "আলু", "পেঁয়াজ", "রসুন", "আদা", "কাঁচামরিচ", "টমেটো", "বেগুন", "পটল",
-      "ঢ্যাঁড়শ", "শসা", "গাজর", "ফুলকপি/বাঁধাকপি", "মাছ", "মুরগির মাংস", "ডিম",
+      "আলু",  "আদা", "কাঁচামরিচ", "টমেটো", "বেগুন", "পটল",
+      "ঢ্যাঁড়শ", "শসা", "গাজর", "ফুলকপি/বাঁধাকপি", 
       "চাল", "ডাল", "তেল", "লবণ", "চিনি", "হলুদ গুঁড়ো", "মরিচ গুঁড়ো", 
       "জিরে গুঁড়ো", "ধনিয়া গুঁড়ো", "গরম মসলা", "তেজপাতা", "পাঁচফোড়ন", 
       "হারপিক", "ভিম", "সাবান", "অন্যান্য"
@@ -1347,7 +1257,6 @@
 
     window.hostelData = {
       users: [],
-      syncRequests: [],
       members: [],
       deposits: [],
       fixedExpenses: [],
@@ -1365,151 +1274,53 @@
     };
 
     const masterLedgerRef = ref(db, 'hostel_records/master_ledger');
-
-    // ============================================================
-    // USER DATA ISOLATION + MEMBER SYNC LAYER
-    // ============================================================
-    window.masterHostelData = null;
-
-    function normalizeMasterData(data) {
-      data = data || {};
-      return {
-        users: data.users || [],
-        syncRequests: data.syncRequests || [],
-        members: data.members || [],
-        deposits: data.deposits || [],
-        fixedExpenses: data.fixedExpenses || [],
-        gasExpenses: data.gasExpenses || [],
-        bazaarExpenses: data.bazaarExpenses || [],
-        meals: data.meals || [],
-        mealRequests: data.mealRequests || [],
-        bazaarRequests: data.bazaarRequests || [],
-        pendingEdits: data.pendingEdits || [],
-        comments: data.comments || {},
-        replies: data.replies || [],
-        paymentInfo: data.paymentInfo || { link: '', qrImage: '', instructions: '' },
-        siteBranding: data.siteBranding || { logo: '' },
-        liveChats: data.liveChats || []
-      };
-    }
-
-    function getScopedDataForUser(userId) {
-      const m = normalizeMasterData(window.masterHostelData);
-      if (!userId) return m;
-
-      // Only records owned by the logged-in account are exposed to its UI.
-      const members = m.members.filter(x => x.userId === userId);
-      const memberIds = new Set(members.map(x => x.id));
-
-      return {
-        users: m.users,
-        syncRequests: m.syncRequests,
-        members,
-        deposits: m.deposits.filter(x => x.userId === userId || memberIds.has(x.memberId)),
-        fixedExpenses: m.fixedExpenses.filter(x => x.userId === userId),
-        gasExpenses: m.gasExpenses.filter(x => x.userId === userId),
-        bazaarExpenses: m.bazaarExpenses.filter(x => x.userId === userId),
-        meals: m.meals.filter(x => x.userId === userId || memberIds.has(x.memberId)),
-        mealRequests: m.mealRequests.filter(x => x.userId === userId),
-        bazaarRequests: m.bazaarRequests.filter(x => x.userId === userId),
-        pendingEdits: m.pendingEdits.filter(x => !x.userId || x.userId === userId),
-        comments: m.comments,
-        replies: m.replies,
-        paymentInfo: m.paymentInfo,
-        siteBranding: m.siteBranding,
-        liveChats: m.liveChats
-      };
-    }
-
-    function applyScopedData() {
-      window.hostelData = getScopedDataForUser(window.currentUser && window.currentUser.userId);
-      localStorage.setItem('dream_touching_hostel_db', JSON.stringify(window.masterHostelData || window.hostelData));
-    }
-
-    function mergeCurrentUserDataIntoMaster() {
-      const m = normalizeMasterData(window.masterHostelData);
-
-      if (!window.currentUser) {
-        window.masterHostelData = normalizeMasterData(window.hostelData);
-        return;
-      }
-
-      const uid = window.currentUser.userId;
-      const replaceOwned = (key, predicate) => {
-        m[key] = m[key].filter(x => !predicate(x));
-        m[key].push(...(window.hostelData[key] || []));
-      };
-
-      replaceOwned('members', x => x.userId === uid);
-      replaceOwned('deposits', x => x.userId === uid || (x.memberId && window.hostelData.members.some(mem => mem.id === x.memberId)));
-      replaceOwned('fixedExpenses', x => x.userId === uid);
-      replaceOwned('gasExpenses', x => x.userId === uid);
-      replaceOwned('bazaarExpenses', x => x.userId === uid);
-      replaceOwned('meals', x => x.userId === uid || (x.memberId && window.hostelData.members.some(mem => mem.id === x.memberId)));
-      replaceOwned('mealRequests', x => x.userId === uid);
-      replaceOwned('bazaarRequests', x => x.userId === uid);
-      replaceOwned('pendingEdits', x => x.userId === uid);
-
-      m.users = window.hostelData.users || m.users;
-      m.syncRequests = window.masterHostelData.syncRequests || m.syncRequests;
-      m.comments = window.masterHostelData.comments || m.comments;
-      m.replies = window.masterHostelData.replies || m.replies;
-      m.paymentInfo = window.masterHostelData.paymentInfo || m.paymentInfo;
-      m.siteBranding = window.masterHostelData.siteBranding || m.siteBranding;
-      m.liveChats = window.masterHostelData.liveChats || m.liveChats;
-
-      window.masterHostelData = m;
-    }
-
+    
     onValue(masterLedgerRef, (snapshot) => {
-      const data = normalizeMasterData(snapshot.val());
-      window.masterHostelData = data;
-
-      // Legacy records without ownership are deliberately NOT shown to users.
-      // They remain available to management until explicitly assigned.
-      applyScopedData();
-
-      migrateLiveChats();
-      applySiteBranding();
-      renderFloatingReplies();
-
-      if (window.currentUser) {
-        // Refresh the current user's copy only.
-        window.hostelData = getScopedDataForUser(window.currentUser.userId);
-        renderUserProfilePanel();
-        renderDashboard();
-        checkUserAdminComments();
-        renderUserMealRequests();
-        renderUserBazaarRequests();
-        renderLiveChatMessages();
-        renderSyncCenter();
+      const data = snapshot.val();
+      if (data) {
+        window.hostelData = {
+          users: data.users || [],
+          members: data.members || [],
+          deposits: data.deposits || [],
+          fixedExpenses: data.fixedExpenses || [],
+          gasExpenses: data.gasExpenses || [],
+          bazaarExpenses: data.bazaarExpenses || [],
+          meals: data.meals || [],
+          mealRequests: data.mealRequests || [],
+          bazaarRequests: data.bazaarRequests || [],
+          pendingEdits: data.pendingEdits || [],
+          comments: data.comments || {},
+          replies: data.replies || [],
+          paymentInfo: data.paymentInfo || { link: '', qrImage: '', instructions: '' },
+          siteBranding: data.siteBranding || { logo: '' },
+          liveChats: data.liveChats || []
+        };
+        migrateLiveChats();
+        localStorage.setItem('dream_touching_hostel_db', JSON.stringify(window.hostelData));
+        applySiteBranding();
+        renderFloatingReplies();
+        if (window.currentUser) {
+          renderUserProfilePanel();
+          renderDashboard();
+          checkUserAdminComments();
+          renderUserMealRequests();
+          renderUserBazaarRequests();
+          renderLiveChatMessages();
+        }
+        populateMgmtChatUsers();
+        renderMgmtLiveChatMessages();
+        applyLanguage();
       }
-
-      populateMgmtChatUsers();
-      renderMgmtLiveChatMessages();
-      applyLanguage();
     });
 
     window.syncMasterData = function() {
-      if (window.currentUser) {
-        mergeCurrentUserDataIntoMaster();
-      } else {
-        window.masterHostelData = normalizeMasterData(window.hostelData);
-      }
-
-      window.masterHostelData.siteBranding = window.masterHostelData.siteBranding || { logo: '' };
-      localStorage.setItem('dream_touching_hostel_db', JSON.stringify(window.masterHostelData));
-
-      set(masterLedgerRef, window.masterHostelData)
+      window.hostelData.siteBranding = window.hostelData.siteBranding || { logo: '' };
+      localStorage.setItem('dream_touching_hostel_db', JSON.stringify(window.hostelData));
+      set(masterLedgerRef, window.hostelData)
         .catch(err => console.error('Firebase Realtime Sync Error:', err));
-
-      if (window.currentUser) {
-        window.hostelData = getScopedDataForUser(window.currentUser.userId);
-      }
       renderDashboard();
       renderFloatingReplies();
       applyLanguage();
-      renderSyncCenter();
     };
 
     window.parseDDMMYYYY = function(dateStr) {
@@ -1540,46 +1351,6 @@
         alert('প্রোফাইল ছবি সফলভাবে আপডেট করা হয়েছে!');
       };
       reader.readAsDataURL(file);
-    };
-
-    window.openProfileModal = function() {
-      if (!window.currentUser) return;
-      document.getElementById('profile-modal-name-input').value = window.currentUser.fullName || '';
-      document.getElementById('profile-modal-mobile-input').value = window.currentUser.mobile || '';
-      document.getElementById('profile-modal-dob-input').value = window.currentUser.dob || '';
-      document.getElementById('profile-modal-userid').innerText = `@${window.currentUser.userId}`;
-      document.getElementById('profile-modal').classList.remove('hidden');
-      document.getElementById('profile-modal').classList.add('flex');
-    };
-
-    window.closeProfileModal = function() {
-      document.getElementById('profile-modal').classList.add('hidden');
-      document.getElementById('profile-modal').classList.remove('flex');
-    };
-
-    window.handleProfileInfoUpdate = function(event) {
-      event.preventDefault();
-      if (!window.currentUser) return;
-
-      const name = document.getElementById('profile-modal-name-input').value.trim();
-      const mobile = document.getElementById('profile-modal-mobile-input').value.trim();
-      const dob = document.getElementById('profile-modal-dob-input').value.trim();
-
-      window.currentUser.fullName = name;
-      window.currentUser.mobile = mobile;
-      window.currentUser.dob = dob;
-
-      const userIdx = window.hostelData.users.findIndex(u => u.userId === window.currentUser.userId);
-      if (userIdx !== -1) {
-        window.hostelData.users[userIdx].fullName = name;
-        window.hostelData.users[userIdx].mobile = mobile;
-        window.hostelData.users[userIdx].dob = dob;
-      }
-
-      syncMasterData();
-      renderUserProfilePanel();
-      alert(window.currentLang === 'bn' ? 'প্রোফাইল সফলভাবে আপডেট করা হয়েছে!' : 'Profile updated successfully!');
-      closeProfileModal();
     };
 
     window.isUserExpired = function(user) {
@@ -1642,53 +1413,17 @@
         iconEl.classList.remove('hidden');
       }
 
-      // Sync header profile button photo
-      const headerImgEl = document.getElementById('header-profile-img');
-      const headerIconEl = document.getElementById('header-profile-default-icon');
-      if (headerImgEl && headerIconEl) {
-        if (window.currentUser.photo) {
-          headerImgEl.src = window.currentUser.photo;
-          headerImgEl.classList.remove('hidden');
-          headerIconEl.classList.add('hidden');
+      const fpBtn = document.getElementById('fingerprint-lock-btn');
+      const fpBtnText = document.getElementById('fingerprint-lock-btn-text');
+      if (fpBtn && fpBtnText) {
+        if (window.currentUser.fpEnabled) {
+          fpBtnText.innerText = 'ডিভাইস ফিঙ্গার লক বন্ধ করুন';
+          fpBtn.className = 'w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2 rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition';
         } else {
-          headerImgEl.classList.add('hidden');
-          headerIconEl.classList.remove('hidden');
+          fpBtnText.innerText = 'ডিভাইস ফিঙ্গার লক চালু করুন';
+          fpBtn.className = 'w-full bg-slate-700 hover:bg-slate-800 text-white py-2 rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition';
         }
       }
-
-      // Sync profile modal photo & readonly info
-      const modalImgEl = document.getElementById('profile-modal-img');
-      const modalIconEl = document.getElementById('profile-modal-default-icon');
-      if (modalImgEl && modalIconEl) {
-        if (window.currentUser.photo) {
-          modalImgEl.src = window.currentUser.photo;
-          modalImgEl.classList.remove('hidden');
-          modalIconEl.classList.add('hidden');
-        } else {
-          modalImgEl.classList.add('hidden');
-          modalIconEl.classList.remove('hidden');
-        }
-      }
-      const modalValidityEl = document.getElementById('profile-modal-validity');
-      const modalStatusEl = document.getElementById('profile-modal-status');
-      if (modalValidityEl && modalStatusEl) {
-        modalValidityEl.innerText = validEl.innerText;
-        modalStatusEl.innerHTML = statusText.innerHTML;
-        modalStatusEl.className = statusText.className;
-      }
-    };
-
-    window.dashboardTabNames = ['members', 'fixed', 'gas', 'bazaar', 'meal', 'summary'];
-
-    window.switchDashboardTab = function(tabName) {
-      window.dashboardTabNames.forEach(t => {
-        const panel = document.getElementById('dash-panel-' + t);
-        const btn = document.getElementById('dash-tab-btn-' + t);
-        if (panel) panel.classList.toggle('hidden', t !== tabName);
-        if (btn) btn.classList.toggle('active-dash-tab', t === tabName);
-      });
-      window.currentDashboardTab = tabName;
-      try { localStorage.setItem('dream_touching_hostel_last_tab', tabName); } catch(e) {}
     };
 
     window.manualSaveData = function() {
@@ -1704,14 +1439,29 @@
       return `${day}-${month}-${year}`;
     };
 
+    window.isoToDDMMYYYY = function(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return '';
+      return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+    };
+
+    window.ddmmyyyyToISO = function(value) {
+      const m = String(value||'').trim().match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if (!m) return '';
+      const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), 23, 59, 59, 999);
+      if (d.getFullYear()!==Number(m[3]) || d.getMonth()!==Number(m[2])-1 || d.getDate()!==Number(m[1])) return '';
+      return d.toISOString();
+    };
+
     window.onload = function() {
       window.currentLang = localStorage.getItem('dream_touching_hostel_lang') || 'bn';
       renderBazaarChecklist();
       setInitialDates();
       const local = localStorage.getItem('dream_touching_hostel_db');
       if (local) {
-        window.masterHostelData = normalizeMasterData(JSON.parse(local));
-        window.hostelData = normalizeMasterData(window.masterHostelData);
+        window.hostelData = JSON.parse(local);
+        window.hostelData.bazaarRequests = window.hostelData.bazaarRequests || [];
         migrateLiveChats();
         window.hostelData.siteBranding = window.hostelData.siteBranding || { logo: '' };
         applySiteBranding();
@@ -1719,11 +1469,7 @@
       } else {
         applySiteBranding();
       }
-      if (window.masterHostelData) migrateUserOwnership();
-
       applyLanguage();
-      const savedTab = (function(){ try { return localStorage.getItem('dream_touching_hostel_last_tab'); } catch(e) { return null; } })();
-      switchDashboardTab(window.dashboardTabNames.includes(savedTab) ? savedTab : 'members');
     };
 
     window.setInitialDates = function() {
@@ -1732,6 +1478,17 @@
         const el = document.getElementById(id);
         if (el && !el.value) el.value = today;
       });
+    };
+
+    // CALENDAR DATE PICKER: every editable date field uses a calendar and DD-MM-YYYY.
+    window.initAllDatePickers = function() {
+      if (typeof flatpickr !== 'function') return;
+      const ids = ['signup-dob','forget-dob-input','fixed-date-input','gas-date-input','bazaar-date-input','meal-date-input','user-meal-request-date','admin-bazaar-date','admin-meal-date'];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el._flatpickr) flatpickr(el,{dateFormat:'d-m-Y',allowInput:true,locale:'bn',disableMobile:true,onReady:function(_,__,instance){instance.input.setAttribute('placeholder','দিন-মাস-বছর');instance.input.setAttribute('autocomplete','off');}});
+      });
+      document.querySelectorAll('input[id^="dep-date-"], input[data-date-picker="true"]').forEach(el=>{if(!el._flatpickr)flatpickr(el,{dateFormat:'d-m-Y',allowInput:true,locale:'bn',disableMobile:true});});
     };
 
     window.triggerHostelLogoClick = function() {
@@ -1770,6 +1527,7 @@
       populateMgmtChatUsers();
       renderMgmtLiveChatMessages();
       applyLanguage();
+      initAllDatePickers();
       document.getElementById('mgmt-dashboard-modal').classList.remove('hidden');
     };
 
@@ -1802,6 +1560,11 @@
         if (logo) el.classList.add('hidden');
         else el.classList.remove('hidden');
       });
+
+      const favicon = document.getElementById('site-favicon');
+      if (favicon && logo) {
+        favicon.href = logo;
+      }
 
       if (preview && !logo) preview.classList.add('hidden');
       if (previewIcon) previewIcon.classList.toggle('hidden', !!logo);
@@ -2044,7 +1807,7 @@ window.renderPendingEditsTable = function() {
         approvedUsers.forEach(u => {
           let dateVal = '';
           if (u.expiryDate) {
-            dateVal = u.expiryDate.split('T')[0];
+            dateVal = isoToDDMMYYYY(u.expiryDate);
           }
           const isExp = window.isUserExpired(u);
 
@@ -2055,7 +1818,7 @@ window.renderPendingEditsTable = function() {
               <td class="p-2"><div class="relative min-w-[130px]"><input type="password" id="mgmt-pass-${u.userId}" value="${u.pass || ''}" readonly class="w-full pr-8 px-2 py-1 border rounded text-xs"><button type="button" onclick="togglePasswordVisibility('mgmt-pass-${u.userId}','mgmt-pass-eye-${u.userId}')" class="absolute right-2 top-1.5 text-gray-500"><i id="mgmt-pass-eye-${u.userId}" class="fa-solid fa-eye text-xs"></i></button></div></td>
               <td class="p-2 font-bold ${isExp ? 'text-red-600' : 'text-emerald-700'}">
                 <div class="flex items-center gap-1">
-                  <input type="date" value="${dateVal}" onchange="setExpiryDateExact('${u.userId}', this.value)" class="border rounded px-1 py-0.5 text-xs text-gray-800">
+                  <input type="text" value="${dateVal}" data-date-picker="true" placeholder="দিন-মাস-বছর" autocomplete="off" onchange="setExpiryDateExact('${u.userId}', this.value)" class="border rounded px-1 py-0.5 text-xs text-gray-800 w-32">
                 </div>
                 <span class="text-[10px] opacity-75">${isExp ? 'মেয়াদ শেষ/লকড' : 'সক্রিয়'}</span>
               </td>
@@ -2084,13 +1847,14 @@ window.renderPendingEditsTable = function() {
     /* নির্দিষ্ট তারিখ অনুযায়ী মেয়াদ নির্ধারণ করা */
     window.setExpiryDateExact = function(userId, dateString) {
       if (!dateString) return;
+      const iso = ddmmyyyyToISO(dateString);
+      if (!iso) { alert('তারিখ অবশ্যই দিন-মাস-বছর (DD-MM-YYYY) ফরম্যাটে দিন।'); return; }
       const u = window.hostelData.users.find(x => x.userId === userId);
       if (u) {
-        const exp = new Date(dateString);
-        exp.setHours(23, 59, 59, 999);
-        u.expiryDate = exp.toISOString();
+        u.expiryDate = iso;
         syncMasterData();
         renderMgmtUserTables();
+        initAllDatePickers();
         alert(`মেয়াদ ${dateString} তারিখ পর্যন্ত সংরক্ষণ করা হয়েছে!`);
       }
     };
@@ -2108,14 +1872,55 @@ window.renderPendingEditsTable = function() {
       }
     };
 
+    // Deleting a user cascades: every record owned by that user (members, deposits,
+    // fixed/gas/bazaar expenses, meals, pending requests, admin comments, chats) is
+    // removed from window.hostelData, which is then synced/deleted from the server.
     window.deleteUserAccount = function(userId) {
-      if (confirm(`আপনি কি নিশ্চিত যে ইউজার আইডি '${userId}' স্থায়ীভাবে ডিলিট করতে চান?`)) {
+      if (confirm(`আপনি কি নিশ্চিত যে ইউজার আইডি '${userId}' স্থায়ীভাবে ডিলিট করতে চান? এই ইউজারের সকল ডেটা (সদস্য, জমা, খরচ, মিল ইত্যাদি) সার্ভার থেকে স্থায়ীভাবে মুছে যাবে।`)) {
+        const memberIds = new Set(
+          (window.hostelData.members || []).filter(m => m.userId === userId).map(m => m.id)
+        );
+        const ownedByUserOrMember = (arr) => (arr || []).filter(
+          x => !(x.userId === userId || (x.memberId && memberIds.has(x.memberId)))
+        );
+        const ownedByUserOnly = (arr) => (arr || []).filter(x => x.userId !== userId);
+
+        window.hostelData.members = ownedByUserOnly(window.hostelData.members);
+        window.hostelData.deposits = ownedByUserOrMember(window.hostelData.deposits);
+        window.hostelData.fixedExpenses = ownedByUserOnly(window.hostelData.fixedExpenses);
+        window.hostelData.gasExpenses = ownedByUserOnly(window.hostelData.gasExpenses);
+        window.hostelData.bazaarExpenses = ownedByUserOrMember(window.hostelData.bazaarExpenses);
+        window.hostelData.meals = ownedByUserOrMember(window.hostelData.meals);
+        window.hostelData.mealRequests = ownedByUserOnly(window.hostelData.mealRequests);
+        window.hostelData.bazaarRequests = ownedByUserOnly(window.hostelData.bazaarRequests);
+        window.hostelData.pendingEdits = ownedByUserOnly(window.hostelData.pendingEdits);
+        window.hostelData.liveChats = (window.hostelData.liveChats || []).filter(
+          x => x.senderId !== userId && x.recipientId !== userId
+        );
+        if (window.hostelData.comments && window.hostelData.comments[userId]) {
+          delete window.hostelData.comments[userId];
+        }
+        // FIX: floating "reply" posts made by this user were never being removed before.
+        window.hostelData.replies = (window.hostelData.replies || []).filter(
+          r => r.userId !== userId
+        );
+
         window.hostelData.users = window.hostelData.users.filter(u => u.userId !== userId);
+
+        // FIX: also purge any "orphan" member records left over from before per-user
+        // scoping existed (no userId, or userId pointing at a user that no longer
+        // exists). These used to linger forever and leak into unscoped lists like
+        // the admin "sender name" dropdown even after every user was deleted.
+        const stillActiveUserIds = new Set(window.hostelData.users.map(u => u.userId));
+        window.hostelData.members = (window.hostelData.members || []).filter(
+          m => m.userId && stillActiveUserIds.has(m.userId)
+        );
         syncMasterData();
         renderMgmtUserTables();
-        alert('অ্যাকোউন্টটি ডিলিট করা হয়েছে!');
+        alert('অ্যাকাউন্ট এবং এর অধীনস্থ সকল ডেটা সার্ভার থেকে স্থায়ীভাবে ডিলিট করা হয়েছে!');
       }
     };
+
 
     window.togglePasswordVisibility = function(inputId, eyeId) {
       const input = document.getElementById(inputId);
@@ -2130,7 +1935,7 @@ window.renderPendingEditsTable = function() {
     };
 
     window.i18nMap = {
-'সাইন ইন':'Sign In','সাইন আপ':'Sign Up','সাইন ইন করুন':'Sign In','সাইন আপ করুন':'Sign Up','ইউজার আইডি':'User ID','পাসওয়ার্ড':'Password','পাসওয়ার্ড চেঞ্জ':'Change Password','পাসওয়ার্ড পরিবর্তন':'Change Password','পাসওয়ার্ড পরিবর্তন করুন':'Change Password','পাসওয়ার্ড সেভ করুন':'Save Password','ফরগেট পাসওয়ার্ড?':'Forgot Password?','পাসওয়ার্ড পুনরুদ্ধার':'Recover Password','মোবাইল নম্বর':'Mobile Number','জন্ম তারিখ (দিন-মাস-বছর)':'Date of Birth (DD-MM-YYYY)','এখানে প্রবেশ করে হিসাব দেখুন':'Enter Here to View Accounts','অ্যাডমিন প্যানেল (বার্তা পাঠাতে)':'Admin Panel','ক্যাশ ইন হ্যান্ড':'Cash In Hand','সর্বমোট জমা':'Total Deposit','সর্বমোট খরচ':'Total Expense','সর্বমোট মিল':'Total Meals','সদস্য এন্ট্রি ও জমা হিসাব':'Member Entry & Deposits','সদস্যের নাম':'Member Name','সদস্য যুক্ত করুন':'Add Member','সদস্য নির্বাচন করুন:':'Select Member:','গ্যাস ব্যবহার করেন কিনা?':'Uses Gas?','হ্যাঁ (গ্যাস ব্যবহার করেন)':'Yes (Uses Gas)','না (গ্যাস ব্যবহার করেন না)':'No (Does Not Use Gas)','স্থায়ী খরচ (সকল সদস্যের মধ্যে সমান ভাগ)':'Fixed Expenses (Shared Equally)','বিদ্যুৎ':'Electricity','পানি':'Water','ময়লা':'Garbage','ইন্টারনেট':'Internet','রাধুনি':'Cook','অন্যান্য':'Other','খাত':'Category','টাকার পরিমাণ':'Amount','তারিখ (দিন-মাস-বছর)':'Date (DD-MM-YYYY)','যোগ করুন':'Add','গ্যাস খরচ যোগ করুন':'Add Gas Expense','বাজার খরচ এন্ট্রি (তারিখের ক্রমানুসারে)':'Bazaar Expense Entry (By Date)','কি কি বাজার হলো (টিক দিন):':'Items Bought (Select All):','অন্যান্য বাজার (ম্যানুয়ালি নতুন জিনিস লিখতে চাইলে):':'Other Bazaar Items (Enter manually):','কে কে করল (সদস্য বেছে নিন):':'Who Bought (Select Members):','কত টাকার করল (৳):':'Amount Spent (৳):','বাজার খরচ সেভ করুন':'Save Bazaar Expense','মোট বাজার খরচ:':'Total Bazaar Expense:','দৈনিক মিল এন্ট্রি (তারিখের ক্রমানুসারে)':'Daily Meal Entry (By Date)','সকাল':'Morning','দুপুর':'Noon','রাত':'Night','মিল সেভ':'Save Meal','মিল এন্ট্রি রিকোয়েস্ট':'Meal Entry Request','প্রতি সদস্য, প্রতি দিনে সর্বোচ্চ ১টি':'Maximum 1 request per member per day','সর্বমোট মিল সংখ্যা:':'Total Meals Count:','চূড়ান্ত হিসাব ও মাসের পুরো হিসেব':'Final Ledger & Monthly Summary','মিল খরচ (৳)':'Meal Cost (৳)','স্থায়ী খরচ (৳)':'Fixed Cost (৳)','গ্যাস খরচ (৳)':'Gas Cost (৳)','সর্বমোট খরচ (৳)':'Total Expense (৳)','অবস্থা (পাবো/দিবো)':'Balance (Receive/Pay)','সেভ':'Save','হিসাব রিসেট করুন':'Reset Ledger','লগ আউট':'Log Out','রশিদ':'Receipt','JPG হিসেবে সেভ করুন':'Save as JPG','বন্ধ করুন':'Close','অ্যাকশন':'Action','আইটেম':'Items','কে করেছে':'Buyer','স্ট্যাটাস:':'Status:','আইডি মেয়াদ:':'ID Validity:','সক্রিয়':'Active','বার্তা':'Message','বার্তা পাঠাও':'Send Message','প্রেরকের নাম:':'Sender Name:','বার্তার বিষয়বস্তু:':'Message Content:','ইউজার নির্বাচন করুন:':'Select User:','ইউজার প্রোফাইল তথ্য:':'User Profile Information:','ম্যানেজমেন্ট প্যানেল লগইন':'Management Panel Login','ম্যানেজমেন্ট প্যানেলে প্রবেশের তথ্য দিন:':'Enter Management Panel Login Details:','প্যানেলে প্রবেশ করুন':'Enter Panel','হোস্টেল ম্যানেজমেন্ট প্যানেল':'Hostel Management Panel','ওয়েবসাইট লোগো সেটিংস':'Website Logo Settings','লোগো সেভ করুন':'Save Logo','পেমেন্ট ও সাবস্ক্রিপশন':'Payment & Subscription','পেমেন্ট ও সাবস্ক্রিপশন সেটিংস':'Payment & Subscription Settings','পেমেন্ট লিংক:':'Payment Link:','পেমেন্ট QR কোড:':'Payment QR Code:','পেমেন্ট নির্দেশাবলী:':'Payment Instructions:','কোনো লিংক দেওয়া হয়নি':'No link provided','QR ফাইল নেই':'No QR file','অপেক্ষমান রিকোয়েস্ট':'Pending Requests','মিল এন্ট্রি':'Meal Entry','মিল এন্ট্রি রিকোয়েস্ট পাঠান':'Send Meal Entry Request','মেস লাইভ চ্যাট সাপোর্টিং':'Mess Live Chat Support','ইউজার লাইভ চ্যাট সাপোর্ট প্যানেল':'User Live Chat Support Panel','চ্যাট ক্লিয়ার করুন':'Clear Chat','চ্যাট মুছুন':'Delete Chat','উত্তর দিন':'Reply','পাঠান':'Send','প্রবেশ করুন':'Enter','বর্তমান পাসওয়ার্ড':'Current Password','নতুন পাসওয়ার্ড':'New Password','লাইভ চ্যাট':'Live Chat','ম্যানেজারের সাথে লাইভ চ্যাট':'Live Chat with Manager','চ্যাট শুরু করুন':'Start Chat','নাম':'Name','পরিবর্তন':'Change','তারিখ':'Date','গ্যাস ব্যবহারী':'Gas User','গ্যাস নেই':'No Gas','আলু':'Potato','পেঁয়াজ':'Onion','রসুন':'Garlic','আদা':'Ginger','কাঁচামরিচ':'Green Chili','টমেটো':'Tomato','বেগুন':'Eggplant','পটল':'Pointed Gourd','ঢ্যাঁড়শ':'Okra','শসা':'Cucumber','গাজর':'Carrot','ফুলকপি/বাঁধাকপি':'Cauliflower/Cabbage','মাছ':'Fish','মুরগির মাংস':'Chicken','ডিম':'Egg','চাল':'Rice','ডাল':'Lentils','তেল':'Oil','লবণ':'Salt','চিনি':'Sugar','হলুদ গুঁড়ো':'Turmeric Powder','মরিচ গুঁড়ো':'Chili Powder','জিরে গুঁড়ো':'Cumin Powder','ধনিয়া গুঁড়ো':'Coriander Powder','গরম মসলা':'Garam Masala','তেজপাতা':'Bay Leaf','পাঁচফোড়ন':'Panch Phoron','হারপিক':'Harpic','ভিম':'Vim','সাবান':'Soap','সর্বমোট বাজার খরচ:':'Total Bazaar Expense:','সর্বমোট স্থায়ী খরচ:':'Total Fixed Expense:','সর্বমোট গ্যাস খরচ:':'Total Gas Expense:','সর্বমোট জমা টাকার পরিমাণ:':'Total Deposit Amount:','সদস্য Sync':'Member Sync','সদস্য Sync Center':'Member Sync Center','Sync Request':'Sync Request','Approve':'Approve','Reject':'Reject','Permanent Sync':'Permanent Sync'
+'সাইন ইন':'Sign In','সাইন আপ':'Sign Up','সাইন ইন করুন':'Sign In','সাইন আপ করুন':'Sign Up','ইউজার আইডি':'User ID','পাসওয়ার্ড':'Password','পাসওয়ার্ড চেঞ্জ':'Change Password','পাসওয়ার্ড পরিবর্তন':'Change Password','পাসওয়ার্ড পরিবর্তন করুন':'Change Password','পাসওয়ার্ড সেভ করুন':'Save Password','ফরগেট পাসওয়ার্ড?':'Forgot Password?','পাসওয়ার্ড পুনরুদ্ধার':'Recover Password','মোবাইল নম্বর':'Mobile Number','জন্ম তারিখ (দিন-মাস-বছর)':'Date of Birth (DD-MM-YYYY)','এখানে প্রবেশ করে হিসাব দেখুন':'Enter Here to View Accounts','অ্যাডমিন প্যানেল (বার্তা পাঠাতে)':'Admin Panel','ক্যাশ ইন হ্যান্ড':'Cash In Hand','সর্বমোট জমা':'Total Deposit','সর্বমোট খরচ':'Total Expense','সর্বমোট মিল':'Total Meals','সদস্য এন্ট্রি ও জমা হিসাব':'Member Entry & Deposits','সদস্যের নাম':'Member Name','সদস্য যুক্ত করুন':'Add Member','সদস্য নির্বাচন করুন:':'Select Member:','গ্যাস ব্যবহার করেন কিনা?':'Uses Gas?','সিট বুকিং সংখ্যা':'Seat Booking Quantity','হ্যাঁ (গ্যাস ব্যবহার করেন)':'Yes (Uses Gas)','না (গ্যাস ব্যবহার করেন না)':'No (Does Not Use Gas)','স্থায়ী খরচ (সকল সদস্যের মধ্যে সমান ভাগ)':'Fixed Expenses (Shared Equally)','বাসা ভাড়া':'House Rent','বিদ্যুৎ':'Electricity','পানি':'Water','ময়লা':'Garbage','ইন্টারনেট':'Internet','রাধুনি':'Cook','অন্যান্য':'Other','খাত':'Category','টাকার পরিমাণ':'Amount','তারিখ (দিন-মাস-বছর)':'Date (DD-MM-YYYY)','যোগ করুন':'Add','গ্যাস খরচ যোগ করুন':'Add Gas Expense','বাজার খরচ এন্ট্রি (তারিখের ক্রমানুসারে)':'Bazaar Expense Entry (By Date)','কি কি বাজার হলো (টিক দিন):':'Items Bought (Select All):','অন্যান্য বাজার (ম্যানুয়ালি নতুন জিনিস লিখতে চাইলে):':'Other Bazaar Items (Enter manually):','কে কে করল (সদস্য বেছে নিন):':'Who Bought (Select Members):','কত টাকার করল (৳):':'Amount Spent (৳):','বাজার খরচ সেভ করুন':'Save Bazaar Expense','মোট বাজার খরচ:':'Total Bazaar Expense:','দৈনিক মিল এন্ট্রি (তারিখের ক্রমানুসারে)':'Daily Meal Entry (By Date)','সকাল':'Morning','দুপুর':'Noon','রাত':'Night','মিল সেভ':'Save Meal','মিল এন্ট্রি রিকোয়েস্ট':'Meal Entry Request','প্রতি সদস্য, প্রতি দিনে সর্বোচ্চ ১টি':'Maximum 1 request per member per day','সর্বমোট মিল সংখ্যা:':'Total Meals Count:','চূড়ান্ত হিসাব ও মাসের পুরো হিসেব':'Final Ledger & Monthly Summary','মিল খরচ (৳)':'Meal Cost (৳)','স্থায়ী খরচ (৳)':'Fixed Cost (৳)','গ্যাস খরচ (৳)':'Gas Cost (৳)','সর্বমোট খরচ (৳)':'Total Expense (৳)','অবস্থা (পাবো/দিবো)':'Balance (Receive/Pay)','সেভ':'Save','হিসাব রিসেট করুন':'Reset Ledger','লগ আউট':'Log Out','রশিদ':'Receipt','JPG হিসেবে সেভ করুন':'Save as JPG','বন্ধ করুন':'Close','অ্যাকশন':'Action','আইটেম':'Items','কে করেছে':'Buyer','স্ট্যাটাস:':'Status:','আইডি মেয়াদ:':'ID Validity:','সক্রিয়':'Active','বার্তা':'Message','বার্তা পাঠাও':'Send Message','প্রেরকের নাম:':'Sender Name:','বার্তার বিষয়বস্তু:':'Message Content:','ইউজার নির্বাচন করুন:':'Select User:','ইউজার প্রোফাইল তথ্য:':'User Profile Information:','ম্যানেজমেন্ট প্যানেল লগইন':'Management Panel Login','ম্যানেজমেন্ট প্যানেলে প্রবেশের তথ্য দিন:':'Enter Management Panel Login Details:','প্যানেলে প্রবেশ করুন':'Enter Panel','হোস্টেল ম্যানেজমেন্ট প্যানেল':'Hostel Management Panel','ওয়েবসাইট লোগো সেটিংস':'Website Logo Settings','লোগো সেভ করুন':'Save Logo','পেমেন্ট ও সাবস্ক্রিপশন':'Payment & Subscription','পেমেন্ট ও সাবস্ক্রিপশন সেটিংস':'Payment & Subscription Settings','পেমেন্ট লিংক:':'Payment Link:','পেমেন্ট QR কোড:':'Payment QR Code:','পেমেন্ট নির্দেশাবলী:':'Payment Instructions:','কোনো লিংক দেওয়া হয়নি':'No link provided','QR ফাইল নেই':'No QR file','অপেক্ষমান রিকোয়েস্ট':'Pending Requests','মিল এন্ট্রি':'Meal Entry','মিল এন্ট্রি রিকোয়েস্ট পাঠান':'Send Meal Entry Request','মেস লাইভ চ্যাট সাপোর্টিং':'Mess Live Chat Support','ইউজার লাইভ চ্যাট সাপোর্ট প্যানেল':'User Live Chat Support Panel','চ্যাট ক্লিয়ার করুন':'Clear Chat','চ্যাট মুছুন':'Delete Chat','উত্তর দিন':'Reply','পাঠান':'Send','প্রবেশ করুন':'Enter','বর্তমান পাসওয়ার্ড':'Current Password','নতুন পাসওয়ার্ড':'New Password','লাইভ চ্যাট':'Live Chat','ম্যানেজারের সাথে লাইভ চ্যাট':'Live Chat with Manager','চ্যাট শুরু করুন':'Start Chat','নাম':'Name','পরিবর্তন':'Change','তারিখ':'Date','গ্যাস ব্যবহারী':'Gas User','গ্যাস নেই':'No Gas','আলু':'Potato','পেঁয়াজ':'Onion','রসুন':'Garlic','আদা':'Ginger','কাঁচামরিচ':'Green Chili','টমেটো':'Tomato','বেগুন':'Eggplant','পটল':'Pointed Gourd','ঢ্যাঁড়শ':'Okra','শসা':'Cucumber','গাজর':'Carrot','ফুলকপি/বাঁধাকপি':'Cauliflower/Cabbage','মাছ':'Fish','মুরগির মাংস':'Chicken','ডিম':'Egg','চাল':'Rice','ডাল':'Lentils','তেল':'Oil','লবণ':'Salt','চিনি':'Sugar','হলুদ গুঁড়ো':'Turmeric Powder','মরিচ গুঁড়ো':'Chili Powder','জিরে গুঁড়ো':'Cumin Powder','ধনিয়া গুঁড়ো':'Coriander Powder','গরম মসলা':'Garam Masala','তেজপাতা':'Bay Leaf','পাঁচফোড়ন':'Panch Phoron','হারপিক':'Harpic','ভিম':'Vim','সাবান':'Soap','সর্বমোট বাজার খরচ:':'Total Bazaar Expense:','সর্বমোট স্থায়ী খরচ:':'Total Fixed Expense:','সর্বমোট গ্যাস খরচ:':'Total Gas Expense:','সর্বমোট জমা টাকার পরিমাণ:':'Total Deposit Amount:'
 };
 window.translateText=function(text){let out=String(text??'');if(window.currentLang!=='en')return out;Object.keys(window.i18nMap).sort((a,b)=>b.length-a.length).forEach(k=>out=out.split(k).join(window.i18nMap[k]));return out;};
 window.i18nOriginalText=window.i18nOriginalText||new WeakMap();
@@ -2179,7 +1984,7 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       switchAuthTab('signin');
     };
 
-    window.handleSignIn = function(e) {
+    window.handleSignIn = async function(e) {
       e.preventDefault();
       const userId = document.getElementById('signin-userid').value.trim();
       const pass = document.getElementById('signin-pass').value;
@@ -2187,14 +1992,21 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       const user = window.hostelData.users.find(u => (u.userId === userId || u.mobile === userId) && u.pass === pass);
       if (user) {
         if (user.status === 'pending') {
-          alert('আপনার আইডিটি এখনো অনুমোদন করা হয়নি! ম্যানেজমেন্ট প্যানেলের অনুমোদনের জন্য অপেক্ষা করুন।');
+          alert('আপনার আইডিটি এখনো অনুমোদন করা হয়নি! ম্যানেজমেন্ট প্যানেলের অনুমোদনের জন্য অপেক্ষা করুন।');
           return;
         }
-        
-        window.currentUser = user;
-        window.hostelData = getScopedDataForUser(user.userId);
 
-        /* যদি অ্যাকাউন্টের মেয়াদ শেষ হয়ে থাকে তবে ২ সেকেন্ড নোটিফিকেশন প্রদর্শন করবে */
+        // Device fingerprint lock: if this user has enabled it, the correct password
+        // alone is not enough -- this device must also pass a biometric (fingerprint /
+        // face) prompt before the user panel opens.
+        if (user.fpEnabled) {
+          const fpOk = await window.verifyDeviceFingerprint(user);
+          if (!fpOk) return;
+        }
+
+        window.currentUser = user;
+
+        /* যদি অ্যাকাউন্টের মেয়াদ শেষ হয়ে থাকে তবে ২ সেকেন্ড নোটিফিকেশন প্রদর্শন করবে */
         if (window.isUserExpired(user)) {
           const toast = document.getElementById('expired-toast');
           toast.classList.remove('hidden');
@@ -2210,6 +2022,138 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       }
     };
 
+    // ---- DEVICE FINGERPRINT LOCK (WebAuthn platform authenticator) ----
+    // This binds login on THIS device to the device's own fingerprint/face/PIN
+    // sensor via the browser's native WebAuthn API. The credential id is stored
+    // on the user's record (not a secret -- the private key never leaves the
+    // device's secure hardware), so verification must happen on this same device.
+
+    window.arrayBufferToBase64 = function(buf) {
+      let binary = '';
+      const bytes = new Uint8Array(buf);
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    };
+
+    window.base64ToUint8Array = function(b64) {
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    };
+
+    window.isFingerprintLockSupported = async function() {
+      if (!window.PublicKeyCredential || !navigator.credentials) return false;
+      try {
+        return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      } catch (e) {
+        return false;
+      }
+    };
+
+    window.enableFingerprintLock = async function() {
+      if (!window.currentUser) return;
+      const supported = await isFingerprintLockSupported();
+      if (!supported) {
+        alert(window.currentLang === 'bn'
+          ? 'এই ডিভাইস/ব্রাউজারে ফিঙ্গারপ্রিন্ট বা বায়োমেট্রিক লক সমর্থিত নয়।'
+          : 'Fingerprint/biometric lock is not supported on this device or browser.');
+        return;
+      }
+      try {
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const userIdBytes = new TextEncoder().encode(window.currentUser.userId);
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge,
+            rp: { name: document.title || 'Hostel Ledger' },
+            user: {
+              id: userIdBytes,
+              name: window.currentUser.userId,
+              displayName: window.currentUser.fullName || window.currentUser.userId
+            },
+            pubKeyCredParams: [
+              { type: 'public-key', alg: -7 },
+              { type: 'public-key', alg: -257 }
+            ],
+            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+            timeout: 60000
+          }
+        });
+        if (!credential) throw new Error('no credential');
+
+        const rawIdB64 = arrayBufferToBase64(credential.rawId);
+        const uIdx = window.hostelData.users.findIndex(u => u.userId === window.currentUser.userId);
+        if (uIdx > -1) {
+          window.hostelData.users[uIdx].fpEnabled = true;
+          window.hostelData.users[uIdx].fpCredId = rawIdB64;
+          window.currentUser = window.hostelData.users[uIdx];
+          syncMasterData();
+        }
+        renderUserProfilePanel();
+        alert(window.currentLang === 'bn' ? 'এই ডিভাইসের জন্য ফিঙ্গার লক সফলভাবে চালু করা হয়েছে!' : 'Fingerprint lock has been enabled for this device!');
+      } catch (err) {
+        alert(window.currentLang === 'bn'
+          ? 'ফিঙ্গারপ্রিন্ট রেজিস্ট্রেশন ব্যর্থ হয়েছে বা বাতিল করা হয়েছে।'
+          : 'Fingerprint registration failed or was cancelled.');
+      }
+    };
+
+    window.disableFingerprintLock = function() {
+      if (!window.currentUser) return;
+      const uIdx = window.hostelData.users.findIndex(u => u.userId === window.currentUser.userId);
+      if (uIdx > -1) {
+        window.hostelData.users[uIdx].fpEnabled = false;
+        delete window.hostelData.users[uIdx].fpCredId;
+        window.currentUser = window.hostelData.users[uIdx];
+        syncMasterData();
+      }
+      renderUserProfilePanel();
+      alert(window.currentLang === 'bn' ? 'ডিভাইস ফিঙ্গার লক বন্ধ করা হয়েছে।' : 'Device fingerprint lock has been disabled.');
+    };
+
+    window.toggleFingerprintLock = function() {
+      if (!window.currentUser) return;
+      if (window.currentUser.fpEnabled) {
+        if (confirm(window.currentLang === 'bn' ? 'এই ডিভাইসের জন্য ফিঙ্গার লক বন্ধ করতে চান?' : 'Disable fingerprint lock for this device?')) {
+          disableFingerprintLock();
+        }
+      } else {
+        enableFingerprintLock();
+      }
+    };
+
+    // Called during sign-in when the user account has fpEnabled = true.
+    // Returns true only if this device's biometric sensor successfully verifies.
+    window.verifyDeviceFingerprint = async function(user) {
+      if (!user || !user.fpEnabled || !user.fpCredId) return true;
+      const supported = await isFingerprintLockSupported();
+      if (!supported) {
+        return confirm(window.currentLang === 'bn'
+          ? 'এই ডিভাইসে ফিঙ্গারপ্রিন্ট লক সমর্থিত নয়। শুধু পাসওয়ার্ড দিয়ে প্রবেশ করবেন?'
+          : 'Fingerprint lock is not supported on this device. Continue with password only?');
+      }
+      try {
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const credIdBytes = base64ToUint8Array(user.fpCredId);
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge,
+            allowCredentials: [{ id: credIdBytes, type: 'public-key' }],
+            userVerification: 'required',
+            timeout: 60000
+          }
+        });
+        return !!assertion;
+      } catch (err) {
+        alert(window.currentLang === 'bn'
+          ? 'ফিঙ্গারপ্রিন্ট যাচাই ব্যর্থ হয়েছে বা বাতিল করা হয়েছে। লগইন বাতিল করা হলো।'
+          : 'Fingerprint verification failed or was cancelled. Login aborted.');
+        return false;
+      }
+    };
+
+
     window.trigger1SecTransition = function(isLogin) {
       const authSec = document.getElementById('auth-section');
       const dashSec = document.getElementById('dashboard-section');
@@ -2222,7 +2166,8 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
           dashSec.classList.remove('hidden');
           dashSec.style.opacity = '1';
           dashSec.style.transform = 'scale(1)';
-          document.getElementById('header-profile-btn').classList.remove('hidden');
+          document.getElementById('header-save-btn').classList.remove('hidden');
+          document.getElementById('header-change-pass-btn').classList.remove('hidden');
           document.getElementById('header-logout-btn').classList.remove('hidden');
           renderUserProfilePanel();
           checkUserAdminComments();
@@ -2237,7 +2182,8 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
           authSec.classList.remove('hidden');
           authSec.style.opacity = '1';
           authSec.style.transform = 'scale(1)';
-          document.getElementById('header-profile-btn').classList.add('hidden');
+          document.getElementById('header-save-btn').classList.add('hidden');
+          document.getElementById('header-change-pass-btn').classList.add('hidden');
           document.getElementById('header-logout-btn').classList.add('hidden');
           window.currentUser = null;
         }, 500);
@@ -2245,9 +2191,6 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
     };
 
     window.logout = function() {
-      // Restore the management/anonymous view after logout.
-      if (window.masterHostelData) window.hostelData = normalizeMasterData(window.masterHostelData);
-
       trigger1SecTransition(false);
     };
 
@@ -2255,6 +2198,19 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       window.targetAdminAction = action;
       document.getElementById('admin-auth-id').value = '';
       document.getElementById('admin-auth-pass').value = '';
+      const idField = document.getElementById('admin-auth-id');
+      const idWrap = document.getElementById('admin-auth-id-wrap');
+      const titleEl = document.getElementById('admin-auth-modal-title');
+      const hintEl = document.getElementById('admin-auth-modal-hint');
+      if (action === 'member_login') {
+        if (idWrap) idWrap.classList.add('hidden');
+        if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-lock text-amber-500"></i> মেম্বার লগইন ভেরিফিকেশন';
+        if (hintEl) hintEl.innerText = 'প্রবেশ করতে পাসওয়ার্ড দিন:';
+      } else {
+        if (idWrap) idWrap.classList.remove('hidden');
+        if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-lock text-amber-500"></i> অ্যাডমিন ভেরিফিকেশন';
+        if (hintEl) hintEl.innerText = 'প্রবেশ করতে আইডি ও পাসওয়ার্ড দিন:';
+      }
       document.getElementById('admin-auth-modal').classList.remove('hidden');
     };
 
@@ -2265,6 +2221,16 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
     window.verifyAdminAuth = function() {
       const u = document.getElementById('admin-auth-id').value.trim();
       const p = document.getElementById('admin-auth-pass').value;
+
+      if (window.targetAdminAction === 'member_login') {
+        if (p === 'admin') {
+          closeAdminAuthModal();
+          openMemberPanelModal();
+        } else {
+          alert('ভুল পাসওয়ার্ড!');
+        }
+        return;
+      }
 
       if (u === 'admin' && p === 'admin') {
         closeAdminAuthModal();
@@ -2278,6 +2244,14 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       }
     };
 
+    window.openMemberPanelModal = function() {
+      document.getElementById('member-panel-modal').classList.remove('hidden');
+    };
+
+    window.closeMemberPanelModal = function() {
+      document.getElementById('member-panel-modal').classList.add('hidden');
+    };
+
     window.openViewAccountsModal = function() {
       populateAccountsUserSelector();
       document.getElementById('view-accounts-modal').classList.remove('hidden');
@@ -2289,77 +2263,110 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
 
     window.populateAccountsUserSelector = function() {
       const sel = document.getElementById('accounts-user-selector');
-      sel.innerHTML = '<option value="ALL">সকল ইউজার / সদস্যের হিসাব একত্রে দেখুন</option>';
-      window.hostelData.members.forEach(m => {
-        sel.innerHTML += `<option value="${m.id}">${m.name} (${m.phone})</option>`;
+      const approvedUsers = (window.hostelData.users || []).filter(u => u.status !== 'pending');
+      sel.innerHTML = '<option value="">-- ইউজার নির্বাচন করুন --</option>';
+      approvedUsers.forEach(u => {
+        sel.innerHTML += `<option value="${u.userId}">${u.fullName || u.userId} (@${u.userId})</option>`;
       });
-      renderViewAccountsTableForSelectedUser('ALL');
+      renderViewAccountsTableForSelectedUser(sel.value);
     };
 
-    window.renderViewAccountsTableForSelectedUser = function(selectedMemberId) {
+    // Shows the complete ledger (all members, bazaar list, fixed expense list, final summary)
+    // belonging ONLY to the single user selected above.
+    window.renderViewAccountsTableForSelectedUser = function(selectedUserId) {
       const tbody = document.getElementById('view-accounts-table-body');
+      const bazBody = document.getElementById('accounts-bazaar-detail-body');
+      const fixBody = document.getElementById('accounts-fixed-detail-body');
       tbody.innerHTML = '';
 
-      const totalMembersCount = window.hostelData.members.length || 1;
-      const gasUsersCount = window.hostelData.members.filter(m => m.useGas === 'yes').length || 1;
-
-      const totFixed = window.hostelData.fixedExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totGas = window.hostelData.gasExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totBazaar = window.hostelData.bazaarExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totMealsAll = window.hostelData.meals.reduce((acc, curr) => acc + curr.total, 0) || 1;
-
-      const perMealRate = totBazaar / totMealsAll;
-      const perFixedCharge = totFixed / totalMembersCount;
-      const perGasCharge = totGas / gasUsersCount;
-
-      let filteredMembers = window.hostelData.members;
-      if (selectedMemberId !== 'ALL') {
-        filteredMembers = window.hostelData.members.filter(m => m.id === selectedMemberId);
-      }
-
-      if (filteredMembers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500 font-bold">কোনো হিসাব পাওয়া যায়নি!</td></tr>`;
+      const user = (window.hostelData.users || []).find(u => u.userId === selectedUserId);
+      if (!user) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500 font-bold">অনুগ্রহ করে প্রথমে একজন ইউজার নির্বাচন করুন।</td></tr>`;
+        if (bazBody) bazBody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-gray-400">কোনো ইউজার নির্বাচিত নয়</td></tr>';
+        if (fixBody) fixBody.innerHTML = '<tr><td colspan="3" class="p-3 text-center text-gray-400">কোনো ইউজার নির্বাচিত নয়</td></tr>';
+        document.getElementById('accounts-bazaar-detail-total').innerText = '0';
+        document.getElementById('accounts-fixed-detail-total').innerText = '0';
         return;
       }
 
-      filteredMembers.forEach(m => {
-        const dep = window.hostelData.deposits.filter(d => d.memberId === m.id).reduce((a, c) => a + c.amount, 0);
-        const mls = window.hostelData.meals.filter(ml => ml.memberId === m.id).reduce((a, c) => a + c.total, 0);
-        const mealExp = mls * perMealRate;
-        const fixExp = perFixedCharge;
-        const gasExp = m.useGas === 'yes' ? perGasCharge : 0;
-        const totExp = mealExp + fixExp + gasExp;
-        const bal = dep - totExp;
+      const ledger = getUserLedger(user);
+      const members = ledger.members;
 
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-2.5 font-bold text-gray-800">${m.name}</td>
-            <td class="p-2.5">৳ ${dep}</td>
-            <td class="p-2.5">${mls} টি</td>
-            <td class="p-2.5">৳ ${mealExp.toFixed(2)}</td>
-            <td class="p-2.5">৳ ${fixExp.toFixed(2)}</td>
-            <td class="p-2.5">৳ ${gasExp.toFixed(2)}</td>
-            <td class="p-2.5 font-bold text-rose-600">৳ ${totExp.toFixed(2)}</td>
-            <td class="p-2.5 font-bold ${bal >= 0 ? 'text-emerald-700' : 'text-red-600'}">
-              ${bal >= 0 ? 'পাবে: ৳ ' + bal.toFixed(2) : 'দিবে: ৳ ' + Math.abs(bal).toFixed(2)}
-            </td>
-          </tr>
-        `;
-      });
-      const bazBody = document.getElementById('accounts-bazaar-detail-body');
-      const fixBody = document.getElementById('accounts-fixed-detail-body');
+      const totalMembersCount = members.length || 1;
+      const gasUsersCount = members.filter(m => m.useGas === 'yes').length || 1;
+      const totalSeatsCount = members.reduce((a, m) => a + (parseInt(m.seatQty) || 1), 0) || 1;
+
+      const houseRentList = ledger.fixedExpenses.filter(f => f.category === 'বাসা ভাড়া');
+      const otherFixedList = ledger.fixedExpenses.filter(f => f.category !== 'বাসা ভাড়া');
+      const totHouseRent = houseRentList.reduce((acc, curr) => acc + curr.amount, 0);
+      const totOtherFixed = otherFixedList.reduce((acc, curr) => acc + curr.amount, 0);
+      const totFixed = totHouseRent + totOtherFixed;
+      const totGas = ledger.gasExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+      const totBazaar = ledger.bazaarExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+      const totMealsAll = ledger.meals.reduce((acc, curr) => acc + curr.total, 0) || 1;
+
+      const perMealRate = totBazaar / totMealsAll;
+      const perOtherFixedCharge = totOtherFixed / totalMembersCount;
+      const perSeatRentCharge = totHouseRent / totalSeatsCount;
+      const perGasCharge = totGas / gasUsersCount;
+
+      if (members.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500 font-bold">এই ইউজারের অধীনে কোনো সদস্য/হিসাব পাওয়া যায়নি!</td></tr>`;
+      } else {
+        members.forEach(m => {
+          const dep = ledger.deposits.filter(d => d.memberId === m.id).reduce((a, c) => a + c.amount, 0);
+          const mls = ledger.meals.filter(ml => ml.memberId === m.id).reduce((a, c) => a + c.total, 0);
+          const mealExp = mls * perMealRate;
+          const fixExp = perOtherFixedCharge + (perSeatRentCharge * (parseInt(m.seatQty) || 1));
+          const gasExp = m.useGas === 'yes' ? perGasCharge : 0;
+          const totExp = mealExp + fixExp + gasExp;
+          const bal = dep - totExp;
+
+          tbody.innerHTML += `
+            <tr class="hover:bg-slate-50">
+              <td class="p-2.5 font-bold text-gray-800">${m.name}</td>
+              <td class="p-2.5">৳ ${dep}</td>
+              <td class="p-2.5">${mls} টি</td>
+              <td class="p-2.5">৳ ${mealExp.toFixed(2)}</td>
+              <td class="p-2.5">৳ ${fixExp.toFixed(2)}</td>
+              <td class="p-2.5">৳ ${gasExp.toFixed(2)}</td>
+              <td class="p-2.5 font-bold text-rose-600">৳ ${totExp.toFixed(2)}</td>
+              <td class="p-2.5 font-bold ${bal >= 0 ? 'text-emerald-700' : 'text-red-600'}">
+                ${bal >= 0 ? 'পাবে: ৳ ' + bal.toFixed(2) : 'দিবে: ৳ ' + Math.abs(bal).toFixed(2)}
+              </td>
+            </tr>
+          `;
+        });
+      }
+
       if (bazBody && fixBody) {
-        const sortedBazaar = [...window.hostelData.bazaarExpenses].sort((a,b) => parseDDMMYYYY(a.date)-parseDDMMYYYY(b.date) || (a.timestamp||0)-(b.timestamp||0));
+        const sortedBazaar = [...ledger.bazaarExpenses].sort((a,b) => parseDDMMYYYY(a.date)-parseDDMMYYYY(b.date) || (a.timestamp||0)-(b.timestamp||0));
         bazBody.innerHTML = sortedBazaar.length ? sortedBazaar.map(b => `<tr class="border-b"><td class="p-2">${b.date}</td><td class="p-2">${b.items ? b.items.join(', ') : '-'}</td><td class="p-2">${b.shoppers ? b.shoppers.join(', ') : '-'}</td><td class="p-2">৳${b.amount}</td></tr>`).join('') : '<tr><td colspan="4" class="p-3 text-center text-gray-400">কোনো বাজার খরচ নেই</td></tr>';
-        const sortedFixed = [...window.hostelData.fixedExpenses].sort((a,b) => parseDDMMYYYY(a.date)-parseDDMMYYYY(b.date) || (a.timestamp||0)-(b.timestamp||0));
+        const sortedFixed = [...ledger.fixedExpenses].sort((a,b) => parseDDMMYYYY(a.date)-parseDDMMYYYY(b.date) || (a.timestamp||0)-(b.timestamp||0));
         fixBody.innerHTML = sortedFixed.length ? sortedFixed.map(f => `<tr class="border-b"><td class="p-2">${f.date}</td><td class="p-2">${f.category}</td><td class="p-2">৳${f.amount}</td></tr>`).join('') : '<tr><td colspan="3" class="p-3 text-center text-gray-400">কোনো স্থায়ী খরচ নেই</td></tr>';
         document.getElementById('accounts-bazaar-detail-total').innerText = totBazaar;
         document.getElementById('accounts-fixed-detail-total').innerText = totFixed;
       }
+    };
 
+
+    // FIX: one-time cleanup of pre-existing orphan member records (no userId, or
+    // userId pointing at a user that no longer exists). This clears out any
+    // leftover names that were already stuck in the database from before the
+    // deleteUserAccount fix above existed.
+    window.cleanupOrphanMembers = function() {
+      const activeUserIds = new Set((window.hostelData.users || []).map(u => u.userId));
+      const before = (window.hostelData.members || []).length;
+      window.hostelData.members = (window.hostelData.members || []).filter(
+        m => m.userId && activeUserIds.has(m.userId)
+      );
+      if (window.hostelData.members.length !== before) {
+        syncMasterData();
+      }
     };
 
     window.openAdminPanelModal = function() {
+      cleanupOrphanMembers();
       populateAdminUserSelector();
       populateAdminCommenterDropdown();
       switchAdminTab('message');
@@ -2383,9 +2390,16 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       const commenterSel = document.getElementById('admin-commenter-dropdown');
       commenterSel.innerHTML = '<option value="">-- প্রেরকের নাম নির্বাচন করুন --</option>';
       commenterSel.innerHTML += '<option value="Admin (Hredoy Roy)">Admin (Hredoy Roy)</option>';
-      window.hostelData.members.forEach(m => {
-        commenterSel.innerHTML += `<option value="${m.name}">${m.name}</option>`;
-      });
+      // FIX: only list members who still belong to a currently existing user.
+      // Previously this looped over the raw, unscoped members array, so any
+      // leftover/orphan member record (e.g. missing userId, or belonging to a
+      // user that was already deleted) kept showing up here forever.
+      const activeUserIds = new Set((window.hostelData.users || []).map(u => u.userId));
+      window.hostelData.members
+        .filter(m => m.userId && activeUserIds.has(m.userId))
+        .forEach(m => {
+          commenterSel.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+        });
     };
 
     window.loadAdminSelectedUser = function(userId) {
@@ -2591,16 +2605,19 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       const name = document.getElementById('member-input-name').value.trim();
       const phone = document.getElementById('member-input-phone').value.trim();
       const useGas = document.getElementById('member-input-gas').value;
+      const seatQty = parseInt(document.getElementById('member-input-seatqty').value) || 1;
 
       window.hostelData.members.push({
         id: 'MEM_' + Date.now(),
         name,
         phone,
         useGas,
+        seatQty,
         userId: window.currentUser ? window.currentUser.userId : ''
       });
       document.getElementById('member-input-name').value = '';
       document.getElementById('member-input-phone').value = '';
+      document.getElementById('member-input-seatqty').value = '1';
       syncMasterData();
     };
 
@@ -2614,9 +2631,9 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
 
       window.hostelData.deposits.push({
         id: 'DEP_' + Date.now(),
-        userId: window.currentUser ? window.currentUser.userId : '',
         receiptNo: 'DEP-' + Date.now(),
         memberId,
+        userId: window.currentUser ? window.currentUser.userId : '',
         amount,
         date,
         timestamp: Date.now(),
@@ -2790,7 +2807,7 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
       const html = `<div class="receipt-paper">
         <div class="receipt-header text-center">
           ${window.getReceiptBrandingHTML()}
-          <div class="text-2xl font-black tracking-wide" data-receipt-site-heading>DREAM TOUCHING HOSTEL</div>
+          <div class="text-2xl font-black tracking-wide" data-receipt-site-heading>Gour Kishore Das Babaji BACE</div>
           <div class="text-sm font-bold text-gray-500">OFFICIAL DEPOSIT RECEIPT</div>
           <div class="text-xs mt-2">জমার রশিদ</div>
         </div>
@@ -2801,7 +2818,7 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
         <div class="my-4 p-3 bg-gray-50 rounded-lg"><b>কথায়:</b> ${window.numberToBanglaWords(d.amount)} টাকা মাত্র</div>
         <div class="receipt-total flex justify-between"><span>TRANSACTION SUCCESSFUL</span><span>৳ ${Number(d.amount||0).toLocaleString('en-IN')}</span></div>
         <div class="grid grid-cols-2 gap-10 mt-12 text-center text-xs"><div class="border-t pt-2">জমাদানকারীর স্বাক্ষর</div><div class="border-t pt-2">Authorized Signature</div></div>
-        <div class="text-center text-[10px] text-gray-400 mt-8">এই রশিদটি DREAM TOUCHING HOSTEL-এর হিসাব ব্যবস্থার মাধ্যমে তৈরি।</div>
+        <div class="text-center text-[10px] text-gray-400 mt-8">এই রশিদটি Gour Kishore Das Babaji BACE-এর হিসাব ব্যবস্থার মাধ্যমে তৈরি।</div>
       </div>`;
       window.openReceipt('জমার রশিদ', html);
     };
@@ -2809,22 +2826,30 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
     window.showBazaarReceipt = function(id) {
       const b = window.hostelData.bazaarExpenses.find(x => x.id === id);
       if (!b) return;
-      const ordered = [...window.hostelData.bazaarExpenses].sort((a,c)=>(a.timestamp||0)-(c.timestamp||0));
+      // FIX: "পূর্বের ক্যাশ" was being calculated from the GLOBAL deposits/expenses
+      // of every user on the site, instead of only this bazaar expense's own user.
+      // Scope everything to b.userId so each user's cash-in-hand stays isolated.
+      const uid = b.userId;
+      const myDeposits = (window.hostelData.deposits || []).filter(x => x.userId === uid);
+      const myBazaarExpenses = (window.hostelData.bazaarExpenses || []).filter(x => x.userId === uid);
+      const myFixedExpenses = (window.hostelData.fixedExpenses || []).filter(x => x.userId === uid);
+      const myGasExpenses = (window.hostelData.gasExpenses || []).filter(x => x.userId === uid);
+      const ordered = [...myBazaarExpenses].sort((a,c)=>(a.timestamp||0)-(c.timestamp||0));
       const idx = ordered.findIndex(x=>x.id===id);
-      const previous = window.hostelData.deposits.reduce((a,x)=>a+Number(x.amount||0),0) - ordered.slice(0,idx).reduce((a,x)=>a+Number(x.amount||0),0) - window.hostelData.fixedExpenses.filter(x=>(x.timestamp||0)<(b.timestamp||0)).reduce((a,x)=>a+Number(x.amount||0),0) - window.hostelData.gasExpenses.filter(x=>(x.timestamp||0)<(b.timestamp||0)).reduce((a,x)=>a+Number(x.amount||0),0);
+      const previous = myDeposits.reduce((a,x)=>a+Number(x.amount||0),0) - ordered.slice(0,idx).reduce((a,x)=>a+Number(x.amount||0),0) - myFixedExpenses.filter(x=>(x.timestamp||0)<(b.timestamp||0)).reduce((a,x)=>a+Number(x.amount||0),0) - myGasExpenses.filter(x=>(x.timestamp||0)<(b.timestamp||0)).reduce((a,x)=>a+Number(x.amount||0),0);
       const before = Math.max(0, previous);
       const after = before - Number(b.amount||0);
       const receiptNo = b.receiptNo || ('BAZ-' + String(b.timestamp || Date.now()).slice(-10));
       const items = (b.items && b.items.length) ? b.items : ['উল্লেখ করা হয়নি'];
-      const shoppers = (b.shoppers && b.shoppers.length) ? b.shoppers : ['উল্লেখ করা হয়নি'];
+      const shoppers = (b.shopperNames && b.shopperNames.length) ? b.shopperNames : (b.shoppers && b.shoppers.length ? b.shoppers.map(id => { const m=window.hostelData.members.find(x=>x.id===id); return m ? m.name : id; }) : ['উল্লেখ করা হয়নি']);
       const html = `<div class="receipt-paper">
-        <div class="receipt-header text-center">${window.getReceiptBrandingHTML()}<div class="text-2xl font-black tracking-wide" data-receipt-site-heading>DREAM TOUCHING HOSTEL</div><div class="text-sm font-bold text-gray-500">BAZAAR EXPENSE RECEIPT</div><div class="text-xs mt-2">বাজার খরচের রশিদ</div></div>
+        <div class="receipt-header text-center">${window.getReceiptBrandingHTML()}<div class="text-2xl font-black tracking-wide" data-receipt-site-heading>Gour Kishore Das Babaji BACE</div><div class="text-sm font-bold text-gray-500">BAZAAR EXPENSE RECEIPT</div><div class="text-xs mt-2">বাজার খরচের রশিদ</div></div>
         <div class="grid grid-cols-2 gap-2 text-sm mb-4"><div><b>রশিদ নম্বর:</b> ${window.escapeReceipt(receiptNo)}</div><div class="text-right"><b>তারিখ/সময়:</b> ${window.escapeReceipt(b.date)} | ${window.escapeReceipt(window.getReceiptTime(b.timestamp))}</div></div>
         <table class="w-full receipt-table text-sm"><tr><td class="label">বাজার করেছেন</td><td>${window.escapeReceipt(shoppers.join(', '))}</td></tr><tr><td class="label">বাজারের আইটেম</td><td>${items.map(window.escapeReceipt).join(', ')}</td></tr><tr><td class="label">পূর্বের ক্যাশ</td><td>৳ ${before.toLocaleString('en-IN')}</td></tr><tr><td class="label">বাজার খরচ</td><td class="font-black text-lg">৳ ${Number(b.amount||0).toLocaleString('en-IN')}</td></tr><tr><td class="label">খরচের পর ক্যাশ</td><td class="font-black">৳ ${after.toLocaleString('en-IN')}</td></tr></table>
         <div class="my-4 p-3 bg-gray-50 rounded-lg"><b>খরচের পরিমাণ কথায়:</b> ${window.numberToBanglaWords(b.amount)} টাকা মাত্র</div>
         <div class="receipt-total flex justify-between"><span>EXPENSE RECORDED</span><span>৳ ${Number(b.amount||0).toLocaleString('en-IN')}</span></div>
         <div class="grid grid-cols-2 gap-10 mt-12 text-center text-xs"><div class="border-t pt-2">বাজারকারীর স্বাক্ষর</div><div class="border-t pt-2">Authorized Signature</div></div>
-        <div class="text-center text-[10px] text-gray-400 mt-8">এই রশিদটি DREAM TOUCHING HOSTEL-এর হিসাব ব্যবস্থার মাধ্যমে তৈরি।</div>
+        <div class="text-center text-[10px] text-gray-400 mt-8">এই রশিদটি Gour Kishore Das Babaji BACE-এর হিসাব ব্যবস্থার মাধ্যমে তৈরি।</div>
       </div>`;
       window.openReceipt('বাজার খরচের রশিদ', html);
     };
@@ -2924,36 +2949,67 @@ window.toggleLanguage=function(){window.currentLang=window.currentLang==='bn'?'e
         isPending: false
       });
 
-      const savedId = window.hostelData.bazaarExpenses[window.hostelData.bazaarExpenses.length - 1].id;
-
       document.getElementById('bazaar-amt-input').value = '';
       document.getElementById('bazaar-custom-items').value = '';
       document.querySelectorAll('.bazaar-chk:checked, .shopper-chk:checked').forEach(cb => cb.checked = false);
 
       syncMasterData();
-
-      // Auto-open the cash memo/voucher so the member can save it right after adding the bazaar entry
-      showBazaarReceipt(savedId);
     };
 
     /* BAZAAR EXPENSE REQUEST WORKFLOW */
-window.renderUserBazaarRequests=function(){const box=document.getElementById('user-bazaar-request-list');if(!box||!window.currentUser)return;const rs=(window.hostelData.bazaarRequests||[]).filter(r=>r.status==='pending'&&r.userId===window.currentUser.userId).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!rs.length){box.innerHTML='<div class="text-center text-xs text-gray-400 bg-white/70 border rounded-xl p-3">কোনো অপেক্ষমান বাজার রিকোয়েস্ট নেই।</div>';return;}box.innerHTML=rs.map(r=>`<div class="bg-white border border-blue-200 rounded-xl p-3 text-xs shadow-sm"><div class="flex justify-between gap-2 font-bold text-blue-900"><span>${r.date} — ${r.memberName||'-'}</span><span>অনুমোদন প্রয়োজন</span></div><div class="mt-1 text-gray-700">আইটেম: <b>${(r.items||[]).join(', ')||'-'}</b> | টাকা: <b>৳${Number(r.amount||0).toLocaleString('en-IN')}</b></div><div class="mt-2 flex gap-2"><button onclick="approveBazaarRequest('${r.id}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-check mr-1"></i>অনুমোদন</button><button onclick="rejectBazaarRequest('${r.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i>বাতিল</button></div></div>`).join('');applyLanguage();};
-window.approveBazaarRequest=function(id){const r=(window.hostelData.bazaarRequests||[]).find(x=>x.id===id);if(!r||r.status!=='pending'||!window.currentUser||r.userId!==window.currentUser.userId)return;window.hostelData.bazaarExpenses.push({id:'BAZ_'+Date.now(),userId:window.currentUser?window.currentUser.userId:(r.userId||''),receiptNo:'BAZ-'+Date.now(),items:r.items||[],shoppers:r.shoppers||[r.memberName||r.memberId],amount:Number(r.amount||0),date:r.date,timestamp:Date.now(),editCount:0,isPending:false,source:'admin_bazaar_request',requestId:r.id});r.status='approved';r.approvedAt=Date.now();syncMasterData();renderUserBazaarRequests();alert(window.currentLang==='bn'?'বাজার রিকোয়েস্ট অনুমোদন হয়ে হিসাবের সাথে যুক্ত হয়েছে।':'Bazaar request approved and added to the ledger.');};
+window.renderUserBazaarRequests=function(){const box=document.getElementById('user-bazaar-request-list');if(!box||!window.currentUser)return;const rs=(window.hostelData.bazaarRequests||[]).filter(r=>r.status==='pending'&&r.userId===window.currentUser.userId).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!rs.length){box.innerHTML='<div class="text-center text-xs text-gray-400 bg-white/70 border rounded-xl p-3">কোনো অপেক্ষমান বাজার রিকোয়েস্ট নেই।</div>';return;}box.innerHTML=rs.map(r=>`<div class="bg-white border border-blue-200 rounded-xl p-3 text-xs shadow-sm"><div class="flex justify-between gap-2 font-bold text-blue-900"><span>${r.date} — ${r.memberName||'-'}</span><span>অনুমোদন প্রয়োজন</span></div><div class="mt-1 text-gray-700">আইটেম: <b>${(r.items||[]).join(', ')||'-'}</b> | টাকা: <b>৳${Number(r.amount||0).toLocaleString('en-IN')}</b></div><div class="mt-2 flex flex-wrap gap-2"><button onclick="approveBazaarRequest('${r.id}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-check mr-1"></i>অনুমোদন</button><button onclick="showBazaarRequestReceipt('${r.id}')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-receipt mr-1"></i>রিসিট সেভ</button><button onclick="rejectBazaarRequest('${r.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i>বাতিল</button></div></div>`).join('');applyLanguage();};
+window.showBazaarRequestReceipt=function(id){const r=(window.hostelData.bazaarRequests||[]).find(x=>x.id===id);if(!r||!window.currentUser||r.userId!==window.currentUser.userId)return;const receiptNo=r.receiptNo||('BRQ-'+String(r.createdAt||Date.now()).slice(-10));const html=`<div class="receipt-paper"><div class="receipt-header text-center">${window.getReceiptBrandingHTML()}<div class="text-2xl font-black tracking-wide">Gour Kishore Das Babaji BACE</div><div class="text-sm font-bold text-gray-500">BAZAAR EXPENSE REQUEST RECEIPT</div><div class="text-xs mt-2">বাজার খরচ রিকোয়েস্টের রশিদ</div></div><div class="grid grid-cols-2 gap-2 text-sm mb-4"><div><b>রশিদ নম্বর:</b> ${window.escapeReceipt(receiptNo)}</div><div class="text-right"><b>তারিখ:</b> ${window.escapeReceipt(r.date)}</div></div><table class="w-full receipt-table text-sm"><tr><td class="label">সদস্য</td><td class="font-bold">${window.escapeReceipt(r.memberName||'-')}</td></tr><tr><td class="label">বাজারের আইটেম</td><td>${(r.items||['উল্লেখ করা হয়নি']).map(window.escapeReceipt).join(', ')}</td></tr><tr><td class="label">বাজারের পরিমাণ</td><td class="font-black text-lg">৳ ${Number(r.amount||0).toLocaleString('en-IN')}</td></tr><tr><td class="label">স্ট্যাটাস</td><td class="font-bold text-amber-700">অনুমোদনের অপেক্ষায়</td></tr></table><div class="my-4 p-3 bg-gray-50 rounded-lg"><b>পরিমাণ কথায়:</b> ${window.numberToBanglaWords(r.amount)} টাকা মাত্র</div><div class="receipt-total flex justify-between"><span>BAZAAR REQUEST</span><span>৳ ${Number(r.amount||0).toLocaleString('en-IN')}</span></div><div class="text-center text-[10px] text-gray-400 mt-8">এই রশিদটি Gour Kishore Das Babaji BACE-এর হিসাব ব্যবস্থার মাধ্যমে তৈরি।</div></div>`;window.openReceipt('বাজার রিকোয়েস্টের রশিদ',html);};
+window.approveBazaarRequest=function(id){const r=(window.hostelData.bazaarRequests||[]).find(x=>x.id===id);if(!r||r.status!=='pending'||!window.currentUser||r.userId!==window.currentUser.userId)return;window.hostelData.bazaarExpenses.push({id:'BAZ_'+Date.now(),userId:r.userId,receiptNo:'BAZ-'+Date.now(),items:r.items||[],shoppers:r.shopperNames||r.shoppers||[r.memberName||r.memberId],amount:Number(r.amount||0),date:r.date,timestamp:Date.now(),editCount:0,isPending:false,source:'admin_bazaar_request',requestId:r.id});r.status='approved';r.approvedAt=Date.now();syncMasterData();renderUserBazaarRequests();alert(window.currentLang==='bn'?'বাজার রিকোয়েস্ট অনুমোদন হয়ে হিসাবের সাথে যুক্ত হয়েছে।':'Bazaar request approved and added to the ledger.');};
 window.rejectBazaarRequest=function(id){const r=(window.hostelData.bazaarRequests||[]).find(x=>x.id===id);if(!r||r.status!=='pending'||!window.currentUser||r.userId!==window.currentUser.userId)return;window.hostelData.bazaarRequests=window.hostelData.bazaarRequests.filter(x=>x.id!==id);syncMasterData();renderUserBazaarRequests();alert(window.currentLang==='bn'?'বাজার রিকোয়েস্ট বাতিল করা হয়েছে।':'Bazaar request rejected.');};
 window.populateAdminBazaarItems=function(){const g=document.getElementById('admin-bazaar-items-grid');if(!g)return;g.innerHTML=window.defaultBazaarItems.map(x=>`<label class="flex items-center gap-1 bg-white p-1 rounded border cursor-pointer hover:bg-blue-50"><input type="checkbox" value="${x}" class="admin-bazaar-chk rounded text-blue-600"> <span>${x}</span></label>`).join('');applyLanguage();};
-window.populateAdminBazaarMemberSelector=function(uid){const sel=document.getElementById('admin-bazaar-member-selector');if(!sel)return;sel.innerHTML='<option value="">-- সদস্য নির্বাচন করুন --</option>';sel.disabled=!uid;if(!uid)return;const u=window.hostelData.users.find(x=>x.userId===uid);getMembersForUser(u).forEach(m=>sel.innerHTML+=`<option value="${m.id}">${m.name}${m.phone?' — '+m.phone:''}</option>`);applyLanguage();};
+window.populateAdminBazaarMemberSelector=function(uid){const box=document.getElementById('admin-bazaar-member-selector');if(!box)return;box.innerHTML='';if(!uid){box.innerHTML='<div class="text-xs text-gray-400">-- আগে ইউজার নির্বাচন করুন --</div>';return;}const u=window.hostelData.users.find(x=>x.userId===uid);const members=getMembersForUser(u);if(!members.length){box.innerHTML='<div class="text-xs text-gray-400">কোনো সদস্য পাওয়া যায়নি</div>';return;}box.innerHTML=members.map(m=>`<label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border cursor-pointer"><input type="checkbox" value="${m.id}" class="admin-bazaar-member-chk rounded text-blue-600"><span class="text-xs font-bold">${m.name}${m.phone?' — '+m.phone:''}</span></label>`).join('');applyLanguage();};
 window.populateAdminBazaarUserSelector=function(){const sel=document.getElementById('admin-bazaar-user-selector');if(!sel)return;sel.innerHTML='<option value="">-- ইউজার নির্বাচন করুন --</option>';window.hostelData.users.filter(u=>u.status!=='pending').forEach(u=>{if(getMembersForUser(u).length)sel.innerHTML+=`<option value="${u.userId}">${u.fullName||u.userId} (@${u.userId})</option>`});populateAdminBazaarMemberSelector(sel.value);const d=document.getElementById('admin-bazaar-date');if(d&&!d.value)d.value=getTodayDDMMYYYY();populateAdminBazaarItems();};
-window.sendAdminBazaarRequest=function(){const uid=document.getElementById('admin-bazaar-user-selector').value,mid=document.getElementById('admin-bazaar-member-selector').value,u=window.hostelData.users.find(x=>x.userId===uid),m=window.hostelData.members.find(x=>x.id===mid),date=document.getElementById('admin-bazaar-date').value.trim()||getTodayDDMMYYYY(),amount=parseFloat(document.getElementById('admin-bazaar-amt').value)||0;let items=Array.from(document.querySelectorAll('.admin-bazaar-chk:checked')).map(x=>x.value);const custom=document.getElementById('admin-bazaar-custom-items').value.trim();if(custom)items.push(...custom.split(',').map(x=>x.trim()).filter(Boolean));if(!u||!m){alert(window.currentLang==='bn'?'অনুগ্রহ করে ইউজার ও ক্রেতা সদস্য নির্বাচন করুন।':'Please select a user and shopper member.');return;}if(!amount||amount<=0){alert(window.currentLang==='bn'?'টাকার পরিমাণ দিতে হবে।':'Please enter an amount.');return;}if(!items.length){alert(window.currentLang==='bn'?'কমপক্ষে একটি বাজার আইটেম দিন।':'Enter at least one bazaar item.');return;}window.hostelData.bazaarRequests=window.hostelData.bazaarRequests||[];window.hostelData.bazaarRequests.push({id:'BRQ_'+Date.now(),userId:u.userId,userName:u.fullName||u.userId,memberId:m.id,memberName:m.name,items,shoppers:[m.id],amount,date,status:'pending',managementStatus:'sent',createdAt:Date.now()});document.getElementById('admin-bazaar-amt').value='';document.getElementById('admin-bazaar-custom-items').value='';document.querySelectorAll('.admin-bazaar-chk:checked').forEach(x=>x.checked=false);syncMasterData();renderAdminBazaarRequests();if(window.currentUser?.userId===u.userId)renderUserBazaarRequests();alert(window.currentLang==='bn'?'বাজার খরচ রিকোয়েস্ট সফলভাবে ইউজার প্যানেলে পাঠানো হয়েছে।':'Bazaar expense request sent to the user panel.');};
+window.sendAdminBazaarRequest=function(){const uid=document.getElementById('admin-bazaar-user-selector').value,u=window.hostelData.users.find(x=>x.userId===uid),selectedIds=Array.from(document.querySelectorAll('.admin-bazaar-member-chk:checked')).map(x=>x.value),members=(window.hostelData.members||[]).filter(m=>selectedIds.includes(m.id)),date=document.getElementById('admin-bazaar-date').value.trim()||getTodayDDMMYYYY(),amount=parseFloat(document.getElementById('admin-bazaar-amt').value)||0;let items=Array.from(document.querySelectorAll('.admin-bazaar-chk:checked')).map(x=>x.value);const custom=document.getElementById('admin-bazaar-custom-items').value.trim();if(custom)items.push(...custom.split(',').map(x=>x.trim()).filter(Boolean));if(!u||!members.length){alert(window.currentLang==='bn'?'অনুগ্রহ করে ইউজার ও কমপক্ষে একজন ক্রেতা সদস্য নির্বাচন করুন।':'Please select a user and at least one shopper member.');return;}if(!amount||amount<=0){alert(window.currentLang==='bn'?'টাকার পরিমাণ দিতে হবে।':'Please enter an amount.');return;}if(!items.length){alert(window.currentLang==='bn'?'কমপক্ষে একটি বাজার আইটেম দিন।':'Enter at least one bazaar item.');return;}window.hostelData.bazaarRequests=window.hostelData.bazaarRequests||[];window.hostelData.bazaarRequests.push({id:'BRQ_'+Date.now(),userId:u.userId,userName:u.fullName||u.userId,memberId:members[0].id,memberName:members[0].name,items,shoppers:members.map(m=>m.id),shopperNames:members.map(m=>m.name),amount,date,status:'pending',managementStatus:'sent',createdAt:Date.now()});document.getElementById('admin-bazaar-amt').value='';document.getElementById('admin-bazaar-custom-items').value='';document.querySelectorAll('.admin-bazaar-chk:checked,.admin-bazaar-member-chk:checked').forEach(x=>x.checked=false);syncMasterData();renderAdminBazaarRequests();if(window.currentUser?.userId===u.userId)renderUserBazaarRequests();alert(window.currentLang==='bn'?'বাজার খরচ রিকোয়েস্ট সফলভাবে ইউজার প্যানেলে পাঠানো হয়েছে।':'Bazaar expense request sent to the user panel.');};
 window.renderAdminBazaarRequests=function(){const box=document.getElementById('admin-bazaar-request-list');if(!box)return;const rs=(window.hostelData.bazaarRequests||[]).filter(r=>r.status==='pending').sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!rs.length){box.innerHTML='<div class="text-center text-xs text-gray-400 bg-slate-50 border rounded-xl p-4">কোনো অপেক্ষমান বাজার রিকোয়েস্ট নেই।</div>';return;}box.innerHTML=rs.map(r=>`<div class="border rounded-xl p-3 bg-white shadow-sm"><div class="flex flex-wrap justify-between gap-2 text-xs"><div><b>${r.userName||r.userId}</b> (@${r.userId})</div><div class="font-bold text-blue-700">${r.date}</div></div><div class="text-xs text-gray-600 mt-1">সদস্য: <b>${r.memberName||'-'}</b> | আইটেম: <b>${(r.items||[]).join(', ')}</b> | টাকা: <b>৳${Number(r.amount||0).toLocaleString('en-IN')}</b></div><div class="mt-2 text-[10px] font-bold text-blue-700">ইউজারের প্যানেল থেকে অনুমোদন বা বাতিল হবে।</div></div>`).join('');applyLanguage();};
 
     /* MEAL ENTRY REQUEST WORKFLOW */
     window.getMembersForUser = function(user) {
       if (!user) return [];
-      return (window.hostelData.members || []).filter(m => m.userId === user.userId);
+
+      // নতুন সদস্যগুলো সরাসরি userId দিয়ে যুক্ত থাকে।
+      const owned = window.hostelData.members.filter(m =>
+        m.userId && m.userId === user.userId
+      );
+
+      // SECURITY: unassigned/legacy members must NOT be shown to every user.
+      // Only records explicitly owned by the signed-in user are visible.
+      const result = owned;
+      return result.filter((m, index, arr) =>
+        arr.findIndex(x => x.id === m.id) === index
+      );
     };
 
     window.getMemberForUser = function(user) {
       return getMembersForUser(user)[0] || null;
+    };
+
+    // Return ONLY the ledger records belonging to the currently signed-in user.
+    // Ownership is stored by userId. For old transaction records without userId,
+    // ownership can be resolved through their memberId where possible.
+    window.getUserLedger = function(user) {
+      if (!user) return { members: [], deposits: [], fixedExpenses: [], gasExpenses: [], bazaarExpenses: [], meals: [], mealRequests: [], bazaarRequests: [], pendingEdits: [] };
+      const uid = user.userId;
+      const members = (window.hostelData.members || []).filter(m => m.userId === uid);
+      const memberIds = new Set(members.map(m => m.id));
+      const owned = (arr, allowMemberLookup = true) => (arr || []).filter(x =>
+        x.userId === uid || (allowMemberLookup && x.memberId && memberIds.has(x.memberId))
+      );
+      return {
+        members,
+        deposits: owned(window.hostelData.deposits),
+        fixedExpenses: owned(window.hostelData.fixedExpenses, false),
+        gasExpenses: owned(window.hostelData.gasExpenses, false),
+        bazaarExpenses: owned(window.hostelData.bazaarExpenses, false),
+        meals: owned(window.hostelData.meals),
+        mealRequests: owned(window.hostelData.mealRequests),
+        bazaarRequests: owned(window.hostelData.bazaarRequests),
+        pendingEdits: owned(window.hostelData.pendingEdits)
+      };
     };
 
     window.hasMealForMemberDate = function(memberId, date) {
@@ -3025,7 +3081,7 @@ window.renderAdminBazaarRequests=function(){const box=document.getElementById('a
         return;
       }
       window.hostelData.meals.push({
-        id: 'MEL_' + Date.now(), userId: window.currentUser ? window.currentUser.userId : (req.userId || ''), memberId: req.memberId, date: req.date,
+        id: 'MEL_' + Date.now(), memberId: req.memberId, date: req.date,
         morning: req.morning, noon: req.noon, night: req.night, total: req.total,
         timestamp: Date.now(), editCount: 0, isPending: false, source: 'user_meal_request', requestId: req.id
       });
@@ -3147,6 +3203,7 @@ window.renderAdminMealRequests = function() {
 
       window.hostelData.meals.push({
         id: 'MEL_' + Date.now(),
+        userId: window.currentUser ? window.currentUser.userId : '',
         memberId,
         date,
         morning: m,
@@ -3224,7 +3281,6 @@ window.renderAdminMealRequests = function() {
         if (!window.hostelData.pendingEdits) window.hostelData.pendingEdits = [];
         window.hostelData.pendingEdits.push({
           pendingId: 'PED_' + Date.now(),
-          userId: window.currentUser ? window.currentUser.userId : '',
           type: 'delete',
           listName,
           targetId: id
@@ -3235,6 +3291,13 @@ window.renderAdminMealRequests = function() {
     };
 
     window.renderDashboard = function() {
+      const scoped = getUserLedger(window.currentUser);
+      const members = scoped.members;
+      const deposits = scoped.deposits;
+      const fixedExpenses = scoped.fixedExpenses;
+      const gasExpenses = scoped.gasExpenses;
+      const bazaarExpenses = scoped.bazaarExpenses;
+      const meals = scoped.meals;
       renderUserMealRequests();
       renderUserBazaarRequests();
       const membersContainer = document.getElementById('members-cards-container');
@@ -3245,21 +3308,27 @@ window.renderAdminMealRequests = function() {
       mealSelect.innerHTML = '<option value="">সদস্য নির্বাচন করুন</option>';
       shopperList.innerHTML = '';
 
-      const totalMembersCount = window.hostelData.members.length || 1;
-      const gasUsersCount = window.hostelData.members.filter(m => m.useGas === 'yes').length || 1;
+      const totalMembersCount = members.length || 1;
+      const gasUsersCount = members.filter(m => m.useGas === 'yes').length || 1;
+      const totalSeatsCount = members.reduce((a, m) => a + (parseInt(m.seatQty) || 1), 0) || 1;
 
-      const totFixed = window.hostelData.fixedExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totGas = window.hostelData.gasExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totBazaar = window.hostelData.bazaarExpenses.reduce((acc, curr) => acc + curr.amount, 0);
-      const totMealsAll = window.hostelData.meals.reduce((acc, curr) => acc + curr.total, 0) || 1;
+      const houseRentList = fixedExpenses.filter(f => f.category === 'বাসা ভাড়া');
+      const otherFixedList = fixedExpenses.filter(f => f.category !== 'বাসা ভাড়া');
+      const totHouseRent = houseRentList.reduce((acc, curr) => acc + curr.amount, 0);
+      const totOtherFixed = otherFixedList.reduce((acc, curr) => acc + curr.amount, 0);
+      const totFixed = totHouseRent + totOtherFixed;
+      const totGas = gasExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+      const totBazaar = bazaarExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+      const totMealsAll = meals.reduce((acc, curr) => acc + curr.total, 0) || 1;
 
       const perMealRate = totBazaar / totMealsAll;
-      const perFixedCharge = totFixed / totalMembersCount;
+      const perOtherFixedCharge = totOtherFixed / totalMembersCount;
+      const perSeatRentCharge = totHouseRent / totalSeatsCount;
       const perGasCharge = totGas / gasUsersCount;
 
       let sectionTotalDepositSum = 0;
 
-      window.hostelData.members.forEach(m => {
+      members.forEach(m => {
         mealSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
         shopperList.innerHTML += `
           <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border">
@@ -3267,14 +3336,14 @@ window.renderAdminMealRequests = function() {
           </label>
         `;
 
-        const memberDeposits = window.hostelData.deposits.filter(d => d.memberId === m.id);
+        const memberDeposits = deposits.filter(d => d.memberId === m.id);
         const myDepositSum = memberDeposits.reduce((acc, curr) => acc + curr.amount, 0);
         sectionTotalDepositSum += myDepositSum;
 
-        const myMealsSum = window.hostelData.meals.filter(ml => ml.memberId === m.id).reduce((acc, curr) => acc + curr.total, 0);
+        const myMealsSum = meals.filter(ml => ml.memberId === m.id).reduce((acc, curr) => acc + curr.total, 0);
 
         const myMealCost = myMealsSum * perMealRate;
-        const myFixedCost = perFixedCharge;
+        const myFixedCost = perOtherFixedCharge + (perSeatRentCharge * (parseInt(m.seatQty) || 1));
         const myGasCost = m.useGas === 'yes' ? perGasCharge : 0;
         const myTotalExpense = myMealCost + myFixedCost + myGasCost;
 
@@ -3289,9 +3358,14 @@ window.renderAdminMealRequests = function() {
                 </h4>
                 <p class="text-xs text-gray-500"><i class="fa-solid fa-phone text-xs mr-1"></i>${m.phone}</p>
               </div>
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.useGas === 'yes' ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-700'}">
-                ${m.useGas === 'yes' ? 'গ্যাস ব্যবহারী' : 'গ্যাস নেই'}
-              </span>
+              <div class="flex flex-col items-end gap-1">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800">
+                  <i class="fa-solid fa-bed mr-1"></i>সিট: ${m.seatQty || 1}
+                </span>
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.useGas === 'yes' ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-700'}">
+                  ${m.useGas === 'yes' ? 'গ্যাস ব্যবহারী' : 'গ্যাস নেই'}
+                </span>
+              </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs bg-white p-2.5 rounded-xl border">
@@ -3342,10 +3416,10 @@ window.renderAdminMealRequests = function() {
       renderTables();
       renderUserMealRequests();
 
-      const totalAllDeposits = window.hostelData.deposits.reduce((a, c) => a + c.amount, 0);
+      const totalAllDeposits = deposits.reduce((a, c) => a + c.amount, 0);
       const totalAllExpenses = totFixed + totGas + totBazaar;
       const cashInHand = totalAllDeposits - totalAllExpenses;
-      const totalMealsCount = window.hostelData.meals.reduce((a, c) => a + c.total, 0);
+      const totalMealsCount = meals.reduce((a, c) => a + c.total, 0);
 
       document.getElementById('dash-cash-in-hand').innerText = cashInHand;
       document.getElementById('dash-total-deposit').innerText = totalAllDeposits;
@@ -3358,17 +3432,19 @@ window.renderAdminMealRequests = function() {
       document.getElementById('section-total-meals').innerText = totalMealsCount;
 
       document.getElementById('calc-meal-rate').innerText = perMealRate.toFixed(2);
-      document.getElementById('calc-fixed-rate').innerText = perFixedCharge.toFixed(2);
+      document.getElementById('calc-fixed-rate').innerText = perOtherFixedCharge.toFixed(2);
       document.getElementById('calc-gas-rate').innerText = perGasCharge.toFixed(2);
+      const rentRateEl = document.getElementById('calc-rent-rate');
+      if (rentRateEl) rentRateEl.innerText = perSeatRentCharge.toFixed(2);
       document.getElementById('calc-tot-bazaar').innerText = totBazaar;
 
       const finalSummaryTbody = document.getElementById('final-summary-table-body');
       finalSummaryTbody.innerHTML = '';
-      window.hostelData.members.forEach(m => {
-        const dep = window.hostelData.deposits.filter(d => d.memberId === m.id).reduce((a, c) => a + c.amount, 0);
-        const mls = window.hostelData.meals.filter(ml => ml.memberId === m.id).reduce((a, c) => a + c.total, 0);
+      members.forEach(m => {
+        const dep = deposits.filter(d => d.memberId === m.id).reduce((a, c) => a + c.amount, 0);
+        const mls = meals.filter(ml => ml.memberId === m.id).reduce((a, c) => a + c.total, 0);
         const mealExp = mls * perMealRate;
-        const fixExp = perFixedCharge;
+        const fixExp = perOtherFixedCharge + (perSeatRentCharge * (parseInt(m.seatQty) || 1));
         const gasExp = m.useGas === 'yes' ? perGasCharge : 0;
         const totExp = mealExp + fixExp + gasExp;
         const bal = dep - totExp;
@@ -3391,8 +3467,9 @@ window.renderAdminMealRequests = function() {
     };
 
     window.populateMealDateFilter = function() {
+      const scoped = getUserLedger(window.currentUser);
       const dateSel = document.getElementById('meal-date-filter-selector');
-      const sortedDates = [...new Set(window.hostelData.meals.map(m => m.date))].sort((a, b) => parseDDMMYYYY(a) - parseDDMMYYYY(b));
+      const sortedDates = [...new Set(scoped.meals.map(m => m.date))].sort((a, b) => parseDDMMYYYY(a) - parseDDMMYYYY(b));
 
       let optionsHTML = `<option value="ALL">সকল তারিখের মিল দেখুন</option>`;
       sortedDates.forEach(d => {
@@ -3402,10 +3479,11 @@ window.renderAdminMealRequests = function() {
     };
 
     window.renderMealTableByDate = function(selectedDate) {
+      const scoped = getUserLedger(window.currentUser);
       window.selectedMealDateFilter = selectedDate;
       const mealBody = document.getElementById('meal-table-body');
       
-      let filteredMeals = [...window.hostelData.meals].sort((a, b) => {
+      let filteredMeals = [...scoped.meals].sort((a, b) => {
         const dateDiff = parseDDMMYYYY(a.date) - parseDDMMYYYY(b.date);
         return dateDiff !== 0 ? dateDiff : (a.timestamp || 0) - (b.timestamp || 0);
       });
@@ -3420,7 +3498,7 @@ window.renderAdminMealRequests = function() {
       }
 
       mealBody.innerHTML = filteredMeals.map(ml => {
-        const mem = window.hostelData.members.find(m => m.id === ml.memberId);
+        const mem = scoped.members.find(m => m.id === ml.memberId);
         return `
           <tr class="border-b hover:bg-slate-50 ${ml.isPending ? 'pending-approval' : ''}">
             <td class="p-2 font-semibold text-emerald-800">${ml.date}</td>
@@ -3439,8 +3517,9 @@ window.renderAdminMealRequests = function() {
     };
 
     window.renderTables = function() {
+      const scoped = getUserLedger(window.currentUser);
       const fixedBody = document.getElementById('fixed-expense-table-body');
-      fixedBody.innerHTML = window.hostelData.fixedExpenses.map(f => `
+      fixedBody.innerHTML = scoped.fixedExpenses.map(f => `
         <tr class="border-b ${f.isPending ? 'pending-approval' : ''}">
           <td class="p-2">${f.date}</td>
           <td class="p-2 font-semibold">${f.category}</td>
@@ -3452,7 +3531,7 @@ window.renderAdminMealRequests = function() {
       `).join('');
 
       const gasBody = document.getElementById('gas-expense-table-body');
-      gasBody.innerHTML = window.hostelData.gasExpenses.map(g => `
+      gasBody.innerHTML = scoped.gasExpenses.map(g => `
         <tr class="border-b ${g.isPending ? 'pending-approval' : ''}">
           <td class="p-2">${g.date}</td>
           <td class="p-2">৳${g.amount}</td>
@@ -3462,7 +3541,7 @@ window.renderAdminMealRequests = function() {
         </tr>
       `).join('');
 
-      const sortedBazaar = [...window.hostelData.bazaarExpenses].sort((a, b) => {
+      const sortedBazaar = [...scoped.bazaarExpenses].sort((a, b) => {
         const dateDiff = parseDDMMYYYY(a.date) - parseDDMMYYYY(b.date);
         return dateDiff !== 0 ? dateDiff : (a.timestamp || 0) - (b.timestamp || 0);
       });
@@ -3484,324 +3563,54 @@ window.renderAdminMealRequests = function() {
 
       populateMealDateFilter();
       renderMealTableByDate(window.selectedMealDateFilter);
+      initAllDatePickers();
     };
-
     window.handleResetLedger = function() {
-      const pass = prompt(window.currentLang === 'bn' ? 'সদস্যদের তথ্য বাদে পুরো হিসাব মুছে ফেলতে লগইন পাসওয়ার্ড লিখুন:' : 'Enter password to reset ledger:');
-      if (window.currentUser && window.currentUser.pass === pass) {
-        window.hostelData.deposits = [];
-        window.hostelData.fixedExpenses = [];
-        window.hostelData.gasExpenses = [];
-        window.hostelData.bazaarExpenses = [];
-        window.hostelData.meals = [];
-        window.hostelData.pendingEdits = [];
-        syncMasterData();
-        alert('হিসাব সফলভাবে রিসেট করা হয়েছে!');
-      } else if (pass !== null) {
-        alert('ভুল পাসওয়ার্ড!');
-      }
-    };
-  
-    // ============================================================
-    // MEMBER SYNC CENTER
-    // ============================================================
-    function ensureSyncModal() {
-      if (document.getElementById('member-sync-modal')) return;
-
-      const wrap = document.createElement('div');
-      wrap.id = 'member-sync-modal';
-      wrap.className = 'fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-[95] no-print';
-      wrap.innerHTML = `
-        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border-t-8 border-purple-600">
-          <div class="flex items-center justify-between p-5 border-b">
-            <div>
-              <h3 class="text-lg font-black text-purple-900 flex items-center gap-2">
-                <i class="fa-solid fa-users-viewfinder"></i> সদস্য Sync Center
-              </h3>
-              <p class="text-[11px] text-gray-500 mt-1">অন্য ইউজারের সদস্য তথ্য তার অনুমতি নিয়ে আপনার প্রোফাইলে স্থায়ীভাবে কপি করুন।</p>
-            </div>
-            <button onclick="closeSyncCenter()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-
-          <div class="p-5 space-y-5">
-            <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4 space-y-3">
-              <h4 class="font-black text-purple-900 text-sm"><i class="fa-solid fa-user-plus mr-1"></i> অন্য প্রোফাইল থেকে সদস্য Sync Request</h4>
-              <select id="sync-target-user" onchange="renderSyncTargetMembers()" class="w-full px-3 py-2 border rounded-xl text-sm bg-white"></select>
-              <div id="sync-target-members" class="space-y-2"></div>
-              <p class="text-[10px] text-gray-500">Request পাঠানোর পর ওই সদস্যের মালিক ইউজারকে Approve করতে হবে।</p>
-            </div>
-
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-              <h4 class="font-black text-amber-900 text-sm mb-3"><i class="fa-solid fa-inbox mr-1"></i> আপনার কাছে আসা Sync Request</h4>
-              <div id="sync-incoming-list" class="space-y-2"></div>
-            </div>
-
-            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
-              <h4 class="font-black text-emerald-900 text-sm mb-3"><i class="fa-solid fa-clock-rotate-left mr-1"></i> আপনার পাঠানো Request</h4>
-              <div id="sync-outgoing-list" class="space-y-2"></div>
-            </div>
-
-            <div class="bg-slate-50 border rounded-2xl p-4">
-              <h4 class="font-black text-slate-800 text-sm mb-2"><i class="fa-solid fa-link mr-1"></i> Sync করা সদস্য</h4>
-              <div id="sync-owned-list" class="space-y-2"></div>
-            </div>
-          </div>
-        </div>`;
-      document.body.appendChild(wrap);
-    }
-
-    window.openSyncCenter = function() {
       if (!window.currentUser) return;
-      ensureSyncModal();
-      populateSyncTargetUsers();
-      renderSyncCenter();
-      const modal = document.getElementById('member-sync-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    };
+      const pass = prompt(window.currentLang === 'bn'
+        ? 'শুধু আপনার ইউজারের হিসাব রিসেট করতে লগইন পাসওয়ার্ড লিখুন:'
+        : 'Enter your password to reset ONLY your account ledger:');
 
-    window.closeSyncCenter = function() {
-      const modal = document.getElementById('member-sync-modal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    };
-
-    function getAllMasterUsers() {
-      return normalizeMasterData(window.masterHostelData).users
-        .filter(u => u.status !== 'pending');
-    }
-
-    window.populateSyncTargetUsers = function() {
-      const sel = document.getElementById('sync-target-user');
-      if (!sel || !window.currentUser) return;
-      const users = getAllMasterUsers().filter(u => u.userId !== window.currentUser.userId);
-      sel.innerHTML = '<option value="">-- যে ইউজারের সদস্য Sync করতে চান --</option>' +
-        users.map(u => `<option value="${String(u.userId).replace(/"/g,'&quot;')}">${String(u.fullName || u.userId)} (@${String(u.userId)})</option>`).join('');
-      renderSyncTargetMembers();
-    };
-
-    window.renderSyncTargetMembers = function() {
-      const box = document.getElementById('sync-target-members');
-      const sel = document.getElementById('sync-target-user');
-      if (!box || !sel) return;
-      const uid = sel.value;
-      if (!uid) {
-        box.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">প্রথমে একটি ইউজার নির্বাচন করুন।</p>';
-        return;
-      }
-
-      const m = normalizeMasterData(window.masterHostelData);
-      const members = m.members.filter(x => x.userId === uid);
-      if (!members.length) {
-        box.innerHTML = '<p class="text-xs text-gray-500 text-center py-3 bg-white rounded-xl border">এই ইউজারের কোনো সদস্য তথ্য নেই।</p>';
-        return;
-      }
-
-      box.innerHTML = members.map(mem => {
-        const already = m.syncRequests.some(r =>
-          r.status === 'approved' &&
-          r.fromUserId === uid &&
-          r.toUserId === window.currentUser.userId &&
-          r.sourceMemberId === mem.id
-        ) || (window.hostelData.members || []).some(x =>
-          x.syncedFromUserId === uid && x.syncedFromMemberId === mem.id
+      if (window.currentUser.pass === pass) {
+        const uid = window.currentUser.userId;
+        const myMemberIds = new Set(
+          (window.hostelData.members || []).filter(m => m.userId === uid).map(m => m.id)
         );
 
-        return `<div class="bg-white border rounded-xl p-3 flex items-center justify-between gap-3">
-          <div class="min-w-0">
-            <div class="font-bold text-sm text-gray-800">${String(mem.name || '-')}</div>
-            <div class="text-[10px] text-gray-500">${String(mem.phone || '')} ${mem.useGas === 'yes' ? '• গ্যাস' : '• গ্যাস নেই'}</div>
-          </div>
-          ${already
-            ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg">Sync করা আছে</span>'
-            : `<button onclick="requestMemberSync('${String(uid).replace(/'/g,"\\'")}','${String(mem.id).replace(/'/g,"\\'")}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Sync Request</button>`}
-        </div>`;
-      }).join('');
-    };
+        // NEVER clear the complete shared arrays. Remove only this user's records.
+        window.hostelData.deposits = (window.hostelData.deposits || []).filter(
+          x => !(x.userId === uid || (x.memberId && myMemberIds.has(x.memberId)))
+        );
+        window.hostelData.fixedExpenses = (window.hostelData.fixedExpenses || []).filter(
+          x => x.userId !== uid
+        );
+        window.hostelData.gasExpenses = (window.hostelData.gasExpenses || []).filter(
+          x => x.userId !== uid
+        );
+        window.hostelData.bazaarExpenses = (window.hostelData.bazaarExpenses || []).filter(
+          x => !(x.userId === uid || (x.memberId && myMemberIds.has(x.memberId)))
+        );
+        window.hostelData.meals = (window.hostelData.meals || []).filter(
+          x => !(x.userId === uid || (x.memberId && myMemberIds.has(x.memberId)))
+        );
+        window.hostelData.mealRequests = (window.hostelData.mealRequests || []).filter(
+          x => x.userId !== uid
+        );
+        window.hostelData.bazaarRequests = (window.hostelData.bazaarRequests || []).filter(
+          x => x.userId !== uid
+        );
+        window.hostelData.pendingEdits = (window.hostelData.pendingEdits || []).filter(
+          x => x.userId !== uid
+        );
 
-    window.requestMemberSync = function(sourceUserId, sourceMemberId) {
-      if (!window.currentUser || !sourceUserId || !sourceMemberId) return;
-      if (sourceUserId === window.currentUser.userId) return;
-
-      const m = normalizeMasterData(window.masterHostelData);
-      m.syncRequests = m.syncRequests || [];
-
-      const exists = m.syncRequests.some(r =>
-        r.fromUserId === sourceUserId &&
-        r.toUserId === window.currentUser.userId &&
-        r.sourceMemberId === sourceMemberId &&
-        (r.status === 'pending' || r.status === 'approved')
-      );
-      if (exists) {
-        alert('এই সদস্যের জন্য Sync Request আগে থেকেই আছে বা Sync করা হয়েছে।');
-        return;
+        syncMasterData();
+        alert(window.currentLang === 'bn'
+          ? 'শুধু আপনার ইউজারের হিসাব সফলভাবে রিসেট হয়েছে। অন্য কোনো ইউজারের ডেটা পরিবর্তন হয়নি।'
+          : 'Only your account ledger has been reset. Other users data were not changed.');
+      } else if (pass !== null) {
+        alert(window.currentLang === 'bn' ? 'ভুল পাসওয়ার্ড!' : 'Wrong password!');
       }
-
-      const sourceUser = m.users.find(u => u.userId === sourceUserId);
-      const sourceMember = m.members.find(x => x.id === sourceMemberId && x.userId === sourceUserId);
-      if (!sourceUser || !sourceMember) {
-        alert('সদস্য তথ্য পাওয়া যায়নি।');
-        return;
-      }
-
-      m.syncRequests.push({
-        id: 'SYNC_' + Date.now(),
-        fromUserId: sourceUserId,
-        fromUserName: sourceUser.fullName || sourceUserId,
-        toUserId: window.currentUser.userId,
-        toUserName: window.currentUser.fullName || window.currentUser.userId,
-        sourceMemberId,
-        sourceMemberName: sourceMember.name || '',
-        status: 'pending',
-        createdAt: Date.now()
-      });
-
-      window.masterHostelData = m;
-      syncMasterData();
-      renderSyncCenter();
-      alert('Sync Request পাঠানো হয়েছে। সদস্যের মালিক Approve করলে সদস্যটি আপনার প্রোফাইলে স্থায়ীভাবে কপি হবে।');
     };
-
-    window.approveMemberSync = function(requestId) {
-      if (!window.currentUser) return;
-      const m = normalizeMasterData(window.masterHostelData);
-      const req = (m.syncRequests || []).find(r =>
-        r.id === requestId &&
-        r.toUserId === window.currentUser.userId &&
-        r.status === 'pending'
-      );
-      if (!req) return;
-
-      const sourceMember = m.members.find(x =>
-        x.id === req.sourceMemberId && x.userId === req.fromUserId
-      );
-      if (!sourceMember) {
-        alert('মূল সদস্য তথ্য পাওয়া যাচ্ছে না।');
-        return;
-      }
-
-      const already = m.members.some(x =>
-        x.userId === req.toUserId &&
-        x.syncedFromUserId === req.fromUserId &&
-        x.syncedFromMemberId === req.sourceMemberId
-      );
-      if (!already) {
-        m.members.push({
-          ...JSON.parse(JSON.stringify(sourceMember)),
-          id: 'SYNCMEM_' + Date.now(),
-          userId: req.toUserId,
-          syncedFromUserId: req.fromUserId,
-          syncedFromMemberId: req.sourceMemberId,
-          syncedAt: Date.now(),
-          syncType: 'permanent-copy'
-        });
-      }
-
-      req.status = 'approved';
-      req.approvedAt = Date.now();
-      window.masterHostelData = m;
-      syncMasterData();
-      alert('Sync অনুমোদিত। সদস্য তথ্য এখন আপনার প্রোফাইলে স্থায়ীভাবে আলাদা কপি হিসেবে যুক্ত হয়েছে।');
-      renderSyncCenter();
-    };
-
-    window.rejectMemberSync = function(requestId) {
-      if (!window.currentUser) return;
-      const m = normalizeMasterData(window.masterHostelData);
-      const req = (m.syncRequests || []).find(r =>
-        r.id === requestId &&
-        r.toUserId === window.currentUser.userId &&
-        r.status === 'pending'
-      );
-      if (!req) return;
-      req.status = 'rejected';
-      req.rejectedAt = Date.now();
-      window.masterHostelData = m;
-      syncMasterData();
-      renderSyncCenter();
-      alert('Sync Request বাতিল করা হয়েছে।');
-    };
-
-    window.renderSyncCenter = function() {
-      if (!window.currentUser) return;
-      const modalExists = document.getElementById('member-sync-modal');
-      if (!modalExists) return;
-
-      const m = normalizeMasterData(window.masterHostelData);
-      const uid = window.currentUser.userId;
-      const requests = m.syncRequests || [];
-
-      const incoming = requests.filter(r => r.fromUserId === uid && r.status === 'pending');
-      const outgoing = requests.filter(r => r.toUserId === uid).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-      const synced = (window.hostelData.members || []).filter(x => x.syncedFromUserId);
-
-      const incomingBox = document.getElementById('sync-incoming-list');
-      const outgoingBox = document.getElementById('sync-outgoing-list');
-      const ownedBox = document.getElementById('sync-owned-list');
-      const mini = document.getElementById('sync-status-mini');
-
-      incomingBox.innerHTML = incoming.length ? incoming.map(r => `
-        <div class="bg-white border rounded-xl p-3">
-          <div class="flex justify-between gap-2 text-xs">
-            <b>${String(r.toUserName || r.toUserId)}</b>
-            <span class="text-[10px] text-gray-400">${new Date(r.createdAt||Date.now()).toLocaleString('bn-BD')}</span>
-          </div>
-          <div class="text-[11px] text-gray-600 mt-1">আপনার সদস্য <b>${String(r.sourceMemberName || '-')}</b> Sync করতে চাচ্ছেন।</div>
-          <div class="flex gap-2 mt-2">
-            <button onclick="approveMemberSync('${String(r.id).replace(/'/g,"\\'")}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Approve</button>
-            <button onclick="rejectMemberSync('${String(r.id).replace(/'/g,"\\'")}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Reject</button>
-          </div>
-        </div>`).join('') :
-        '<p class="text-xs text-gray-400 text-center py-2">কোনো অপেক্ষমান Request নেই।</p>';
-
-      outgoingBox.innerHTML = outgoing.length ? outgoing.map(r => `
-        <div class="bg-white border rounded-xl p-3 flex justify-between gap-3">
-          <div>
-            <div class="text-xs font-bold">${String(r.sourceMemberName || '-')}</div>
-            <div class="text-[10px] text-gray-500">মালিক: ${String(r.fromUserName || r.fromUserId)}</div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-1 rounded-lg ${r.status==='approved'?'bg-emerald-100 text-emerald-700':r.status==='rejected'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700'}">${r.status==='approved'?'Approved':r.status==='rejected'?'Rejected':'Pending'}</span>
-        </div>`).join('') :
-        '<p class="text-xs text-gray-400 text-center py-2">আপনার কোনো Request নেই।</p>';
-
-      ownedBox.innerHTML = synced.length ? synced.map(x => `
-        <div class="bg-white border rounded-xl p-3 flex justify-between gap-3">
-          <div>
-            <div class="text-xs font-bold">${String(x.name || '-')}</div>
-            <div class="text-[10px] text-gray-500">Source: @${String(x.syncedFromUserId || '-')} • আলাদা কপি</div>
-          </div>
-          <span class="text-[10px] font-bold text-emerald-700">Permanent Sync</span>
-        </div>`).join('') :
-        '<p class="text-xs text-gray-400 text-center py-2">এখনো কোনো সদস্য Sync করা হয়নি।</p>';
-
-      const pendingCount = incoming.length;
-      if (mini) mini.innerText = pendingCount ? `🔔 ${pendingCount}টি Sync Request অপেক্ষমান` : 'সদস্য Sync: প্রস্তুত';
-    };
-
-
-    // Safe one-time migration for older transaction records:
-    // ownership is inferred only when a transaction points to a member that already has an owner.
-    window.migrateUserOwnership = function() {
-      const m = normalizeMasterData(window.masterHostelData);
-      const ownerByMember = {};
-      m.members.forEach(mem => { if (mem.userId) ownerByMember[mem.id] = mem.userId; });
-
-      ['deposits','meals'].forEach(key => {
-        (m[key] || []).forEach(item => {
-          if (!item.userId && item.memberId && ownerByMember[item.memberId]) {
-            item.userId = ownerByMember[item.memberId];
-          }
-        });
-      });
-
-      // Do NOT guess ownership for old fixed/gas/bazaar records.
-      // They remain management-visible but hidden from user profiles.
-      window.masterHostelData = m;
-      localStorage.setItem('dream_touching_hostel_db', JSON.stringify(m));
-    };
-
-</script>
+  </script>
 </body>
 </html>
