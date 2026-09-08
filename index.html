@@ -324,6 +324,11 @@
         <p class="settings-feedback" id="notif-feedback"></p>
       </div>
 
+      <div class="settings-section">
+        <h4>সেশন</h4>
+        <button class="settings-btn" id="settings-logout-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">⏻ লগআউট করো</button>
+      </div>
+
       <button class="close-settings" id="close-settings-btn" type="button">বন্ধ করো</button>
     </div>
   </div>
@@ -382,6 +387,14 @@
 
   const $ = (id) => document.getElementById(id);
   const otherUser = (u) => (u === "Hredoy" ? "Tonu" : "Hredoy");
+
+  // ---------- SESSION PERSISTENCE ----------
+  // sessionStorage survives a page reload but is cleared when the tab/browser
+  // is closed, which gives us "reload stays logged in, closing logs out".
+  const SESSION_KEY = "dujon_session_user";
+  function saveSession(user){ try{ sessionStorage.setItem(SESSION_KEY, user); }catch(e){} }
+  function clearSession(){ try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){} }
+  function loadSession(){ try{ return sessionStorage.getItem(SESSION_KEY); }catch(e){ return null; } }
 
   async function sha256Hex(text){
     const enc = new TextEncoder().encode(text);
@@ -442,6 +455,7 @@
     const ok = await verifyFingerprint(JSON.parse(stored).id);
     if(ok){
       currentUser = id;
+      saveSession(currentUser);
       enterChat();
     }else{
       $("login-error").textContent = "ফিঙ্গারপ্রিন্ট যাচাই ব্যর্থ হয়েছে।";
@@ -471,6 +485,7 @@
       }
     }
     currentUser = id;
+    saveSession(currentUser);
     enterChat();
   }
 
@@ -492,16 +507,21 @@
     }
   }
 
-  $("logout-btn").addEventListener("click", ()=>{
+  function doLogout(){
     if(badgeTicker) clearInterval(badgeTicker);
     currentUser = null;
+    clearSession();
+    $("settings-overlay").classList.remove("show");
     $("chat-screen").style.display = "none";
     $("login-card").style.display = "block";
     $("login-id").value = "";
     $("login-pass").value = "";
     $("login-error").textContent = "";
     updateFpButtonVisibility();
-  });
+  }
+
+  $("logout-btn").addEventListener("click", doLogout);
+  $("settings-logout-btn").addEventListener("click", doLogout);
 
   // ---------- WEBAUTHN FINGERPRINT LOCK ----------
   function b64urlToBuffer(b64url){
@@ -577,7 +597,31 @@
       $("fp-feedback").textContent = "এই ব্রাউজারে ফিঙ্গারপ্রিন্ট লক সাপোর্ট নেই।";
       $("fp-toggle").disabled = true;
     }
+    updateNotifStatus();
     $("settings-overlay").classList.add("show");
+  }
+
+  function updateNotifStatus(){
+    const fb = $("notif-feedback");
+    fb.className = "settings-feedback";
+    if(!window.Notification){
+      fb.textContent = "এই ব্রাউজারে নোটিফিকেশন সাপোর্ট নেই।";
+      fb.classList.add("err");
+      $("enable-notif-btn").disabled = true;
+      return;
+    }
+    if(Notification.permission === "granted"){
+      fb.textContent = "নোটিফিকেশন চালু আছে। (মনে রাখো: ব্রাউজার/ট্যাব খোলা থাকলে তবেই নোটিফিকেশন আসবে, একদম বন্ধ থাকলে আসবে না।)";
+      fb.classList.add("ok");
+      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু আছে ✓";
+    }else if(Notification.permission === "denied"){
+      fb.textContent = "নোটিফিকেশন ব্রাউজার সেটিংস থেকে বন্ধ করা আছে। ব্রাউজারের সাইট সেটিংসে গিয়ে অনুমতি দাও।";
+      fb.classList.add("err");
+      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু করো";
+    }else{
+      fb.textContent = "নোটিফিকেশন এখনো চালু করা হয়নি — নিচের বাটনে চাপো।";
+      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু করো";
+    }
   }
 
   $("change-photo-btn").addEventListener("click", ()=> $("avatar-input").click());
@@ -622,12 +666,9 @@
   });
 
   $("enable-notif-btn").addEventListener("click", async ()=>{
-    const fb = $("notif-feedback");
-    fb.className = "settings-feedback";
-    if(!window.Notification){ fb.textContent = "এই ব্রাউজারে নোটিফিকেশন সাপোর্ট নেই।"; fb.classList.add("err"); return; }
-    const perm = await Notification.requestPermission();
-    if(perm === "granted"){ fb.textContent = "নোটিফিকেশন চালু হয়েছে।"; fb.classList.add("ok"); }
-    else{ fb.textContent = "নোটিফিকেশন অনুমতি দেওয়া হয়নি।"; fb.classList.add("err"); }
+    if(!window.Notification){ updateNotifStatus(); return; }
+    await Notification.requestPermission();
+    updateNotifStatus();
   });
 
   // ---------- SOUND + NOTIFICATION ----------
@@ -1007,6 +1048,19 @@
       badge.textContent = "তুমি মেসেজ দিলে Hredoy-র SMS mode চালু হবে";
     }
   }
+
+  // ---------- RESTORE SESSION ON RELOAD ----------
+  // Runs once at startup. If sessionStorage has a saved user, log straight
+  // back into the chat instead of showing the login screen. sessionStorage
+  // is per-tab and is wiped when the tab/browser is closed, so a reload
+  // stays logged in but closing the browser logs out.
+  (function restoreSession(){
+    const saved = loadSession();
+    if(saved && USER_IDS.includes(saved)){
+      currentUser = saved;
+      enterChat();
+    }
+  })();
 
   // ---------- LIGHT PRIVACY DETERRENTS (not foolproof) ----------
   document.addEventListener("visibilitychange", ()=>{
