@@ -8,20 +8,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1c1420;
-    --surface: #261c2c;
-    --surface-2: #2f2337;
-    --surface-3: #3a2c43;
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --surface-2: #282828;
+    --surface-3: #333333;
     --bubble-mine: #d98b6f;
-    --bubble-mine-text: #241318;
-    --bubble-theirs: #362a3f;
-    --bubble-theirs-text: #f3e9ee;
-    --text: #f3e9ee;
-    --text-dim: #b8a3ba;
+    --bubble-mine-text: #121212;
+    --bubble-theirs: #2d2d2d;
+    --bubble-theirs-text: #ffffff;
+    --text: #ffffff;
+    --text-dim: #b0b0b0;
     --accent: #d98b6f;
-    --accent-soft: rgba(217,139,111,0.18);
-    --danger: #c76a5f;
-    --ok: #7fae8c;
+    --accent-soft: rgba(217,139,111,0.25);
+    --danger: #cf6679;
+    --ok: #81c784;
     --radius: 18px;
     --serif: 'Cormorant Garamond', serif;
     --sans: 'Karla', sans-serif;
@@ -32,8 +32,8 @@
     margin:0;
     font-family:var(--sans);
     background:
-      radial-gradient(circle at 15% 0%, rgba(217,139,111,0.10), transparent 45%),
-      radial-gradient(circle at 100% 100%, rgba(122,90,140,0.16), transparent 50%),
+      radial-gradient(circle at 15% 0%, rgba(217,139,111,0.08), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(122,90,140,0.12), transparent 50%),
       var(--bg);
     color:var(--text);
     -webkit-user-select:none;
@@ -50,11 +50,11 @@
   .login-card{
     width:min(360px, 90vw);
     background:var(--surface);
-    border:1px solid rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.08);
     border-radius:24px;
     padding:40px 32px 32px;
     text-align:center;
-    box-shadow:0 30px 60px rgba(0,0,0,0.35);
+    box-shadow:0 30px 60px rgba(0,0,0,0.45);
   }
   .login-mark{ font-family:var(--serif); font-style:italic; font-size:38px; letter-spacing:0.5px; color:var(--accent); margin:0 0 6px; }
   .login-sub{ color:var(--text-dim); font-size:13.5px; margin:0 0 28px; line-height:1.5; }
@@ -62,19 +62,19 @@
   .field label{ display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:6px; letter-spacing:0.2px; }
   .field input{
     width:100%; padding:12px 14px; border-radius:12px;
-    border:1px solid rgba(255,255,255,0.08); background:var(--surface-2);
+    border:1px solid rgba(255,255,255,0.1); background:var(--surface-2);
     color:var(--text); font-size:15px; font-family:var(--sans); outline:none;
   }
   .field input:focus{ border-color:var(--accent); }
   .login-btn{
     width:100%; margin-top:10px; padding:13px; border:none; border-radius:12px;
-    background:var(--accent); color:#241318; font-weight:700; font-size:14.5px; cursor:pointer;
+    background:var(--accent); color:#121212; font-weight:700; font-size:14.5px; cursor:pointer;
   }
   .login-btn:active{ transform:scale(0.98); }
   .login-error{ color:var(--danger); font-size:12.5px; min-height:16px; margin-top:12px; }
   .fp-btn{
     width:100%; margin-top:10px; padding:12px; border-radius:12px;
-    border:1px solid rgba(255,255,255,0.12); background:transparent; color:var(--text);
+    border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--text);
     font-size:13.5px; cursor:pointer;
   }
 
@@ -82,21 +82,21 @@
   #chat-screen{ display:none; height:100vh; width:100vw; flex-direction:column; position:relative; }
   header.bar{
     display:flex; align-items:center; gap:12px; padding:14px 16px;
-    background:var(--surface); border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;
+    background:var(--surface); border-bottom:1px solid rgba(255,255,255,0.08); flex-shrink:0;
   }
   .avatar{
     width:38px;height:38px;border-radius:50%; flex-shrink:0; overflow:hidden;
     background:linear-gradient(135deg, var(--accent), #7a5a8c);
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--serif); font-weight:600; font-size:17px; color:#241318;
+    font-family:var(--serif); font-weight:600; font-size:17px; color:#121212;
   }
   .avatar img{ width:100%; height:100%; object-fit:cover; }
   .avatar.small{ width:24px; height:24px; font-size:12px; }
-  .bar-name{ font-family:var(--serif); font-size:19px; font-style:italic; line-height:1.1; }
+  .bar-name{ font-family:var(--serif); font-size:19px; font-style:italic; line-height:1.1; color: var(--text); }
   .bar-status{ font-size:11.5px; color:var(--text-dim); margin-top:1px; }
   .sms-badge{
     margin-left:auto; font-size:10px; padding:5px 9px; border-radius:999px;
-    background:rgba(255,255,255,0.06); color:var(--text-dim); white-space:nowrap;
+    background:rgba(255,255,255,0.08); color:var(--text-dim); white-space:nowrap;
   }
   .sms-badge.on{ background:var(--accent-soft); color:var(--accent); }
   .icon-flat{
@@ -121,80 +121,80 @@
     max-width:72%; padding:8px 12px; border-radius:var(--radius); font-size:14.5px;
     line-height:1.45; word-wrap:break-word; position:relative; cursor:pointer;
   }
-  .row.mine .bubble{ background:var(--bubble-mine); color:var(--bubble-mine-text); border-bottom-right-radius:5px; }
+  .row.mine .bubble{ background:var(--bubble-mine); color:var(--bubble-mine-text); border-bottom-right-radius:5px; font-weight: 500; }
   .row.theirs .bubble{ background:var(--bubble-theirs); color:var(--bubble-theirs-text); border-bottom-left-radius:5px; }
 
   .reply-quote{
-    border-left:3px solid rgba(0,0,0,0.25); background:rgba(0,0,0,0.10);
-    border-radius:8px; padding:5px 8px; margin-bottom:6px; font-size:12px; opacity:0.85;
+    border-left:3px solid rgba(0,0,0,0.25); background:rgba(0,0,0,0.12);
+    border-radius:8px; padding:5px 8px; margin-bottom:6px; font-size:12px; opacity:0.9;
   }
-  .row.theirs .reply-quote{ background:rgba(255,255,255,0.06); border-left-color:rgba(255,255,255,0.25); }
+  .row.theirs .reply-quote{ background:rgba(255,255,255,0.08); border-left-color:rgba(255,255,255,0.3); }
   .reply-quote b{ display:block; font-size:11px; }
 
-  .bubble img{ max-width:100%; max-height:280px; border-radius:12px; display:block; margin-top:2px; -webkit-user-drag:none; user-drag:none; pointer-events:none; }
-  .bubble .stamp{ font-size:10px; opacity:0.6; margin-top:4px; text-align:right; }
-  .watermark-tag{ position:absolute; bottom:4px; left:8px; font-size:9px; color:rgba(255,255,255,0.55); background:rgba(0,0,0,0.35); padding:1px 5px; border-radius:6px; pointer-events:none; }
+  .bubble img{ max-width:100%; max-height:280px; border-radius:12px; display:block; margin-top:2px; cursor:pointer; }
+  .bubble .stamp{ font-size:10px; opacity:0.75; margin-top:4px; text-align:right; }
+  .watermark-tag{ position:absolute; bottom:4px; left:8px; font-size:9px; color:rgba(255,255,255,0.7); background:rgba(0,0,0,0.45); padding:1px 5px; border-radius:6px; pointer-events:none; }
 
   .reactions-row{ display:flex; gap:4px; margin-top:3px; flex-wrap:wrap; }
   .msg-block:has(.row.mine) .reactions-row{ justify-content:flex-end; }
   .reaction-pill{
-    font-size:11.5px; background:var(--surface-3); border:1px solid rgba(255,255,255,0.08);
+    font-size:11.5px; background:var(--surface-3); border:1px solid rgba(255,255,255,0.1);
     border-radius:999px; padding:2px 7px; cursor:pointer; color:var(--text);
   }
   .reaction-pill.mine-reacted{ border-color:var(--accent); color:var(--accent); }
 
-  form#composer{ display:flex; align-items:flex-end; gap:8px; padding:10px 12px; background:var(--surface); border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+  form#composer{ display:flex; align-items:flex-end; gap:8px; padding:10px 12px; background:var(--surface); border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
   #reply-preview{
     display:none; align-items:center; gap:8px; padding:8px 14px; background:var(--surface-2);
-    border-top:1px solid rgba(255,255,255,0.06); font-size:12.5px; color:var(--text-dim);
+    border-top:1px solid rgba(255,255,255,0.08); font-size:12.5px; color:var(--text-dim);
   }
   #reply-preview.show{ display:flex; }
-  #reply-preview .rp-text{ flex:1; border-left:3px solid var(--accent); padding-left:8px; }
+  #reply-preview .rp-text{ flex:1; border-left:3px solid var(--accent); padding-left:8px; color: var(--text); }
   #reply-preview button{ background:none; border:none; color:var(--text-dim); font-size:15px; cursor:pointer; }
 
   #text-input{
     flex:1; resize:none; max-height:100px; padding:11px 14px; border-radius:20px;
-    border:1px solid rgba(255,255,255,0.08); background:var(--surface-2); color:var(--text);
+    border:1px solid rgba(255,255,255,0.1); background:var(--surface-2); color:var(--text);
     font-family:var(--sans); font-size:14.5px; outline:none; line-height:1.4;
   }
   #text-input:focus{ border-color:var(--accent); }
   .icon-btn{
     width:42px;height:42px; border-radius:50%; border:none; background:var(--surface-2);
-    color:var(--text-dim); font-size:18px; cursor:pointer; display:flex;align-items:center;justify-content:center; flex-shrink:0;
+    color:var(--text); font-size:18px; cursor:pointer; display:flex;align-items:center;justify-content:center; flex-shrink:0;
   }
-  .send-btn{ background:var(--accent); color:#241318; }
+  .send-btn{ background:var(--accent); color:#121212; }
   #img-input, #avatar-input{ display:none; }
-  .protect-note{ font-size:9.5px; color:var(--text-dim); text-align:center; padding:4px 10px 8px; opacity:0.65; }
+  .protect-note{ font-size:9.5px; color:var(--text-dim); text-align:center; padding:4px 10px 8px; opacity:0.75; }
 
   /* ---------- SETTINGS OVERLAY ---------- */
   #settings-overlay{
-    position:fixed; inset:0; background:rgba(10,6,12,0.72); display:none;
+    position:fixed; inset:0; background:rgba(10,6,12,0.8); display:none;
     align-items:center; justify-content:center; z-index:50; padding:16px;
   }
   #settings-overlay.show{ display:flex; }
   .settings-card{
     width:min(380px, 100%); max-height:86vh; overflow-y:auto; background:var(--surface);
-    border-radius:22px; padding:26px 22px; border:1px solid rgba(255,255,255,0.07);
+    border-radius:22px; padding:26px 22px; border:1px solid rgba(255,255,255,0.1);
   }
-  .settings-card h3{ font-family:var(--serif); font-style:italic; font-weight:600; font-size:22px; margin:0 0 18px; }
+  .settings-card h3{ font-family:var(--serif); font-style:italic; font-weight:600; font-size:22px; margin:0 0 18px; color: var(--text); }
   .settings-section{ margin-bottom:22px; }
   .settings-section h4{ font-size:12px; color:var(--text-dim); margin:0 0 10px; letter-spacing:0.2px; }
   .settings-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
   .settings-btn{
-    padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+    padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.12);
     background:var(--surface-2); color:var(--text); font-size:13px; cursor:pointer;
   }
-  .settings-btn.primary{ background:var(--accent); color:#241318; border:none; font-weight:700; }
-  .settings-card input{
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+  .settings-btn.primary{ background:var(--accent); color:#121212; border:none; font-weight:700; }
+  .settings-card input[type="password"], .settings-card input[type="text"]{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
     background:var(--surface-2); color:var(--text); font-size:13.5px; margin-bottom:8px; outline:none;
   }
-  .toggle-row{ display:flex; justify-content:space-between; align-items:center; }
+  .toggle-row{ display:flex; justify-content:space-between; align-items:center; color: var(--text); }
   .switch{ position:relative; width:42px; height:24px; }
   .switch input{ opacity:0; width:0; height:0; }
-  .slider{ position:absolute; inset:0; background:var(--surface-2); border-radius:999px; cursor:pointer; transition:.2s; }
-  .slider::before{ content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:var(--text-dim); border-radius:50%; transition:.2s; }
-  .switch input:checked + .slider{ background:var(--accent-soft); }
+  .slider{ position:absolute; inset:0; background:var(--surface-2); border-radius:999px; cursor:pointer; transition:.2s; border: 1px solid rgba(255,255,255,0.1); }
+  .slider::before{ content:""; position:absolute; width:18px; height:18px; left:2px; top:2px; background:var(--text-dim); border-radius:50%; transition:.2s; }
+  .switch input:checked + .slider{ background:var(--accent-soft); border-color: var(--accent); }
   .switch input:checked + .slider::before{ transform:translateX(18px); background:var(--accent); }
   .settings-note{ font-size:11px; color:var(--text-dim); line-height:1.5; margin-top:4px; }
   .settings-feedback{ font-size:12px; margin-top:6px; min-height:14px; }
@@ -203,17 +203,17 @@
   .close-settings{ display:block; margin:4px auto 0; background:none; border:none; color:var(--text-dim); font-size:13px; cursor:pointer; }
 
   ::-webkit-scrollbar{ width:6px; }
-  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.1); border-radius:10px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.15); border-radius:10px; }
 
   /* ---------- MESSAGE LONG-PRESS MENU ---------- */
   .msg-menu-overlay{
-    position:fixed; inset:0; background:rgba(10,6,12,0.55); display:none;
+    position:fixed; inset:0; background:rgba(10,6,12,0.65); display:none;
     align-items:center; justify-content:center; z-index:60; padding:20px;
   }
   .msg-menu-overlay.show{ display:flex; }
   .msg-menu-panel{
     width:min(300px, 86vw); background:var(--surface); border-radius:20px; padding:14px;
-    border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 50px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.1); box-shadow:0 20px 50px rgba(0,0,0,0.5);
   }
   .msg-menu-emojis{
     display:flex; justify-content:space-between; align-items:center;
@@ -230,7 +230,7 @@
   }
   .msg-menu-item:active{ background:var(--surface-2); }
   .msg-menu-item.danger{ color:var(--danger); }
-  .msg-menu-item + .msg-menu-item{ border-top:1px solid rgba(255,255,255,0.05); }
+  .msg-menu-item + .msg-menu-item{ border-top:1px solid rgba(255,255,255,0.06); }
 
   .reactions-row .reaction-pill{ user-select:none; }
 
@@ -241,17 +241,17 @@
   /* ---------- LINK PREVIEW ---------- */
   .link-preview{
     display:flex; align-items:center; gap:8px; margin-top:6px; padding:8px; border-radius:12px;
-    background:rgba(0,0,0,0.15); text-decoration:none; cursor:pointer;
+    background:rgba(0,0,0,0.2); text-decoration:none; cursor:pointer; color: var(--text);
   }
-  .row.theirs .link-preview{ background:rgba(255,255,255,0.07); }
+  .row.theirs .link-preview{ background:rgba(255,255,255,0.08); }
   .link-preview img{ width:56px; height:56px; object-fit:cover; border-radius:8px; flex-shrink:0; }
   .link-preview .lp-icon{
     width:56px; height:56px; border-radius:8px; flex-shrink:0; display:flex; align-items:center;
-    justify-content:center; font-size:22px; background:rgba(255,255,255,0.08);
+    justify-content:center; font-size:22px; background:rgba(255,255,255,0.1);
   }
   .link-preview .lp-text{ font-size:12px; overflow:hidden; }
-  .link-preview .lp-title{ font-weight:700; margin-bottom:2px; }
-  .link-preview .lp-domain{ opacity:0.7; }
+  .link-preview .lp-title{ font-weight:700; margin-bottom:2px; color: var(--text); }
+  .link-preview .lp-domain{ opacity:0.75; }
 
   /* ---------- BLOCKED BANNER ---------- */
   .blocked-banner{
@@ -282,7 +282,7 @@
       <label>ID</label>
       <input id="login-id" type="text" autocomplete="off" placeholder="">
     </div>
-    <div class="field">
+    <div class="field" id="password-field">
       <label>Password</label>
       <input id="login-pass" type="password" autocomplete="off" placeholder="••••">
     </div>
@@ -301,7 +301,7 @@
       </div>
       <div class="sms-badge" id="sms-badge">SMS mode: off</div>
       <button class="icon-flat" id="settings-btn" title="Settings">⚙️</button>
-      <button class="icon-flat" id="logout-btn" title="Log out">⏻</button>
+      <button class="icon-flat" id="lock-btn" title="Lock App">✖</button>
     </header>
 
     <div id="messages">
@@ -341,9 +341,9 @@
         <div class="swatch-row" id="theme-swatches"></div>
         <div class="swatch-custom">
           <input type="color" id="theme-custom-color" value="#d98b6f">
-          <span class="settings-note" style="margin:0;">Pick a custom color</span>
+          <span class="settings-note" style="margin:0;">Pick a custom accent color</span>
         </div>
-        <p class="settings-note">Only affects how the app looks on this device.</p>
+        <p class="settings-note">Affects buttons, active states, and your message bubbles.</p>
       </div>
 
       <div class="settings-section">
@@ -361,13 +361,21 @@
           <span>Ask for fingerprint/face unlock at login</span>
           <label class="switch"><input type="checkbox" id="fp-toggle"><span class="slider"></span></label>
         </div>
-        <p class="settings-note">Applies only to this device/browser — log in on another device to set it up there separately. No server verifies this; it's just a local lock for this device.</p>
+        <p class="settings-note">Applies only to this device/browser.</p>
         <p class="settings-feedback" id="fp-feedback"></p>
         <div class="toggle-row" id="pin-toggle-row" style="margin-top:10px;">
-          <span>Use a PIN lock instead (works even without fingerprint support)</span>
+          <span>Use a PIN lock instead</span>
           <label class="switch"><input type="checkbox" id="pin-toggle"><span class="slider"></span></label>
         </div>
         <p class="settings-feedback" id="pin-feedback"></p>
+      </div>
+
+      <div class="settings-section">
+        <h4>Security Block</h4>
+        <div class="toggle-row">
+          <span>Enable 5-Min Security Block (for Tonu)</span>
+          <label class="switch"><input type="checkbox" id="security-block-toggle" checked><span class="slider"></span></label>
+        </div>
       </div>
 
       <div class="settings-section">
@@ -388,13 +396,13 @@
       <div class="settings-section">
         <h4>Chat data</h4>
         <button class="settings-btn" id="clear-me-btn" type="button" style="margin-bottom:8px;">🗑 Clear chat for me</button><br>
-        <button class="settings-btn" id="clear-everyone-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">🗑 Clear chat for everyone</button>
+        <button class="settings-btn" id="clear-everyone-btn" type="button" style="border-color:rgba(207,102,121,0.4); color:var(--danger);">🗑 Clear chat for everyone</button>
         <p class="settings-feedback" id="clear-feedback"></p>
       </div>
 
       <div class="settings-section">
         <h4>Session</h4>
-        <button class="settings-btn" id="settings-logout-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">⏻ Log out</button>
+        <button class="settings-btn" id="settings-logout-btn" type="button" style="border-color:rgba(207,102,121,0.4); color:var(--danger);">⏻ Hard Log out</button>
       </div>
 
       <button class="close-settings" id="close-settings-btn" type="button">Close</button>
@@ -443,7 +451,7 @@
   const JPEG_QUALITY = 0.72;
   const REACTION_EMOJIS = ["❤️","😂","😮","😢","👍","😡"];
   const MAX_HISTORY = 2000;
-  const THEME_PRESETS = ["#d98b6f","#7fae8c","#7a9fd9","#c76a5f","#b98fd9","#d9c46f"];
+  const THEME_PRESETS = ["#d98b6f","#81c784","#7a9fd9","#cf6679","#b98fd9","#e0af68"];
 
   let currentUser = null;
   let lastRenderedSignature = "";
@@ -463,20 +471,9 @@
   const $ = (id) => document.getElementById(id);
   const otherUser = (u) => (u === "Hredoy" ? "Tonu" : "Hredoy");
 
-  // ---------- NATIVE ANDROID BRIDGE (optional) ----------
-  // If the surrounding Android app registers these JavascriptInterface objects
-  // (see MainActivity.kt notes), we use real OS biometrics + real Android
-  // notifications instead of the browser WebAuthn/Notification APIs, which a
-  // plain WebView does not support. Everything below falls back to the old
-  // browser-only behavior automatically when the bridge is absent (e.g. when
-  // this page is opened in a normal browser tab).
   const hasNativeAuth = () => !!(window.AndroidLock && window.AndroidLock.authenticate);
   const hasNativeNotif = () => !!(window.AndroidNotif && window.AndroidNotif.notify);
 
-  // Push notification token: the Kotlin side fetches this async and reports
-  // it back via window.onFcmToken(token). We save it under the logged-in
-  // user's profile so the Cloud Function knows where to send that user's
-  // incoming-message pushes, even while the app is fully closed.
   window.onFcmToken = function(token){
     if(!token || !currentUser) return;
     try{
@@ -489,8 +486,6 @@
     }
   }
 
-  // Native biometric auth is async on the Kotlin side, so it replies by
-  // calling window.onNativeAuthResult(true/false). We wrap that in a Promise.
   let pendingAuthResolve = null;
   window.onNativeAuthResult = function(success){
     if(pendingAuthResolve){ pendingAuthResolve(!!success); pendingAuthResolve = null; }
@@ -505,14 +500,10 @@
         pendingAuthResolve = null;
         resolve(false);
       }
-      // Safety timeout in case the native side never calls back.
       setTimeout(()=>{ if(pendingAuthResolve === resolve){ pendingAuthResolve = null; resolve(false); } }, 30000);
     });
   }
 
-  // ---------- SESSION PERSISTENCE ----------
-  // sessionStorage survives a page reload but is cleared when the tab/browser
-  // is closed, which gives us "reload stays logged in, closing logs out".
   const SESSION_KEY = "dujon_session_user";
   function saveSession(user){ try{ sessionStorage.setItem(SESSION_KEY, user); }catch(e){} }
   function clearSession(){ try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){} }
@@ -525,7 +516,6 @@
   }
   const DEFAULT_HASH = await sha256Hex("1234");
 
-  // ---------- REALTIME LISTENERS ----------
   onValue(threadRef, (snap) => {
     const data = snap.val();
     latestThread = data ? Object.values(data) : [];
@@ -562,7 +552,6 @@
     if(currentUser){ applyBlockState(); }
   });
 
-  // ---------- PRESENCE (online / last seen) ----------
   function setupPresence(user){
     const myPresenceRef = ref(db, "dujon_chat/presence/"+user);
     const connectedRef = ref(db, ".info/connected");
@@ -592,7 +581,6 @@
     }
   }
 
-  // ---------- BLOCK ----------
   function isBlockedByMe(){ return !!latestBlocks[currentUser]; }
   function isBlockedByPeer(){ return !!latestBlocks[otherUser(currentUser)]; }
   function isConversationBlocked(){ return isBlockedByMe() || isBlockedByPeer(); }
@@ -625,12 +613,10 @@
   function saveProfile(user, photo){ set(ref(db, "dujon_chat/profiles/"+user), { photo }).catch(e=>console.error("profile sync error:", e)); }
   function saveAuthHash(user, hash){ return set(ref(db, "dujon_chat/auth/"+user), { passwordHash: hash }); }
 
-  // ---------- LOGIN ----------
   $("login-btn").addEventListener("click", doLogin);
   $("login-pass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") doLogin(); });
   $("login-id").addEventListener("input", updateFpButtonVisibility);
 
-  // Unified device-lock storage: { type:"native"|"webauthn", id:"<credId>" } or { type:"pin", hash:"<sha256>" }
   function getDeviceLock(user){
     try{
       const legacy = localStorage.getItem("dujon_fp_"+user);
@@ -667,6 +653,8 @@
     if(ok){
       currentUser = id;
       saveSession(currentUser);
+      $("password-field").style.display = "block";
+      $("login-btn").style.display = "block";
       enterChat();
     }else{
       $("login-error").textContent = "Device lock verification failed.";
@@ -686,7 +674,6 @@
       $("login-error").textContent = "Incorrect ID or password.";
       return;
     }
-    // if this device has a lock (fingerprint or PIN) enabled for this user, require it too
     const lock = getDeviceLock(id);
     if(lock){
       const ok = await verifyDeviceLock(lock);
@@ -738,14 +725,23 @@
     $("login-card").style.display = "block";
     $("login-id").value = "";
     $("login-pass").value = "";
+    $("password-field").style.display = "block"; 
+    $("login-btn").style.display = "block";
     $("login-error").textContent = "";
     updateFpButtonVisibility();
   }
 
-  $("logout-btn").addEventListener("click", doLogout);
   $("settings-logout-btn").addEventListener("click", doLogout);
+  
+  $("lock-btn").addEventListener("click", () => {
+    $("chat-screen").style.display = "none";
+    $("login-card").style.display = "block";
+    $("login-id").value = currentUser;
+    $("password-field").style.display = "none";
+    $("login-btn").style.display = "none";
+    updateFpButtonVisibility();
+  });
 
-  // ---------- WEBAUTHN FINGERPRINT LOCK ----------
   function b64urlToBuffer(b64url){
     const b64 = b64url.replace(/-/g,"+").replace(/_/g,"/");
     const pad = b64.length % 4 ? "=".repeat(4 - (b64.length % 4)) : "";
@@ -757,12 +753,9 @@
 
   async function registerFingerprint(user){
     if(hasNativeAuth()){
-      // Ask the OS to confirm the user's fingerprint/face once, purely to
-      // prove the sensor works and is enrolled, then remember that this
-      // device+user should use native auth going forward.
       const ok = await nativeAuthenticate();
       if(!ok){
-        $("fp-feedback").textContent = "Fingerprint check failed or was cancelled. Try again, or use the PIN lock instead.";
+        $("fp-feedback").textContent = "Fingerprint check failed or was cancelled. Try PIN instead.";
         $("fp-feedback").className = "settings-feedback err";
         return false;
       }
@@ -770,7 +763,7 @@
       return true;
     }
     if(!(window.PublicKeyCredential)){
-      $("fp-feedback").textContent = "Not supported on this device/browser (common inside a plain WebView-based app). Try the PIN lock below instead.";
+      $("fp-feedback").textContent = "Not supported on this device/browser. Use PIN lock instead.";
       $("fp-feedback").className = "settings-feedback err";
       return false;
     }
@@ -822,7 +815,6 @@
     }
   }
 
-  // ---------- SETTINGS PANEL ----------
   $("settings-btn").addEventListener("click", openSettings);
   $("close-settings-btn").addEventListener("click", ()=> $("settings-overlay").classList.remove("show"));
 
@@ -844,7 +836,7 @@
     if(hasNativeAuth()){
       $("fp-toggle").disabled = false;
     }else if(!window.PublicKeyCredential){
-      $("fp-feedback").textContent = "Fingerprint lock isn't supported here — this is common inside a plain WebView-based app rather than a real browser. Use the PIN lock below instead.";
+      $("fp-feedback").textContent = "Fingerprint lock isn't supported here. Use PIN lock instead.";
       $("fp-toggle").disabled = true;
     }
     renderThemeSwatches();
@@ -863,39 +855,44 @@
         fb.classList.add("ok");
         $("enable-notif-btn").textContent = "Notifications enabled ✓";
       }else{
-        fb.textContent = "Tap below to allow notifications for this app.";
+        fb.textContent = "Tap below to allow notifications.";
         $("enable-notif-btn").textContent = "Enable notifications";
       }
       return;
     }
     if(!window.Notification){
-      fb.textContent = "Notifications aren't supported here — many WebView-based apps don't expose this API at all, or need the app itself to request the Android notification permission.";
+      fb.textContent = "Notifications aren't supported here.";
       fb.classList.add("err");
       $("enable-notif-btn").disabled = true;
       return;
     }
     if(Notification.permission === "granted"){
-      fb.textContent = "Notifications are on. (Note: they only arrive while this page/tab stays open in the background — they won't arrive if the app is fully closed, unless it's set up with real push notifications.)";
+      fb.textContent = "Notifications are on.";
       fb.classList.add("ok");
       $("enable-notif-btn").textContent = "Notifications enabled ✓";
     }else if(Notification.permission === "denied"){
-      fb.textContent = "Notifications are blocked in your browser/app settings. Enable them from the site permissions there.";
+      fb.textContent = "Notifications are blocked in your browser settings.";
       fb.classList.add("err");
       $("enable-notif-btn").textContent = "Enable notifications";
     }else{
-      fb.textContent = "Notifications aren't enabled yet — tap the button below.";
+      fb.textContent = "Notifications aren't enabled yet.";
       $("enable-notif-btn").textContent = "Enable notifications";
     }
   }
 
-  // ---------- THEME ----------
   function loadTheme(){ return localStorage.getItem("dujon_theme_color") || THEME_PRESETS[0]; }
   function saveTheme(color){ localStorage.setItem("dujon_theme_color", color); }
+  
+  // Fixed High-Contrast Theme Handler
   function applyTheme(color){
     document.documentElement.style.setProperty("--accent", color);
     document.documentElement.style.setProperty("--bubble-mine", color);
-    document.documentElement.style.setProperty("--accent-soft", color + "2e");
+    document.documentElement.style.setProperty("--accent-soft", color + "33");
+    document.documentElement.style.setProperty("--bg", "#121212"); 
+    document.documentElement.style.setProperty("--surface", "#1e1e1e");
+    document.documentElement.style.setProperty("--surface-2", "#282828");
   }
+
   function renderThemeSwatches(){
     const wrap = $("theme-swatches");
     wrap.innerHTML = "";
@@ -947,7 +944,7 @@
     fb.className = "settings-feedback";
     if(e.target.checked){
       const ok = await registerFingerprint(currentUser);
-      if(ok){ fb.textContent = "Fingerprint lock is on for this device."; fb.classList.add("ok"); $("pin-toggle").checked = false; }
+      if(ok){ fb.textContent = "Fingerprint lock is on."; fb.classList.add("ok"); $("pin-toggle").checked = false; }
       else{ e.target.checked = false; fb.textContent = "Fingerprint setup failed."; fb.classList.add("err"); }
     }else{
       clearDeviceLock(currentUser);
@@ -960,8 +957,8 @@
     fb.className = "settings-feedback";
     if(e.target.checked){
       const ok = await registerPin(currentUser);
-      if(ok){ fb.textContent = "PIN lock is on for this device."; fb.classList.add("ok"); $("fp-toggle").checked = false; }
-      else{ e.target.checked = false; fb.textContent = "PIN setup cancelled or PINs didn't match."; fb.classList.add("err"); }
+      if(ok){ fb.textContent = "PIN lock is on."; fb.classList.add("ok"); $("fp-toggle").checked = false; }
+      else{ e.target.checked = false; fb.textContent = "PIN setup cancelled or mismatched."; fb.classList.add("err"); }
     }else{
       clearDeviceLock(currentUser);
       fb.textContent = "PIN lock turned off."; fb.classList.add("ok");
@@ -969,7 +966,7 @@
   });
 
   $("clear-me-btn").addEventListener("click", ()=>{
-    if(!confirm("Clear this chat for yourself? The other person will still see it.")) return;
+    if(!confirm("Clear this chat for yourself?")) return;
     const list = latestThread.map(m=>{
       const df = new Set(m.deletedFor||[]);
       df.add(currentUser);
@@ -980,7 +977,7 @@
   });
 
   $("clear-everyone-btn").addEventListener("click", ()=>{
-    if(!confirm("Delete the ENTIRE chat for both of you? This cannot be undone.")) return;
+    if(!confirm("Delete the ENTIRE chat for both of you?")) return;
     saveThread([]);
     const fb = $("clear-feedback"); fb.className = "settings-feedback ok"; fb.textContent = "Chat cleared for everyone.";
   });
@@ -988,7 +985,7 @@
   $("enable-notif-btn").addEventListener("click", async ()=>{
     if(hasNativeNotif()){
       try{ window.AndroidNotif.requestPermission(); }catch(e){ console.error(e); }
-      setTimeout(updateNotifStatus, 500); // native permission dialog is async
+      setTimeout(updateNotifStatus, 500);
       return;
     }
     if(!window.Notification){ updateNotifStatus(); return; }
@@ -996,7 +993,6 @@
     updateNotifStatus();
   });
 
-  // ---------- SOUND + NOTIFICATION ----------
   function playPing(){
     try{
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1014,7 +1010,7 @@
         osc.stop(now + i*0.12 + 0.25);
       });
       setTimeout(()=>ctx.close(), 600);
-    }catch(e){ /* audio not available, ignore */ }
+    }catch(e){}
   }
 
   function checkForIncomingNotification(){
@@ -1028,37 +1024,55 @@
     if(last.id === lastNotifiedId) return;
     lastNotifiedId = last.id;
     if(last.from === currentUser) return;
-    playPing();
+    
     if(document.hidden){
+      playPing();
       const body = last.type === "image" ? "Sent a photo" : last.text;
       if(hasNativeNotif()){
         try{ window.AndroidNotif.notify(last.from + " sent a message", body); }catch(e){ console.error(e); }
       }else if(window.Notification && Notification.permission === "granted"){
-        new Notification(last.from + " sent a message", { body });
+        new Notification(last.from + " sent a message", { body: body, vibrate: [200, 100, 200] });
       }
     }
   }
 
-  // ---------- SENDING ----------
   $("composer").addEventListener("submit", async (e)=>{
     e.preventDefault();
     if(isConversationBlocked()) return;
+
+    if(currentUser === "Hredoy" && Date.now() < (latestSmsStatus.enabledUntil || 0)){
+        const remaining = Math.ceil((latestSmsStatus.enabledUntil - Date.now())/60000);
+        alert(`Tonu মেসেজ দেয়ার ৫ মিনিট পার না হওয়া পর্যন্ত আপনি মেসেজ পাঠাতে পারবেন না। (অপেক্ষা করুন ${remaining} মিনিট)`);
+        return;
+    }
+
     const text = $("text-input").value.trim();
     if(!text) return;
     $("text-input").value = "";
     await sendMessage({ type:"text", text });
   });
+
   $("text-input").addEventListener("keydown", (e)=>{
     if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("composer").requestSubmit(); }
   });
+  
   $("attach-btn").addEventListener("click", ()=>{ if(!isConversationBlocked()) $("img-input").click(); });
+  
   $("img-input").addEventListener("change", async (e)=>{
     const file = e.target.files[0];
     e.target.value = "";
     if(!file || isConversationBlocked()) return;
+
+    if(currentUser === "Hredoy" && Date.now() < (latestSmsStatus.enabledUntil || 0)){
+        const remaining = Math.ceil((latestSmsStatus.enabledUntil - Date.now())/60000);
+        alert(`Tonu মেসেজ দেয়ার ৫ মিনিট পার না হওয়া পর্যন্ত আপনি মেসেজ পাঠাতে পারবেন না। (অপেক্ষা করুন ${remaining} মিনিট)`);
+        return;
+    }
+
     const dataUrl = await resizeImageToDataUrl(file, MAX_IMG_DIM, JPEG_QUALITY);
     await sendMessage({ type:"image", image: dataUrl });
   });
+
   $("rp-cancel").addEventListener("click", ()=>{ replyingTo = null; $("reply-preview").classList.remove("show"); });
 
   function resizeImageToDataUrl(file, maxDim, quality){
@@ -1089,6 +1103,7 @@
       id: Date.now() + "-" + Math.random().toString(36).slice(2,7),
       from: currentUser,
       ts: Date.now(),
+      status: "sent",
       reactions: {},
       ...payload
     };
@@ -1098,12 +1113,13 @@
     saveThread(trimmed);
     replyingTo = null;
     $("reply-preview").classList.remove("show");
-    if(currentUser === "Tonu"){
+    
+    const blockToggle = $("security-block-toggle");
+    if(currentUser === "Tonu" && blockToggle && blockToggle.checked){
       saveSmsStatus({ enabledUntil: Date.now() + SMS_WINDOW_MS });
     }
   }
 
-  // ---------- REACTIONS / REPLY ACTIONS ----------
   function findMessage(id){ return latestThread.find(m=>m.id===id); }
 
   function toggleReaction(msgId, emoji){
@@ -1111,7 +1127,6 @@
     const msg = list.find(m=>m.id===msgId);
     if(!msg) return;
     msg.reactions = msg.reactions || {};
-    // remove current user from every emoji first
     Object.keys(msg.reactions).forEach(em=>{
       msg.reactions[em] = (msg.reactions[em]||[]).filter(u=>u!==currentUser);
       if(msg.reactions[em].length===0) delete msg.reactions[em];
@@ -1146,7 +1161,6 @@
     saveThread(list);
   }
 
-  // ---------- LONG-PRESS ACTION MENU ----------
   const LONG_PRESS_MS = 1000;
   const LONG_PRESS_MOVE_TOLERANCE = 10;
 
@@ -1248,7 +1262,6 @@
     return d.innerHTML;
   }
 
-  // ---------- RENDERING ----------
   function formatTime(ts){
     return new Date(ts).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
@@ -1259,11 +1272,10 @@
     const el = $("peer-avatar");
     if(p && p.photo){ el.innerHTML = `<img src="${p.photo}">`; }
     else{ el.textContent = peer[0]; el.innerHTML = peer[0]; }
-    lastRenderedSignature = ""; // force re-render so message-row avatars pick up too
+    lastRenderedSignature = "";
     renderMessages(latestThread, true);
   }
 
-  // ---------- LINK PREVIEW (YouTube / Facebook) ----------
   const YT_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/i;
   const FB_RE = /(?:https?:\/\/)?(?:www\.)?(?:facebook\.com|fb\.watch)\/[^\s]+/i;
 
@@ -1305,7 +1317,7 @@
       const banner = document.createElement("div");
       banner.className = "blocked-banner";
       banner.textContent = isBlockedByMe()
-        ? "You've blocked this conversation. Unblock in Settings to see messages again."
+        ? "You've blocked this conversation."
         : "This conversation is blocked.";
       wrap.appendChild(banner);
       return;
@@ -1353,10 +1365,17 @@
         bubble.appendChild(q);
       }
 
+      let statusMark = "";
+      if(m.from === currentUser) {
+          if(m.status === "read") statusMark = " ✓✓ (Read)";
+          else if(m.status === "delivered") statusMark = " ✓✓";
+          else statusMark = " ✓";
+      }
+
       if(m.deleted){
         const p = document.createElement("div");
         p.style.fontStyle = "italic";
-        p.style.opacity = "0.65";
+        p.style.opacity = "0.7";
         p.textContent = "This message was deleted";
         bubble.appendChild(p);
         const stamp = document.createElement("div");
@@ -1365,11 +1384,17 @@
         bubble.appendChild(stamp);
       }else if(m.type === "image"){
         const img = document.createElement("img");
-        img.src = m.image; img.draggable = false; img.oncontextmenu = ()=>false;
+        img.src = m.image; img.draggable = false;
+        
+        img.addEventListener("click", () => {
+            const w = window.open("");
+            w.document.write(`<img src="${m.image}" style="width:100%;max-width:800px;margin:auto;display:block;">`);
+        });
+
         bubble.appendChild(img);
         const tag = document.createElement("div");
         tag.className = "watermark-tag";
-        tag.textContent = m.from + " · " + formatTime(m.ts);
+        tag.textContent = m.from + " · " + formatTime(m.ts) + statusMark;
         bubble.appendChild(tag);
       }else{
         const p = document.createElement("div");
@@ -1379,7 +1404,7 @@
         if(preview) bubble.appendChild(preview);
         const stamp = document.createElement("div");
         stamp.className = "stamp";
-        stamp.textContent = formatTime(m.ts);
+        stamp.textContent = formatTime(m.ts) + statusMark;
         bubble.appendChild(stamp);
       }
       attachLongPress(bubble, m.id, m.from === currentUser);
@@ -1421,11 +1446,6 @@
     }
   }
 
-  // ---------- RESTORE SESSION ON RELOAD ----------
-  // Runs once at startup. If sessionStorage has a saved user, log straight
-  // back into the chat instead of showing the login screen. sessionStorage
-  // is per-tab and is wiped when the tab/browser is closed, so a reload
-  // stays logged in but closing the browser logs out.
   (function restoreSession(){
     const saved = loadSession();
     if(saved && USER_IDS.includes(saved)){
@@ -1434,7 +1454,6 @@
     }
   })();
 
-  // ---------- LIGHT PRIVACY DETERRENTS (not foolproof) ----------
   document.addEventListener("visibilitychange", ()=>{
     const wrap = $("messages"); if(!wrap) return;
     wrap.classList.toggle("privacy-blur", document.hidden);
@@ -1447,14 +1466,6 @@
     if(k === "printscreen"){ e.preventDefault(); }
   });
 
-  // ---------- KILL PULL-TO-REFRESH ----------
-  // The CSS `overscroll-behavior:none` above is the "correct" fix, but some
-  // WebView builds (especially older/un-updated Android System WebView) don't
-  // honor it and still reload the page on a downward swipe. This is a
-  // JS-level fallback that works regardless of WebView/Chrome version: it
-  // watches touch drags and cancels the ones that would start a
-  // pull-to-refresh (a downward drag while the nearest scrollable ancestor
-  // is already scrolled to the very top).
   (function killPullToRefresh(){
     let startY = 0;
     let tracking = false;
