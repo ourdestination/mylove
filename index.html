@@ -27,7 +27,7 @@
     --sans: 'Karla', sans-serif;
   }
   *{box-sizing:border-box;}
-  html,body{height:100%; overscroll-behavior-y:none;}
+  html,body{height:100%; overscroll-behavior:none;}
   body{
     margin:0;
     font-family:var(--sans);
@@ -1446,6 +1446,52 @@
     if((e.metaKey||e.ctrlKey) && (k==="s"||k==="p")){ e.preventDefault(); }
     if(k === "printscreen"){ e.preventDefault(); }
   });
+
+  // ---------- KILL PULL-TO-REFRESH ----------
+  // The CSS `overscroll-behavior:none` above is the "correct" fix, but some
+  // WebView builds (especially older/un-updated Android System WebView) don't
+  // honor it and still reload the page on a downward swipe. This is a
+  // JS-level fallback that works regardless of WebView/Chrome version: it
+  // watches touch drags and cancels the ones that would start a
+  // pull-to-refresh (a downward drag while the nearest scrollable ancestor
+  // is already scrolled to the very top).
+  (function killPullToRefresh(){
+    let startY = 0;
+    let tracking = false;
+
+    function scrollableAncestor(el){
+      while(el && el !== document.body){
+        if(el.scrollHeight > el.clientHeight){
+          const style = window.getComputedStyle(el);
+          if(/(auto|scroll)/.test(style.overflowY)) return el;
+        }
+        el = el.parentElement;
+      }
+      return null;
+    }
+
+    document.addEventListener("touchstart", (e)=>{
+      if(e.touches.length !== 1) return;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    }, { passive:true });
+
+    document.addEventListener("touchmove", (e)=>{
+      if(!tracking || e.touches.length !== 1) return;
+      const y = e.touches[0].clientY;
+      const draggingDown = y > startY;
+      if(!draggingDown) return;
+
+      const scroller = scrollableAncestor(e.target);
+      const atTop = !scroller || scroller.scrollTop <= 0;
+      if(atTop){
+        e.preventDefault();
+      }
+    }, { passive:false });
+
+    document.addEventListener("touchend", ()=>{ tracking = false; }, { passive:true });
+    document.addEventListener("touchcancel", ()=>{ tracking = false; }, { passive:true });
+  })();
 </script>
 </body>
 </html>
