@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -27,7 +27,7 @@
     --sans: 'Karla', sans-serif;
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html,body{height:100%; overscroll-behavior-y:none;}
   body{
     margin:0;
     font-family:var(--sans);
@@ -40,6 +40,7 @@
     user-select:none;
     -webkit-touch-callout:none;
     overflow:hidden;
+    overscroll-behavior:none;
   }
   input, textarea{ -webkit-user-select:text; user-select:text; }
   button{ font-family:var(--sans); }
@@ -106,6 +107,7 @@
     flex:1; overflow-y:auto; padding:18px 14px 10px;
     display:flex; flex-direction:column; gap:2px;
     filter:none; transition:filter .25s ease;
+    overscroll-behavior:contain;
   }
   #messages.privacy-blur{ filter: blur(18px) brightness(0.6); }
   .empty-state{ margin:auto; text-align:center; color:var(--text-dim); font-size:13.5px; max-width:220px; line-height:1.6; }
@@ -231,6 +233,41 @@
   .msg-menu-item + .msg-menu-item{ border-top:1px solid rgba(255,255,255,0.05); }
 
   .reactions-row .reaction-pill{ user-select:none; }
+
+  /* ---------- PRESENCE ---------- */
+  .presence-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--text-dim); margin-right:5px; }
+  .presence-dot.online{ background:var(--ok); }
+
+  /* ---------- LINK PREVIEW ---------- */
+  .link-preview{
+    display:flex; align-items:center; gap:8px; margin-top:6px; padding:8px; border-radius:12px;
+    background:rgba(0,0,0,0.15); text-decoration:none; cursor:pointer;
+  }
+  .row.theirs .link-preview{ background:rgba(255,255,255,0.07); }
+  .link-preview img{ width:56px; height:56px; object-fit:cover; border-radius:8px; flex-shrink:0; }
+  .link-preview .lp-icon{
+    width:56px; height:56px; border-radius:8px; flex-shrink:0; display:flex; align-items:center;
+    justify-content:center; font-size:22px; background:rgba(255,255,255,0.08);
+  }
+  .link-preview .lp-text{ font-size:12px; overflow:hidden; }
+  .link-preview .lp-title{ font-weight:700; margin-bottom:2px; }
+  .link-preview .lp-domain{ opacity:0.7; }
+
+  /* ---------- BLOCKED BANNER ---------- */
+  .blocked-banner{
+    margin:auto; text-align:center; color:var(--text-dim); font-size:13.5px; max-width:240px; line-height:1.6;
+  }
+
+  /* ---------- THEME SWATCHES ---------- */
+  .swatch-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .swatch{
+    width:32px; height:32px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+  }
+  .swatch.active{ border-color:var(--text); }
+  .swatch-custom{ display:flex; align-items:center; gap:8px; }
+  .swatch-custom input[type="color"]{
+    width:36px; height:36px; padding:0; border:none; border-radius:50%; background:none; cursor:pointer;
+  }
 </style>
 </head>
 <body oncontextmenu="return false;">
@@ -249,8 +286,8 @@
       <label>Password</label>
       <input id="login-pass" type="password" autocomplete="off" placeholder="••••">
     </div>
-    <button class="login-btn" id="login-btn">প্রবেশ করো</button>
-    <button class="fp-btn" id="fp-login-btn" style="display:none;">🔒 ফিঙ্গারপ্রিন্ট দিয়ে প্রবেশ করো</button>
+    <button class="login-btn" id="login-btn">Log In</button>
+    <button class="fp-btn" id="fp-login-btn" style="display:none;">🔒 Log in with device lock</button>
     <p class="login-error" id="login-error"></p>
   </div>
 
@@ -260,15 +297,15 @@
       <div class="avatar" id="peer-avatar">T</div>
       <div>
         <div class="bar-name" id="peer-name">Tonu</div>
-        <div class="bar-status" id="peer-status">প্রাইভেট চ্যাট</div>
+        <div class="bar-status" id="peer-status">Private chat</div>
       </div>
       <div class="sms-badge" id="sms-badge">SMS mode: off</div>
-      <button class="icon-flat" id="settings-btn" title="সেটিংস">⚙️</button>
-      <button class="icon-flat" id="logout-btn" title="লগআউট">⏻</button>
+      <button class="icon-flat" id="settings-btn" title="Settings">⚙️</button>
+      <button class="icon-flat" id="logout-btn" title="Log out">⏻</button>
     </header>
 
     <div id="messages">
-      <div class="empty-state" id="empty-state">এখনো কোনো মেসেজ নেই। প্রথম মেসেজটা তুমিই পাঠাও 🤍</div>
+      <div class="empty-state" id="empty-state">No messages yet. Send the first one 🤍</div>
     </div>
 
     <div id="reply-preview">
@@ -279,57 +316,88 @@
     <form id="composer">
       <button type="button" class="icon-btn" id="attach-btn">📷</button>
       <input id="img-input" type="file" accept="image/*">
-      <textarea id="text-input" rows="1" placeholder="মেসেজ লেখো…"></textarea>
+      <textarea id="text-input" rows="1" placeholder="Type a message…"></textarea>
       <button type="submit" class="icon-btn send-btn">➤</button>
     </form>
-    <div class="protect-note">স্ক্রিনশট/ডাউনলোড ঠেকানোর চেষ্টা করা আছে, তবে ব্রাউজারে এটা ১০০% নিশ্চিত করা যায় না।</div>
+    <div class="protect-note">Screenshot/download prevention is attempted, but this can't be 100% guaranteed in a browser.</div>
   </div>
 
   <!-- SETTINGS -->
   <div id="settings-overlay">
     <div class="settings-card">
-      <h3>সেটিংস</h3>
+      <h3>Settings</h3>
 
       <div class="settings-section">
-        <h4>প্রোফাইল ছবি</h4>
+        <h4>Profile photo</h4>
         <div class="settings-row">
           <div class="avatar" id="my-avatar-preview" style="width:52px;height:52px;font-size:20px;">?</div>
-          <button class="settings-btn" id="change-photo-btn" type="button">ছবি পরিবর্তন করো</button>
+          <button class="settings-btn" id="change-photo-btn" type="button">Change photo</button>
           <input id="avatar-input" type="file" accept="image/*">
         </div>
       </div>
 
       <div class="settings-section">
-        <h4>পাসওয়ার্ড পরিবর্তন</h4>
-        <input id="old-pass" type="password" placeholder="বর্তমান পাসওয়ার্ড">
-        <input id="new-pass" type="password" placeholder="নতুন পাসওয়ার্ড">
-        <input id="new-pass2" type="password" placeholder="নতুন পাসওয়ার্ড আবার লেখো">
-        <button class="settings-btn primary" id="save-pass-btn" type="button">পাসওয়ার্ড সেভ করো</button>
+        <h4>App color</h4>
+        <div class="swatch-row" id="theme-swatches"></div>
+        <div class="swatch-custom">
+          <input type="color" id="theme-custom-color" value="#d98b6f">
+          <span class="settings-note" style="margin:0;">Pick a custom color</span>
+        </div>
+        <p class="settings-note">Only affects how the app looks on this device.</p>
+      </div>
+
+      <div class="settings-section">
+        <h4>Change password</h4>
+        <input id="old-pass" type="password" placeholder="Current password">
+        <input id="new-pass" type="password" placeholder="New password">
+        <input id="new-pass2" type="password" placeholder="Re-enter new password">
+        <button class="settings-btn primary" id="save-pass-btn" type="button">Save password</button>
         <p class="settings-feedback" id="pass-feedback"></p>
       </div>
 
       <div class="settings-section">
-        <h4>এই ডিভাইসের ফিঙ্গারপ্রিন্ট লক</h4>
+        <h4>Device lock (fingerprint/PIN)</h4>
         <div class="toggle-row">
-          <span>লগইনের সময় ফিঙ্গারপ্রিন্ট/ফেস আনলক চাইবে</span>
+          <span>Ask for fingerprint/face unlock at login</span>
           <label class="switch"><input type="checkbox" id="fp-toggle"><span class="slider"></span></label>
         </div>
-        <p class="settings-note">এটা শুধু এই ডিভাইস ও এই ব্রাউজারের জন্য প্রযোজ্য — অন্য কোনো ডিভাইসে লগইন করলে সেখানে আলাদা করে চালু করতে হবে। কোনো সার্ভার এই ফিঙ্গারপ্রিন্ট যাচাই করে না, এটা শুধু ডিভাইসের নিজস্ব লক হিসেবে কাজ করে।</p>
+        <p class="settings-note">Applies only to this device/browser — log in on another device to set it up there separately. No server verifies this; it's just a local lock for this device.</p>
         <p class="settings-feedback" id="fp-feedback"></p>
+        <div class="toggle-row" id="pin-toggle-row" style="margin-top:10px;">
+          <span>Use a PIN lock instead (works even without fingerprint support)</span>
+          <label class="switch"><input type="checkbox" id="pin-toggle"><span class="slider"></span></label>
+        </div>
+        <p class="settings-feedback" id="pin-feedback"></p>
       </div>
 
       <div class="settings-section">
-        <h4>নোটিফিকেশন</h4>
-        <button class="settings-btn" id="enable-notif-btn" type="button">নোটিফিকেশন চালু করো</button>
+        <h4>Notifications</h4>
+        <button class="settings-btn" id="enable-notif-btn" type="button">Enable notifications</button>
         <p class="settings-feedback" id="notif-feedback"></p>
       </div>
 
       <div class="settings-section">
-        <h4>সেশন</h4>
-        <button class="settings-btn" id="settings-logout-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">⏻ লগআউট করো</button>
+        <h4>Block</h4>
+        <div class="toggle-row">
+          <span id="block-label">Block this person</span>
+          <label class="switch"><input type="checkbox" id="block-toggle"><span class="slider"></span></label>
+        </div>
+        <p class="settings-feedback" id="block-feedback"></p>
       </div>
 
-      <button class="close-settings" id="close-settings-btn" type="button">বন্ধ করো</button>
+      <div class="settings-section">
+        <h4>Chat data</h4>
+        <button class="settings-btn" id="clear-me-btn" type="button" style="margin-bottom:8px;">🗑 Clear chat for me</button><br>
+        <button class="settings-btn" id="clear-everyone-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">🗑 Clear chat for everyone</button>
+        <p class="settings-feedback" id="clear-feedback"></p>
+      </div>
+
+      <div class="settings-section">
+        <h4>Session</h4>
+        <button class="settings-btn" id="settings-logout-btn" type="button" style="border-color:rgba(199,106,95,0.4); color:var(--danger);">⏻ Log out</button>
+      </div>
+
+      <button class="close-settings" id="close-settings-btn" type="button">Close</button>
     </div>
   </div>
 
@@ -345,7 +413,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAScujJv7tJnrWA_V3JB_GnW233WEwMsCg",
@@ -365,6 +433,8 @@
   const smsRef = ref(db, "dujon_chat/sms_status");
   const profilesRef = ref(db, "dujon_chat/profiles");
   const authRef = ref(db, "dujon_chat/auth");
+  const presenceRef = ref(db, "dujon_chat/presence");
+  const blocksRef = ref(db, "dujon_chat/blocks");
 
   const USER_IDS = ["Hredoy", "Tonu"];
   const SMS_WINDOW_MS = 5 * 60 * 1000;
@@ -372,6 +442,8 @@
   const MAX_AVATAR_DIM = 300;
   const JPEG_QUALITY = 0.72;
   const REACTION_EMOJIS = ["❤️","😂","😮","😢","👍","😡"];
+  const MAX_HISTORY = 2000;
+  const THEME_PRESETS = ["#d98b6f","#7fae8c","#7a9fd9","#c76a5f","#b98fd9","#d9c46f"];
 
   let currentUser = null;
   let lastRenderedSignature = "";
@@ -379,14 +451,64 @@
   let latestSmsStatus = { enabledUntil: 0 };
   let latestProfiles = {};
   let latestAuth = {};
+  let latestPresence = {};
+  let latestBlocks = {};
   let authSeeded = false;
   let badgeTicker = null;
+  let presenceTicker = null;
   let replyingTo = null;
   let lastNotifiedId = null;
   let firstThreadLoad = true;
 
   const $ = (id) => document.getElementById(id);
   const otherUser = (u) => (u === "Hredoy" ? "Tonu" : "Hredoy");
+
+  // ---------- NATIVE ANDROID BRIDGE (optional) ----------
+  // If the surrounding Android app registers these JavascriptInterface objects
+  // (see MainActivity.kt notes), we use real OS biometrics + real Android
+  // notifications instead of the browser WebAuthn/Notification APIs, which a
+  // plain WebView does not support. Everything below falls back to the old
+  // browser-only behavior automatically when the bridge is absent (e.g. when
+  // this page is opened in a normal browser tab).
+  const hasNativeAuth = () => !!(window.AndroidLock && window.AndroidLock.authenticate);
+  const hasNativeNotif = () => !!(window.AndroidNotif && window.AndroidNotif.notify);
+
+  // Push notification token: the Kotlin side fetches this async and reports
+  // it back via window.onFcmToken(token). We save it under the logged-in
+  // user's profile so the Cloud Function knows where to send that user's
+  // incoming-message pushes, even while the app is fully closed.
+  window.onFcmToken = function(token){
+    if(!token || !currentUser) return;
+    try{
+      set(ref(db, "dujon_chat/profiles/"+currentUser+"/fcmToken"), token);
+    }catch(e){ console.error("saving fcm token failed", e); }
+  };
+  function registerFcmTokenIfPossible(){
+    if(window.AndroidNotif && window.AndroidNotif.registerFcmToken){
+      try{ window.AndroidNotif.registerFcmToken(); }catch(e){ console.error(e); }
+    }
+  }
+
+  // Native biometric auth is async on the Kotlin side, so it replies by
+  // calling window.onNativeAuthResult(true/false). We wrap that in a Promise.
+  let pendingAuthResolve = null;
+  window.onNativeAuthResult = function(success){
+    if(pendingAuthResolve){ pendingAuthResolve(!!success); pendingAuthResolve = null; }
+  };
+  function nativeAuthenticate(){
+    return new Promise((resolve)=>{
+      pendingAuthResolve = resolve;
+      try{
+        window.AndroidLock.authenticate();
+      }catch(e){
+        console.error("native authenticate() call failed", e);
+        pendingAuthResolve = null;
+        resolve(false);
+      }
+      // Safety timeout in case the native side never calls back.
+      setTimeout(()=>{ if(pendingAuthResolve === resolve){ pendingAuthResolve = null; resolve(false); } }, 30000);
+    });
+  }
 
   // ---------- SESSION PERSISTENCE ----------
   // sessionStorage survives a page reload but is cleared when the tab/browser
@@ -431,6 +553,72 @@
       });
     }
   });
+  onValue(presenceRef, (snap) => {
+    latestPresence = snap.val() || {};
+    if(currentUser){ renderPeerStatus(); }
+  });
+  onValue(blocksRef, (snap) => {
+    latestBlocks = snap.val() || {};
+    if(currentUser){ applyBlockState(); }
+  });
+
+  // ---------- PRESENCE (online / last seen) ----------
+  function setupPresence(user){
+    const myPresenceRef = ref(db, "dujon_chat/presence/"+user);
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap)=>{
+      if(snap.val() === true){
+        onDisconnect(myPresenceRef).set({ online:false, lastSeen: serverTimestamp() }).then(()=>{
+          set(myPresenceRef, { online:true, lastSeen: serverTimestamp() });
+        });
+      }
+    });
+    if(presenceTicker) clearInterval(presenceTicker);
+    presenceTicker = setInterval(renderPeerStatus, 20000);
+  }
+
+  function renderPeerStatus(){
+    const el = $("peer-status");
+    if(!el) return;
+    const peer = otherUser(currentUser);
+    const p = latestPresence[peer];
+    if(!p){ el.innerHTML = "Private chat"; return; }
+    if(p.online){
+      el.innerHTML = `<span class="presence-dot online"></span>Online`;
+    }else if(p.lastSeen){
+      el.innerHTML = `<span class="presence-dot"></span>Last seen ${formatTime(p.lastSeen)}`;
+    }else{
+      el.innerHTML = "Private chat";
+    }
+  }
+
+  // ---------- BLOCK ----------
+  function isBlockedByMe(){ return !!latestBlocks[currentUser]; }
+  function isBlockedByPeer(){ return !!latestBlocks[otherUser(currentUser)]; }
+  function isConversationBlocked(){ return isBlockedByMe() || isBlockedByPeer(); }
+
+  function applyBlockState(){
+    const blocked = isConversationBlocked();
+    $("text-input").disabled = blocked;
+    $("attach-btn").disabled = blocked;
+    $("composer").querySelector(".send-btn").disabled = blocked;
+    lastRenderedSignature = "";
+    renderMessages(latestThread, true);
+    if($("settings-overlay").classList.contains("show")) refreshBlockToggle();
+  }
+
+  function refreshBlockToggle(){
+    const peer = otherUser(currentUser);
+    $("block-label").textContent = "Block " + peer;
+    $("block-toggle").checked = isBlockedByMe();
+  }
+
+  $("block-toggle").addEventListener("change", (e)=>{
+    set(ref(db, "dujon_chat/blocks/"+currentUser), e.target.checked ? true : null);
+    const fb = $("block-feedback");
+    fb.className = "settings-feedback ok";
+    fb.textContent = e.target.checked ? "This person is now blocked." : "Unblocked.";
+  });
 
   function saveThread(list){ set(threadRef, list).catch(e=>console.error("thread sync error:", e)); }
   function saveSmsStatus(status){ set(smsRef, status).catch(e=>console.error("sms sync error:", e)); }
@@ -442,23 +630,46 @@
   $("login-pass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") doLogin(); });
   $("login-id").addEventListener("input", updateFpButtonVisibility);
 
+  // Unified device-lock storage: { type:"native"|"webauthn", id:"<credId>" } or { type:"pin", hash:"<sha256>" }
+  function getDeviceLock(user){
+    try{
+      const legacy = localStorage.getItem("dujon_fp_"+user);
+      if(legacy) return { type:"webauthn", id: JSON.parse(legacy).id };
+      const raw = localStorage.getItem("dujon_lock_"+user);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function setDeviceLock(user, obj){ localStorage.setItem("dujon_lock_"+user, JSON.stringify(obj)); localStorage.removeItem("dujon_fp_"+user); }
+  function clearDeviceLock(user){ localStorage.removeItem("dujon_lock_"+user); localStorage.removeItem("dujon_fp_"+user); }
+
+  async function verifyDeviceLock(lock){
+    if(lock.type === "pin"){
+      const entered = prompt("Enter your device PIN");
+      if(entered === null) return false;
+      return (await sha256Hex(entered)) === lock.hash;
+    }
+    if(lock.type === "native") return nativeAuthenticate();
+    return verifyFingerprint(lock.id);
+  }
+
   function updateFpButtonVisibility(){
     const id = $("login-id").value.trim();
-    const has = id && localStorage.getItem("dujon_fp_"+id);
+    const has = id && getDeviceLock(id);
     $("fp-login-btn").style.display = has ? "block" : "none";
+    $("fp-login-btn").textContent = (has && has.type === "pin") ? "🔒 Log in with PIN" : "🔒 Log in with fingerprint";
   }
 
   $("fp-login-btn").addEventListener("click", async ()=>{
     const id = $("login-id").value.trim();
-    const stored = id && localStorage.getItem("dujon_fp_"+id);
-    if(!stored) return;
-    const ok = await verifyFingerprint(JSON.parse(stored).id);
+    const lock = id && getDeviceLock(id);
+    if(!lock) return;
+    const ok = await verifyDeviceLock(lock);
     if(ok){
       currentUser = id;
       saveSession(currentUser);
       enterChat();
     }else{
-      $("login-error").textContent = "ফিঙ্গারপ্রিন্ট যাচাই ব্যর্থ হয়েছে।";
+      $("login-error").textContent = "Device lock verification failed.";
     }
   });
 
@@ -466,21 +677,21 @@
     const id = $("login-id").value.trim();
     const pass = $("login-pass").value;
     if(!USER_IDS.includes(id)){
-      $("login-error").textContent = "ID অথবা পাসওয়ার্ড ভুল হয়েছে।";
+      $("login-error").textContent = "Incorrect ID or password.";
       return;
     }
     const hash = await sha256Hex(pass);
     const expected = (latestAuth[id] && latestAuth[id].passwordHash) || DEFAULT_HASH;
     if(hash !== expected){
-      $("login-error").textContent = "ID অথবা পাসওয়ার্ড ভুল হয়েছে।";
+      $("login-error").textContent = "Incorrect ID or password.";
       return;
     }
-    // if this device has fingerprint lock enabled for this user, require it too
-    const stored = localStorage.getItem("dujon_fp_"+id);
-    if(stored){
-      const ok = await verifyFingerprint(JSON.parse(stored).id);
+    // if this device has a lock (fingerprint or PIN) enabled for this user, require it too
+    const lock = getDeviceLock(id);
+    if(lock){
+      const ok = await verifyDeviceLock(lock);
       if(!ok){
-        $("login-error").textContent = "ফিঙ্গারপ্রিন্ট যাচাই ব্যর্থ হয়েছে।";
+        $("login-error").textContent = "Device lock verification failed.";
         return;
       }
     }
@@ -500,15 +711,26 @@
     renderMessages(latestThread);
     renderSmsBadge(latestSmsStatus);
     applyAvatars();
+    applyTheme(loadTheme());
+    renderPeerStatus();
+    applyBlockState();
+    setupPresence(currentUser);
     if(badgeTicker) clearInterval(badgeTicker);
     badgeTicker = setInterval(()=> renderSmsBadge(latestSmsStatus), 15000);
-    if(window.Notification && Notification.permission === "default"){
+    if(hasNativeNotif()){
+      try{ window.AndroidNotif.requestPermission(); }catch(e){ console.error(e); }
+      registerFcmTokenIfPossible();
+    }else if(window.Notification && Notification.permission === "default"){
       Notification.requestPermission();
     }
   }
 
   function doLogout(){
     if(badgeTicker) clearInterval(badgeTicker);
+    if(presenceTicker) clearInterval(presenceTicker);
+    if(currentUser){
+      set(ref(db, "dujon_chat/presence/"+currentUser), { online:false, lastSeen: serverTimestamp() });
+    }
     currentUser = null;
     clearSession();
     $("settings-overlay").classList.remove("show");
@@ -534,8 +756,21 @@
   }
 
   async function registerFingerprint(user){
+    if(hasNativeAuth()){
+      // Ask the OS to confirm the user's fingerprint/face once, purely to
+      // prove the sensor works and is enrolled, then remember that this
+      // device+user should use native auth going forward.
+      const ok = await nativeAuthenticate();
+      if(!ok){
+        $("fp-feedback").textContent = "Fingerprint check failed or was cancelled. Try again, or use the PIN lock instead.";
+        $("fp-feedback").className = "settings-feedback err";
+        return false;
+      }
+      setDeviceLock(user, { type:"native" });
+      return true;
+    }
     if(!(window.PublicKeyCredential)){
-      $("fp-feedback").textContent = "এই ডিভাইস/ব্রাউজারে সাপোর্ট নেই।";
+      $("fp-feedback").textContent = "Not supported on this device/browser (common inside a plain WebView-based app). Try the PIN lock below instead.";
       $("fp-feedback").className = "settings-feedback err";
       return false;
     }
@@ -545,19 +780,28 @@
       const cred = await navigator.credentials.create({
         publicKey: {
           challenge,
-          rp: { name: "Priyojon প্রাইভেট চ্যাট" },
+          rp: { name: "Priyojon Private Chat" },
           user: { id: userId, name: user, displayName: user },
           pubKeyCredParams: [{ alg:-7, type:"public-key" }, { alg:-257, type:"public-key" }],
           authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
           timeout: 60000
         }
       });
-      localStorage.setItem("dujon_fp_"+user, JSON.stringify({ id: cred.id }));
+      setDeviceLock(user, { type:"webauthn", id: cred.id });
       return true;
     }catch(e){
       console.error("fingerprint registration failed", e);
       return false;
     }
+  }
+
+  async function registerPin(user){
+    const p1 = prompt("Choose a PIN (4+ digits)");
+    if(!p1 || p1.length < 4) return false;
+    const p2 = prompt("Re-enter the PIN to confirm");
+    if(p1 !== p2) return false;
+    setDeviceLock(user, { type:"pin", hash: await sha256Hex(p1) });
+    return true;
   }
 
   async function verifyFingerprint(credId){
@@ -585,18 +829,26 @@
   function openSettings(){
     $("pass-feedback").textContent = "";
     $("fp-feedback").textContent = "";
+    $("pin-feedback").textContent = "";
     $("notif-feedback").textContent = "";
+    $("block-feedback").textContent = "";
+    $("clear-feedback").textContent = "";
     $("old-pass").value = ""; $("new-pass").value = ""; $("new-pass2").value = "";
     const mine = latestProfiles[currentUser];
     const prev = $("my-avatar-preview");
     if(mine && mine.photo){ prev.innerHTML = `<img src="${mine.photo}">`; }
     else{ prev.textContent = currentUser[0]; }
-    const hasFp = !!localStorage.getItem("dujon_fp_"+currentUser);
-    $("fp-toggle").checked = hasFp;
-    if(!window.PublicKeyCredential){
-      $("fp-feedback").textContent = "এই ব্রাউজারে ফিঙ্গারপ্রিন্ট লক সাপোর্ট নেই।";
+    const lock = getDeviceLock(currentUser);
+    $("fp-toggle").checked = !!(lock && (lock.type === "webauthn" || lock.type === "native"));
+    $("pin-toggle").checked = !!(lock && lock.type === "pin");
+    if(hasNativeAuth()){
+      $("fp-toggle").disabled = false;
+    }else if(!window.PublicKeyCredential){
+      $("fp-feedback").textContent = "Fingerprint lock isn't supported here — this is common inside a plain WebView-based app rather than a real browser. Use the PIN lock below instead.";
       $("fp-toggle").disabled = true;
     }
+    renderThemeSwatches();
+    refreshBlockToggle();
     updateNotifStatus();
     $("settings-overlay").classList.add("show");
   }
@@ -604,25 +856,63 @@
   function updateNotifStatus(){
     const fb = $("notif-feedback");
     fb.className = "settings-feedback";
+    if(hasNativeNotif()){
+      const granted = !window.AndroidNotif.hasPermission || window.AndroidNotif.hasPermission();
+      if(granted){
+        fb.textContent = "Notifications are on for the app.";
+        fb.classList.add("ok");
+        $("enable-notif-btn").textContent = "Notifications enabled ✓";
+      }else{
+        fb.textContent = "Tap below to allow notifications for this app.";
+        $("enable-notif-btn").textContent = "Enable notifications";
+      }
+      return;
+    }
     if(!window.Notification){
-      fb.textContent = "এই ব্রাউজারে নোটিফিকেশন সাপোর্ট নেই।";
+      fb.textContent = "Notifications aren't supported here — many WebView-based apps don't expose this API at all, or need the app itself to request the Android notification permission.";
       fb.classList.add("err");
       $("enable-notif-btn").disabled = true;
       return;
     }
     if(Notification.permission === "granted"){
-      fb.textContent = "নোটিফিকেশন চালু আছে। (মনে রাখো: ব্রাউজার/ট্যাব খোলা থাকলে তবেই নোটিফিকেশন আসবে, একদম বন্ধ থাকলে আসবে না।)";
+      fb.textContent = "Notifications are on. (Note: they only arrive while this page/tab stays open in the background — they won't arrive if the app is fully closed, unless it's set up with real push notifications.)";
       fb.classList.add("ok");
-      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু আছে ✓";
+      $("enable-notif-btn").textContent = "Notifications enabled ✓";
     }else if(Notification.permission === "denied"){
-      fb.textContent = "নোটিফিকেশন ব্রাউজার সেটিংস থেকে বন্ধ করা আছে। ব্রাউজারের সাইট সেটিংসে গিয়ে অনুমতি দাও।";
+      fb.textContent = "Notifications are blocked in your browser/app settings. Enable them from the site permissions there.";
       fb.classList.add("err");
-      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু করো";
+      $("enable-notif-btn").textContent = "Enable notifications";
     }else{
-      fb.textContent = "নোটিফিকেশন এখনো চালু করা হয়নি — নিচের বাটনে চাপো।";
-      $("enable-notif-btn").textContent = "নোটিফিকেশন চালু করো";
+      fb.textContent = "Notifications aren't enabled yet — tap the button below.";
+      $("enable-notif-btn").textContent = "Enable notifications";
     }
   }
+
+  // ---------- THEME ----------
+  function loadTheme(){ return localStorage.getItem("dujon_theme_color") || THEME_PRESETS[0]; }
+  function saveTheme(color){ localStorage.setItem("dujon_theme_color", color); }
+  function applyTheme(color){
+    document.documentElement.style.setProperty("--accent", color);
+    document.documentElement.style.setProperty("--bubble-mine", color);
+    document.documentElement.style.setProperty("--accent-soft", color + "2e");
+  }
+  function renderThemeSwatches(){
+    const wrap = $("theme-swatches");
+    wrap.innerHTML = "";
+    const current = loadTheme();
+    THEME_PRESETS.forEach(color=>{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "swatch" + (color === current ? " active" : "");
+      b.style.background = color;
+      b.addEventListener("click", ()=>{ saveTheme(color); applyTheme(color); renderThemeSwatches(); });
+      wrap.appendChild(b);
+    });
+    $("theme-custom-color").value = current;
+  }
+  $("theme-custom-color").addEventListener("input", (e)=>{
+    saveTheme(e.target.value); applyTheme(e.target.value); renderThemeSwatches();
+  });
 
   $("change-photo-btn").addEventListener("click", ()=> $("avatar-input").click());
   $("avatar-input").addEventListener("change", async (e)=>{
@@ -640,15 +930,15 @@
     const newP2 = $("new-pass2").value;
     const fb = $("pass-feedback");
     fb.className = "settings-feedback";
-    if(!oldP || !newP || !newP2){ fb.textContent = "সবগুলো ঘর পূরণ করো।"; fb.classList.add("err"); return; }
-    if(newP !== newP2){ fb.textContent = "নতুন পাসওয়ার্ড দুটো মিলছে না।"; fb.classList.add("err"); return; }
-    if(newP.length < 4){ fb.textContent = "পাসওয়ার্ড কমপক্ষে ৪ ক্যারেক্টার হতে হবে।"; fb.classList.add("err"); return; }
+    if(!oldP || !newP || !newP2){ fb.textContent = "Fill in every field."; fb.classList.add("err"); return; }
+    if(newP !== newP2){ fb.textContent = "The new passwords don't match."; fb.classList.add("err"); return; }
+    if(newP.length < 4){ fb.textContent = "Password must be at least 4 characters."; fb.classList.add("err"); return; }
     const oldHash = await sha256Hex(oldP);
     const expected = (latestAuth[currentUser] && latestAuth[currentUser].passwordHash) || DEFAULT_HASH;
-    if(oldHash !== expected){ fb.textContent = "বর্তমান পাসওয়ার্ড ভুল।"; fb.classList.add("err"); return; }
+    if(oldHash !== expected){ fb.textContent = "Current password is incorrect."; fb.classList.add("err"); return; }
     const newHash = await sha256Hex(newP);
     await saveAuthHash(currentUser, newHash);
-    fb.textContent = "পাসওয়ার্ড পরিবর্তন হয়েছে।"; fb.classList.add("ok");
+    fb.textContent = "Password changed."; fb.classList.add("ok");
     $("old-pass").value=""; $("new-pass").value=""; $("new-pass2").value="";
   });
 
@@ -657,15 +947,50 @@
     fb.className = "settings-feedback";
     if(e.target.checked){
       const ok = await registerFingerprint(currentUser);
-      if(ok){ fb.textContent = "এই ডিভাইসে ফিঙ্গারপ্রিন্ট লক চালু হয়েছে।"; fb.classList.add("ok"); }
-      else{ e.target.checked = false; fb.textContent = "ফিঙ্গারপ্রিন্ট সেটআপ ব্যর্থ হয়েছে।"; fb.classList.add("err"); }
+      if(ok){ fb.textContent = "Fingerprint lock is on for this device."; fb.classList.add("ok"); $("pin-toggle").checked = false; }
+      else{ e.target.checked = false; fb.textContent = "Fingerprint setup failed."; fb.classList.add("err"); }
     }else{
-      localStorage.removeItem("dujon_fp_"+currentUser);
-      fb.textContent = "ফিঙ্গারপ্রিন্ট লক বন্ধ করা হয়েছে।"; fb.classList.add("ok");
+      clearDeviceLock(currentUser);
+      fb.textContent = "Fingerprint lock turned off."; fb.classList.add("ok");
     }
   });
 
+  $("pin-toggle").addEventListener("change", async (e)=>{
+    const fb = $("pin-feedback");
+    fb.className = "settings-feedback";
+    if(e.target.checked){
+      const ok = await registerPin(currentUser);
+      if(ok){ fb.textContent = "PIN lock is on for this device."; fb.classList.add("ok"); $("fp-toggle").checked = false; }
+      else{ e.target.checked = false; fb.textContent = "PIN setup cancelled or PINs didn't match."; fb.classList.add("err"); }
+    }else{
+      clearDeviceLock(currentUser);
+      fb.textContent = "PIN lock turned off."; fb.classList.add("ok");
+    }
+  });
+
+  $("clear-me-btn").addEventListener("click", ()=>{
+    if(!confirm("Clear this chat for yourself? The other person will still see it.")) return;
+    const list = latestThread.map(m=>{
+      const df = new Set(m.deletedFor||[]);
+      df.add(currentUser);
+      return { ...m, deletedFor: Array.from(df) };
+    });
+    saveThread(list);
+    const fb = $("clear-feedback"); fb.className = "settings-feedback ok"; fb.textContent = "Cleared for you.";
+  });
+
+  $("clear-everyone-btn").addEventListener("click", ()=>{
+    if(!confirm("Delete the ENTIRE chat for both of you? This cannot be undone.")) return;
+    saveThread([]);
+    const fb = $("clear-feedback"); fb.className = "settings-feedback ok"; fb.textContent = "Chat cleared for everyone.";
+  });
+
   $("enable-notif-btn").addEventListener("click", async ()=>{
+    if(hasNativeNotif()){
+      try{ window.AndroidNotif.requestPermission(); }catch(e){ console.error(e); }
+      setTimeout(updateNotifStatus, 500); // native permission dialog is async
+      return;
+    }
     if(!window.Notification){ updateNotifStatus(); return; }
     await Notification.requestPermission();
     updateNotifStatus();
@@ -704,15 +1029,20 @@
     lastNotifiedId = last.id;
     if(last.from === currentUser) return;
     playPing();
-    if(window.Notification && Notification.permission === "granted" && document.hidden){
-      const body = last.type === "image" ? "একটা ছবি পাঠিয়েছে" : last.text;
-      new Notification(last.from + " মেসেজ দিয়েছে", { body });
+    if(document.hidden){
+      const body = last.type === "image" ? "Sent a photo" : last.text;
+      if(hasNativeNotif()){
+        try{ window.AndroidNotif.notify(last.from + " sent a message", body); }catch(e){ console.error(e); }
+      }else if(window.Notification && Notification.permission === "granted"){
+        new Notification(last.from + " sent a message", { body });
+      }
     }
   }
 
   // ---------- SENDING ----------
   $("composer").addEventListener("submit", async (e)=>{
     e.preventDefault();
+    if(isConversationBlocked()) return;
     const text = $("text-input").value.trim();
     if(!text) return;
     $("text-input").value = "";
@@ -721,11 +1051,11 @@
   $("text-input").addEventListener("keydown", (e)=>{
     if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("composer").requestSubmit(); }
   });
-  $("attach-btn").addEventListener("click", ()=> $("img-input").click());
+  $("attach-btn").addEventListener("click", ()=>{ if(!isConversationBlocked()) $("img-input").click(); });
   $("img-input").addEventListener("change", async (e)=>{
     const file = e.target.files[0];
     e.target.value = "";
-    if(!file) return;
+    if(!file || isConversationBlocked()) return;
     const dataUrl = await resizeImageToDataUrl(file, MAX_IMG_DIM, JPEG_QUALITY);
     await sendMessage({ type:"image", image: dataUrl });
   });
@@ -764,7 +1094,7 @@
     };
     if(replyingTo) msg.replyTo = replyingTo.id;
     list.push(msg);
-    const trimmed = list.slice(-300);
+    const trimmed = list.slice(-MAX_HISTORY);
     saveThread(trimmed);
     replyingTo = null;
     $("reply-preview").classList.remove("show");
@@ -881,14 +1211,14 @@
         b.addEventListener("click", ()=>{ toggleReaction(msgId, em); closeMsgMenu(); });
         emojiWrap.appendChild(b);
       });
-      addMsgMenuItem(list, "↩ রিপ্লাই করো", ()=>{ startReply(msgId); closeMsgMenu(); });
+      addMsgMenuItem(list, "↩ Reply", ()=>{ startReply(msgId); closeMsgMenu(); });
     }else{
       emojiWrap.style.display = "none";
     }
 
-    addMsgMenuItem(list, "🗑 আমার জন্য রিমুভ করো", ()=>{ removeForMe(msgId); closeMsgMenu(); }, true);
+    addMsgMenuItem(list, "🗑 Remove for me", ()=>{ removeForMe(msgId); closeMsgMenu(); }, true);
     if(isMine && !msg.deleted){
-      addMsgMenuItem(list, "🗑 সবার জন্য রিমুভ করো", ()=>{ removeForEveryone(msgId); closeMsgMenu(); }, true);
+      addMsgMenuItem(list, "🗑 Remove for everyone", ()=>{ removeForEveryone(msgId); closeMsgMenu(); }, true);
     }
 
     $("msg-menu-overlay").classList.add("show");
@@ -906,7 +1236,7 @@
     const msg = findMessage(msgId);
     if(!msg) return;
     replyingTo = msg;
-    const preview = msg.type === "image" ? "📷 ছবি" : msg.text;
+    const preview = msg.type === "image" ? "📷 Photo" : msg.text;
     $("rp-text").innerHTML = `<b>${msg.from}</b>${escapeHtml(preview)}`;
     $("reply-preview").classList.add("show");
     $("text-input").focus();
@@ -920,7 +1250,7 @@
 
   // ---------- RENDERING ----------
   function formatTime(ts){
-    return new Date(ts).toLocaleTimeString('bn-BD', { hour:'2-digit', minute:'2-digit' });
+    return new Date(ts).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
   function applyAvatars(){
@@ -933,6 +1263,36 @@
     renderMessages(latestThread, true);
   }
 
+  // ---------- LINK PREVIEW (YouTube / Facebook) ----------
+  const YT_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/i;
+  const FB_RE = /(?:https?:\/\/)?(?:www\.)?(?:facebook\.com|fb\.watch)\/[^\s]+/i;
+
+  function buildLinkPreview(text){
+    if(!text) return null;
+    const yt = text.match(YT_RE);
+    if(yt){
+      const videoId = yt[1];
+      const url = yt[0].startsWith("http") ? yt[0] : "https://" + yt[0];
+      const a = document.createElement("a");
+      a.className = "link-preview";
+      a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.innerHTML = `<img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="YouTube">
+        <div class="lp-text"><div class="lp-title">▶ YouTube video</div><div class="lp-domain">youtube.com</div></div>`;
+      return a;
+    }
+    const fbUrlMatch = text.match(/https?:\/\/\S+/i);
+    if(fbUrlMatch && FB_RE.test(fbUrlMatch[0])){
+      const url = fbUrlMatch[0];
+      const a = document.createElement("a");
+      a.className = "link-preview";
+      a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.innerHTML = `<div class="lp-icon">📘</div>
+        <div class="lp-text"><div class="lp-title">Facebook link</div><div class="lp-domain">facebook.com</div></div>`;
+      return a;
+    }
+    return null;
+  }
+
   function renderMessages(fullList, force){
     const wrap = $("messages");
     if(!wrap) return;
@@ -940,13 +1300,23 @@
     if(!force && sig === lastRenderedSignature) return;
     lastRenderedSignature = sig;
 
+    wrap.innerHTML = "";
+    if(isConversationBlocked()){
+      const banner = document.createElement("div");
+      banner.className = "blocked-banner";
+      banner.textContent = isBlockedByMe()
+        ? "You've blocked this conversation. Unblock in Settings to see messages again."
+        : "This conversation is blocked.";
+      wrap.appendChild(banner);
+      return;
+    }
+
     const list = fullList.filter(m => !(m.deletedFor||[]).includes(currentUser));
 
-    wrap.innerHTML = "";
     if(list.length === 0){
       const empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "এখনো কোনো মেসেজ নেই। প্রথম মেসেজটা তুমিই পাঠাও 🤍";
+      empty.textContent = "No messages yet. Send the first one 🤍";
       wrap.appendChild(empty);
       return;
     }
@@ -975,10 +1345,10 @@
         const q = document.createElement("div");
         q.className = "reply-quote";
         if(original){
-          const preview = original.deleted ? "এই মেসেজটি মুছে ফেলা হয়েছে" : (original.type==="image" ? "📷 ছবি" : original.text);
+          const preview = original.deleted ? "This message was deleted" : (original.type==="image" ? "📷 Photo" : original.text);
           q.innerHTML = `<b>${original.from}</b>${escapeHtml(preview)}`;
         }else{
-          q.innerHTML = `<b>মেসেজ</b>মূল মেসেজটি পাওয়া যায়নি`;
+          q.innerHTML = `<b>Message</b>Original message not found`;
         }
         bubble.appendChild(q);
       }
@@ -987,7 +1357,7 @@
         const p = document.createElement("div");
         p.style.fontStyle = "italic";
         p.style.opacity = "0.65";
-        p.textContent = "এই মেসেজটি মুছে ফেলা হয়েছে";
+        p.textContent = "This message was deleted";
         bubble.appendChild(p);
         const stamp = document.createElement("div");
         stamp.className = "stamp";
@@ -1005,6 +1375,8 @@
         const p = document.createElement("div");
         p.textContent = m.text;
         bubble.appendChild(p);
+        const preview = buildLinkPreview(m.text);
+        if(preview) bubble.appendChild(preview);
         const stamp = document.createElement("div");
         stamp.className = "stamp";
         stamp.textContent = formatTime(m.ts);
@@ -1041,11 +1413,11 @@
       const on = Date.now() < (status.enabledUntil || 0);
       badge.classList.toggle("on", on);
       badge.textContent = on
-        ? "SMS mode: on (~" + Math.max(1, Math.ceil((status.enabledUntil - Date.now())/60000)) + " মিনিট)"
+        ? "SMS mode: on (~" + Math.max(1, Math.ceil((status.enabledUntil - Date.now())/60000)) + " min)"
         : "SMS mode: off";
     }else{
       badge.classList.remove("on");
-      badge.textContent = "তুমি মেসেজ দিলে Hredoy-র SMS mode চালু হবে";
+      badge.textContent = "Sending a message turns on Hredoy's SMS mode";
     }
   }
 
